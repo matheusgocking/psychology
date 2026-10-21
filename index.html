@@ -311,9 +311,9 @@ async function ligarNuvem() {
   firebase.initializeApp(window.FIREBASE_CONFIG); NV.db = firebase.firestore(); NV.on = true; return true;
 }
 const tela = h => { $("#screen").innerHTML = `<div class="gate">${h}</div>`; document.querySelector("header.top").hidden = true; };
-function telaLogin() {
+function telaLogin(msg) {
   tela(`<h1>Clube de Psicologia</h1><p>O espaço do grupo Psychology para acompanhar projetos, agenda e votações.</p>
-  <button class="btn primary" data-act="login" style="margin-top:12px">Entrar com Google</button>`);
+  <button class="btn primary" data-act="login" style="margin-top:12px">Entrar com Google</button>${msg ? `<p style="color:var(--bad);margin-top:14px">${esc(msg)}</p>` : ""}`);
 }
 function telaCodigo(msg) {
   tela(`<h1>Primeiro acesso</h1><p>Digite o código do grupo, que está no WhatsApp do Psychology.</p>
@@ -793,7 +793,8 @@ document.addEventListener("click", e => {
   if (a === "editprof") { UI.edit = t.dataset.on === "1"; return render(); }
   if (a === "theme") { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem(KEY + "-theme", r.dataset.theme); } catch (x) {} return; }
   if (a === "reset") { if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para confirmar"; return; } S = JSON.parse(JSON.stringify(SEED)); save(); toast("Dados de exemplo restaurados."); return render(); }
-  if (a === "login") { const pr = new firebase.auth.GoogleAuthProvider(); return firebase.auth().signInWithPopup(pr).catch(() => firebase.auth().signInWithRedirect(pr)); }
+  if (a === "login") { const pr = new firebase.auth.GoogleAuthProvider(); pr.setCustomParameters({ prompt: "select_account" });
+    return firebase.auth().signInWithPopup(pr).catch(e => telaLogin(e.code === "auth/popup-blocked" ? "O navegador bloqueou a janela de login. Libere as janelas pop-up deste site e tente de novo." : e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request" ? "" : "Não deu para entrar (" + e.code + ").")); }
   if (a === "sair") return firebase.auth().signOut().then(() => location.reload());
   if (a === "souEu") { NV.db.collection("acessos").doc(NV.user.uid).update({ membro: t.dataset.id }).then(() => { NV.acesso.membro = t.dataset.id; pronto(); }); return; }
   if (a === "newproj") return abrirProjeto();
