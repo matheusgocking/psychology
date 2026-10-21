@@ -87,6 +87,15 @@ h1 { font-size: 28px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.015em
 .tree path { fill: none; stroke-width: 2; }
 .node { position: absolute; width: 176px; box-sizing: border-box; background: var(--raised); border: 1px solid var(--line-strong); border-radius: var(--r-l); padding: 10px 12px; text-align: left; touch-action: none; user-select: none; box-shadow: var(--shadow); }
 .node:hover { border-color: var(--fc); }
+.node.proj { border-color: color-mix(in oklch, var(--fc) 45%, var(--line-strong)); border-width: 1.5px; }
+.node .add { position: absolute; top: -11px; right: -11px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--fc); color: #fff; font-size: 17px; font-weight: 700; line-height: 1; box-shadow: var(--shadow); cursor: pointer; }
+.node .add:hover { filter: brightness(1.1); }
+.cores { display: flex; gap: 8px; flex-wrap: wrap; }
+.cores label { display: block; }
+.cores input { position: absolute; opacity: 0; pointer-events: none; }
+.cores span { display: block; width: 30px; height: 30px; border-radius: 50%; background: var(--fc); border: 3px solid var(--raised); box-shadow: 0 0 0 1px var(--line-strong); cursor: pointer; }
+.cores input:checked + span { box-shadow: 0 0 0 2px var(--fg); }
+.cores input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 .node.dragging { cursor: grabbing; z-index: 2; }
 .node.proj .nm { font-weight: 600; font-size: 14.5px; line-height: 1.3; display: block; }
 .node .who { display: flex; align-items: center; gap: 6px; margin-top: 8px; min-height: 30px; }
@@ -329,7 +338,7 @@ a.btn.primary { color: var(--on-accent); }
 
 <script>
 /* ===== DADOS (lidos nos grupos do WhatsApp em 21/10/2026; fotos do WhatsApp, com o aceite de todos) ===== */
-const SEED = { versao: 6, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
+const SEED = { versao: 7, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
 
 /* ===== NUVEM (Firebase). Só liga fora do claude.ai, quando existe firebase-config.js ao lado da página.
    Os dados e as fotos ficam só no banco, atrás do login Google e do código do grupo; o código do site não guarda dado de ninguém. ===== */
@@ -521,8 +530,12 @@ function stack(ids, max = 4, s = 28) { const u = [...new Set(ids)]; return `<spa
 const pessoasProj = p => [...new Set(p.papeis.map(r => r[0]))];
 const respProj = p => (p.papeis.find(r => r[1] === "Responsável") || [])[0];
 const projsFrente = f => S.projetos.filter(p => p.frente === f.id);
-const pessoasFrente = f => [...new Set((f.resp ? [f.resp] : []).concat(...projsFrente(f).map(pessoasProj)))];
-const semProjeto = () => { const c = new Set(S.projetos.flatMap(pessoasProj).concat(S.frentes.map(f => f.resp).filter(Boolean))); return S.membros.filter(m => !c.has(m.id)); };
+const pessoasFrente = f => [...new Set([].concat(...projsFrente(f).map(pessoasProj)))];
+const semProjeto = () => { const c = new Set(S.projetos.flatMap(pessoasProj)); return S.membros.filter(m => !c.has(m.id)); };
+/* quem cria projeto: ADM em qualquer frente; os outros só na frente aberta (Ideias), onde qualquer um adiciona e assume */
+const podeCriarEm = f => !!f && (souAdm() || !!f.aberta);
+const CORES = [["purple", "Roxo"], ["red", "Vermelho"], ["orange", "Laranja"], ["yellow", "Amarelo"], ["green", "Verde"], ["cyan", "Ciano"], ["pink", "Rosa"], ["gray", "Cinza"]];
+const coresHTML = sel => `<div class="cores" role="radiogroup" aria-label="Cor da frente">${CORES.map(([c, l]) => `<label title="${l}"><input type="radio" name="cor" value="${c}"${c === sel ? " checked" : ""} aria-label="${l}"><span style="--fc:var(--c-${c})"></span></label>`).join("")}</div>`;
 const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
 const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
 const DIAS = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
@@ -558,14 +571,14 @@ function homeHTML() {
   const sp = semProjeto().length;
   const mexeu = Object.keys(POS).length > 0;
   return `<div class="wrap" style="max-width:1400px"><div class="home-head"><h1>Projetos</h1><p>Em cima, os projetos; embaixo, a frente de cada um. Clique num projeto para ver tudo sobre ele.</p>
-  <div class="home-acts"><button class="btn primary" data-act="newproj">+ Novo projeto</button>${mexeu ? `<button class="btn ghost" data-act="arrumar">Arrumar a árvore</button>` : ""}</div></div>
+  <div class="home-acts"><button class="btn primary" data-act="newproj">+ Novo projeto</button>${souAdm() ? `<button class="btn" data-act="newfrente">+ Nova frente</button>` : ""}${mexeu ? `<button class="btn ghost" data-act="arrumar">Arrumar a árvore</button>` : ""}</div></div>
   ${inicioCards()}
   <div class="tree-box" id="treeBox"><div class="tree" id="tree"><svg id="treeLines" width="1" height="1"></svg>
   ${S.projetos.map(p => { const f = F(p.frente), r = respProj(p), outros = pessoasProj(p).filter(x => x !== r);
     return `<button class="node proj" data-node="p:${p.id}" style="--fc:${fc(f)}"><span class="nm">${esc(p.nome)}</span>
       <span class="who">${stack(outros, 2, 30)}</span>${r ? `<span class="resp">${av(r, 22)} ${esc(M(r).curto)}, responsável</span>` : `<span class="resp">Sem responsável</span>`}</button>`; }).join("")}
   ${S.frentes.map(f => { const ppl = pessoasFrente(f);
-    return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}"><span class="nm">${esc(f.nome)}</span>
+    return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}">${podeCriarEm(f) ? `<span class="add" data-add="${f.id}" title="Novo projeto em ${esc(f.nome)}" aria-label="Novo projeto em ${esc(f.nome)}">+</span>` : ""}<span class="nm">${esc(f.nome)}</span>
       <span class="who">${stack(ppl, 4, 28)}</span><span class="resp" style="justify-content:center">${plural(ppl.length, "pessoa", "pessoas")}</span></button>`; }).join("")}
   </div></div>
   <p class="foot-note">${plural(S.membros.length, "integrante", "integrantes")}. ${sp ? `${plural(sp, "ainda não está", "ainda não estão")} em nenhum projeto: <button class="link" data-act="go" data-v="integrantes" data-filtro="sem">ver quem</button>.` : ""}</p></div>`;
@@ -595,13 +608,13 @@ function mountTree() {
     let x = 0; const ph = Math.max(...order.map(p => N["p:" + p.id].h));
     S.frentes.forEach(f => { const xs = [];
       projsFrente(f).forEach(p => { const n = N["p:" + p.id]; n.x = x; n.y = 0; xs.push(x + n.w / 2); x += n.w + GAP; });
-      const nf = N["f:" + f.id]; const cx = xs.length ? (xs[0] + xs[xs.length - 1]) / 2 : x + nf.w / 2; nf.x = cx - nf.w / 2; nf.y = ph + ROWGAP; x += GROUP - GAP; });
+      const nf = N["f:" + f.id]; const cx = xs.length ? (xs[0] + xs[xs.length - 1]) / 2 : x + nf.w / 2; nf.x = cx - nf.w / 2; nf.y = ph + ROWGAP; if (!xs.length) x += nf.w + GAP; x += GROUP - GAP; });
     W = x - GROUP; H = ph + ROWGAP + Math.max(...S.frentes.map(f => N["f:" + f.id].h));
   } else {
     let y = 0; const fw = Math.max(...S.frentes.map(f => N["f:" + f.id].w)); const px = fw + 50;
     S.frentes.forEach(f => { const ys = [];
       projsFrente(f).forEach(p => { const n = N["p:" + p.id]; n.x = px; n.y = y; ys.push(y + n.h / 2); y += n.h + 12; });
-      const nf = N["f:" + f.id]; nf.x = 0; nf.y = (ys[0] + ys[ys.length - 1]) / 2 - nf.h / 2; y += 22; });
+      const nf = N["f:" + f.id]; nf.x = 0; if (!ys.length) { nf.y = y; y += nf.h + 12; } else nf.y = (ys[0] + ys[ys.length - 1]) / 2 - nf.h / 2; y += 22; });
     W = px + Math.max(...order.map(p => N["p:" + p.id].w)); H = y - 22;
   }
   T.nodes = N; T.narrow = narrow;
@@ -671,10 +684,12 @@ function projHTML(p) {
   let h = `<div class="wrap"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button>
   <div class="proj-head"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span></div>
   <h1>${esc(p.nome)}</h1><p class="lede">${esc(p.resumo)}</p>
-  ${dentro ? `<button class="btn small" data-act="leave">Sair do projeto</button>` : `<button class="btn primary" data-act="join">Quero participar</button>`}
+  <div style="display:flex;gap:8px;flex-wrap:wrap">${dentro ? `<button class="btn small" data-act="leave">Sair do projeto</button>` : `<button class="btn primary" data-act="join">Quero participar</button>`}${respProj(p) ? "" : `<button class="btn" data-act="assumir">Assumir este projeto</button>`}</div>
   <div class="tabs" role="tablist">${tabs.map(([k, l, c]) => `<button class="tab" role="tab" aria-selected="${UI.tab === k}" data-act="tab" data-tab="${k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</div>`;
   if (UI.tab === "sobre") {
     if (UI.edit) return h + `<form class="form" data-form="sobre">
+      <label>Nome do projeto<input class="field" name="nome" id="sb-nome" value="${esc(p.nome)}"></label>
+      ${souAdm() ? `<label>Frente<select class="field" name="frente" id="sb-frente">${S.frentes.map(x => `<option value="${x.id}"${x.id === p.frente ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select></label>` : ""}
       <label>Situação<select class="field" name="status" id="sb-status">${Object.entries(STATUS).map(([v, l]) => `<option value="${v}"${p.status === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
       <label>Em uma frase, o que é<input class="field" name="resumo" id="sb-resumo" value="${esc(p.resumo)}"></label>
       <label>Detalhes, um por linha, no formato Título: texto<textarea class="field" name="detalhes" id="sb-det" style="min-height:130px" placeholder="Quando: segundas, às 8h&#10;Como funciona: ...">${esc(p.detalhes.map(([k, v]) => k + ": " + v).join(String.fromCharCode(10)))}</textarea></label>
@@ -735,7 +750,7 @@ function membersHTML() {
   const chip = (k, l, n, cor) => `<button class="chip" data-act="filtro" data-k="${k}" aria-pressed="${UI.filtro === k}">${cor ? `<span class="chipf" style="--fc:${cor}"></span>` : ""}${l} · ${n}</button>`;
   return `<div class="wrap"><h1>Integrantes</h1><p class="lede">Quem está no clube e em que projeto cada um está. Clique numa pessoa para ver o perfil.</p>
   <div class="filters">${chip("todos", "Todos", S.membros.length)}${chip("sem", "Sem projeto", sp.size)}${S.frentes.map(f => chip(f.id, esc(f.nome), S.membros.filter(m => projDe(m.id).some(p => p.frente === f.id)).length, fc(f))).join("")}</div>
-  ${F(UI.filtro) && !F(UI.filtro).aberta ? `<p class="notice" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px">Responsável pela frente ${esc(F(UI.filtro).nome)}: ${souAdm() ? `<select class="field" id="frResp" aria-label="Responsável pela frente" style="font-size:14px"><option value="">Ninguém</option>${S.membros.map(m => `<option value="${m.id}"${m.id === F(UI.filtro).resp ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select>` : `<b>${esc((M(F(UI.filtro).resp) || {}).nome || "ninguém ainda")}</b>`}</p>` : ""}
+  ${F(UI.filtro) && souAdm() ? `<p style="margin:-6px 0 14px"><button class="btn small" data-act="editfrente" data-id="${UI.filtro}">Editar a frente ${esc(F(UI.filtro).nome)}</button></p>` : ""}
   <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${esc(m.nome)}${coroa(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
 }
 
@@ -894,24 +909,35 @@ function abrirTarefa(data) {
 }
 
 /* janela de projeto novo */
-function abrirProjeto() {
+function abrirProjeto(fid) {
+  const ok = S.frentes.filter(podeCriarEm); if (!ok.length && !souAdm()) return toast("Só os ADM criam projetos fora da frente de ideias.");
   $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Novo projeto"><h2>Novo projeto</h2>
   <form class="form" data-form="projeto">
     <label>Nome do projeto<input class="field" name="nome" id="np-nome" required placeholder="Ex.: Grupo de estudos de ACT"></label>
     <label>Em uma frase, o que é<input class="field" name="resumo" id="np-resumo" placeholder="Para quem está de fora entender"></label>
-    <label>Frente<select class="field" name="frente" id="np-frente" data-act="npfrente">${S.frentes.map(f => `<option value="${f.id}">${esc(f.nome)}</option>`).join("")}${souAdm() ? `<option value="__nova">Uma frente nova...</option>` : ""}</select></label>
-    <label id="np-nova-l" hidden>Nome da frente nova<input class="field" name="nova" id="np-nova" placeholder="Ex.: Estudos"></label>
+    <label>Frente<select class="field" name="frente" id="np-frente" data-act="npfrente">${ok.map(f => `<option value="${f.id}"${f.id === fid ? " selected" : ""}>${esc(f.nome)}</option>`).join("")}${souAdm() ? `<option value="__nova">Uma frente nova...</option>` : ""}</select></label>
+    <div id="np-nova-l" style="display:none;gap:12px"><label>Nome da frente nova<input class="field" name="nova" id="np-nova" placeholder="Ex.: Estudos"></label><div><div style="font-size:13.5px;color:var(--muted);margin-bottom:6px">Cor da frente</div>${coresHTML(CORES.map(c => c[0]).find(c => !S.frentes.some(f => f.cor === c)) || "purple")}</div></div>
     <label>Responsável<select class="field" name="resp" id="np-resp"><option value="">Ninguém ainda</option>${S.membros.map(m => `<option value="${m.id}"${m.id === UI.me ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select></label>
     <div class="row-form"><button class="btn primary">Criar projeto</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div>
   </form></div></div>`;
   $("#np-nome").focus();
 }
-const CORES_LIVRES = ["purple", "red", "yellow", "orange", "green", "cyan", "pink"];
+function abrirFrente(id) {
+  const f = id ? F(id) : { id: "", nome: "", cor: CORES.map(c => c[0]).find(c => !S.frentes.some(x => x.cor === c)) || "purple", aberta: false }, vazia = id && !projsFrente(f).length;
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Frente"><h2>${id ? "Editar frente" : "Nova frente"}</h2>
+  <form class="form" data-form="frente" data-id="${id || ""}">
+    <label>Nome da frente<input class="field" name="nome" id="fr-nome" required value="${esc(f.nome)}" placeholder="Ex.: Prática Clínica"></label>
+    <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:6px">Cor</div>${coresHTML(f.cor)}</div>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--fg)"><input type="checkbox" name="aberta" id="fr-ab"${f.aberta ? " checked" : ""}> Frente aberta: qualquer integrante pode criar projeto nela</label>
+    <div class="row-form"><button class="btn primary">${id ? "Salvar" : "Criar frente"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${vazia ? `<button type="button" class="btn ghost" data-act="delfrente" data-id="${id}" style="margin-left:auto;color:var(--bad)">Apagar frente</button>` : ""}</div>
+  </form>${id && !vazia ? `<p class="empty" style="margin-top:12px">Para apagar, primeiro mude os projetos desta frente para outra (no Editar de cada projeto).</p>` : ""}</div></div>`;
+  $("#fr-nome").focus();
+}
 
 /* ===== AÇÕES ===== */
 document.addEventListener("click", e => {
   const node = e.target.closest(".node");
-  if (node) { if (DRAG && DRAG.done) return; const [k, id] = node.dataset.node.split(":"); return k === "p" ? go("projeto", { proj: id, tab: "sobre" }) : go("integrantes", { filtro: id }); }
+  if (node) { if (DRAG && DRAG.done) return; const add = e.target.closest("[data-add]"); if (add) return abrirProjeto(add.dataset.add); const [k, id] = node.dataset.node.split(":"); return k === "p" ? go("projeto", { proj: id, tab: "sobre" }) : go("integrantes", { filtro: id }); }
   const t = e.target.closest("[data-act]"); if (!t) return;
   const a = t.dataset.act, p = UI.v === "projeto" ? P(UI.proj) : null;
   if (a === "closemodal") { if (e.target === t || t.tagName === "BUTTON") $("#overlay").innerHTML = ""; return; }
@@ -936,6 +962,10 @@ document.addEventListener("click", e => {
   if (a === "souEu") { const id = t.dataset.id, b = NV.db.batch(); b.update(NV.db.collection("membros").doc(id), { uid: NV.user.uid }); b.update(NV.db.collection("acessos").doc(NV.user.uid), { membro: id });
     b.commit().then(() => { NV.acesso.membro = id; M(id).uid = NV.user.uid; NV.last["membros/" + id] = JSON.stringify(M(id)); pronto(); }).catch(() => toast("Esse perfil já está ligado a outra conta. Se é você, fale com o Matheus.")); return; }
   if (a === "cadastro") return telaCadastro();
+  if (a === "newfrente") return abrirFrente(null);
+  if (a === "editfrente") return abrirFrente(t.dataset.id);
+  if (a === "delfrente") { const id = t.dataset.id; if (projsFrente(F(id)).length) return toast("A frente ainda tem projetos."); S.frentes = S.frentes.filter(f => f.id !== id); save(); $("#overlay").innerHTML = ""; toast("Frente apagada."); return go("inicio"); }
+  if (a === "assumir") { const x = p.papeis.find(y => y[0] === UI.me); if (x) x[1] = "Responsável"; else p.papeis.unshift([UI.me, "Responsável"]); save(); toast("Agora você é responsável por este projeto."); return render(); }
   if (a === "sala") {
     const url = "https://meet.jit.si/Psychology-" + Math.random().toString(36).slice(2, 10), d = new Date(), f = new Date(d.getTime() + 60 * 60e3);
     S.eventos.push({ id: "e" + Date.now(), titulo: "Sala aberta por " + M(UI.me).curto, data: hojeISO(), ini: hm(d), fim: f.getDate() === d.getDate() ? hm(f) : "23:59", local: url, proj: "", quem: [UI.me], semanal: false, desc: "Sala aberta na hora pelo botão do site.", criador: UI.me, sala: true, em: Date.now() });
@@ -961,14 +991,14 @@ document.addEventListener("click", e => {
   if (a === "who") { lerEvento(); const q = UI.draft.quem, id = t.dataset.id; UI.draft.quem = q.includes(id) ? q.filter(x => x !== id) : q.concat(id); return desenharEvento(); }
   if (a === "delev") { if (!UI.confirmDel) { lerEvento(); UI.confirmDel = true; return desenharEvento(); } S.eventos = S.eventos.filter(x => x.id !== UI.draft.id); save(); $("#overlay").innerHTML = ""; toast("Compromisso apagado."); return render(); }
 });
-document.addEventListener("change", e => { if (e.target.id === "np-frente") { $("#np-nova-l").hidden = e.target.value !== "__nova"; if (e.target.value === "__nova") $("#np-nova").focus(); return; }
-  if (e.target.id === "frResp") { F(UI.filtro).resp = e.target.value || null; save(); toast("Responsável trocado."); return render(); }
+document.addEventListener("change", e => { if (e.target.id === "np-frente") { $("#np-nova-l").hidden = e.target.value !== "__nova"; $("#np-nova-l").style.display = e.target.value === "__nova" ? "grid" : "none"; if (e.target.value === "__nova") $("#np-nova").focus(); return; }
   if (e.target.id === "meSel") { UI.me = e.target.value; saveUI(); toast("Agora você vê o site como " + M(UI.me).curto + "."); go("perfil"); } });
 document.addEventListener("submit", e => {
   e.preventDefault(); const f = e.target, fd = new FormData(f), k = f.dataset.form, p = UI.v === "projeto" ? P(UI.proj) : null;
   if (k === "tarefa") { const t = (fd.get("t") || "").trim(); if (!t) return; p.tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "", em: Date.now() }); save(); toast("Tarefa criada."); return render(); }
   if (k === "ideia") { const t = (fd.get("t") || "").trim(); if (!t) return; p.ideias.push({ t, por: UI.me, votos: [], em: Date.now() }); save(); toast("Ideia adicionada."); return render(); }
   if (k === "sobre") {
+    p.nome = String(fd.get("nome") || "").trim() || p.nome; if (fd.get("frente") && F(fd.get("frente"))) p.frente = fd.get("frente");
     p.status = fd.get("status"); p.resumo = (fd.get("resumo") || "").trim() || p.resumo; p.proximo = (fd.get("proximo") || "").trim();
     if (fd.has("resp")) { const r0 = respProj(p), r1 = fd.get("resp");
       if (r0 !== r1) { p.papeis = p.papeis.map(x => x[1] === "Responsável" ? [x[0], "Participa"] : x); if (r1) { const x = p.papeis.find(y => y[0] === r1); if (x) x[1] = "Responsável"; else p.papeis.unshift([r1, "Responsável"]); } } }
@@ -980,6 +1010,12 @@ document.addEventListener("submit", e => {
     const f = fd.get("arq"); if (!f || !f.size) return telaImportar("Escolha o arquivo.");
     f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), ida({ ...x, ordem: i }))); return b.commit(); })
       .then(() => { toast("Dados carregados."); setTimeout(pronto, 800); }).catch(e => telaImportar("Não deu certo: " + e.message)); return;
+  }
+  if (k === "frente") {
+    const nome = String(fd.get("nome") || "").trim(); if (!nome) return toast("Dê um nome à frente.");
+    const id = f.dataset.id, cor = fd.get("cor") || "purple", aberta = !!fd.get("aberta");
+    if (id) Object.assign(F(id), { nome, cor, aberta }); else S.frentes.push({ id: "f" + Date.now(), nome, cor, aberta });
+    save(); $("#overlay").innerHTML = ""; toast(id ? "Frente salva." : "Frente criada."); return render();
   }
   if (k === "msg") {
     const t = String(fd.get("t") || "").trim(); if (!t) return;
@@ -1013,7 +1049,8 @@ document.addEventListener("submit", e => {
     const nome = (fd.get("nome") || "").trim(); if (!nome) return toast("Dê um nome ao projeto.");
     let frente = fd.get("frente");
     if (frente === "__nova") { const nf = (fd.get("nova") || "").trim(); if (!nf) return toast("Dê um nome à frente nova.");
-      frente = "f" + Date.now(); const usadas = S.frentes.map(f => f.cor); S.frentes.push({ id: frente, nome: nf, cor: CORES_LIVRES.find(c => !usadas.includes(c)) || "purple", resp: fd.get("resp") || null }); }
+      frente = "f" + Date.now(); S.frentes.push({ id: frente, nome: nf, cor: fd.get("cor") || "purple" }); }
+    if (!podeCriarEm(F(frente))) return toast("Só os ADM criam projetos nesta frente.");
     const id = "p" + Date.now(), resp = fd.get("resp");
     S.projetos.push({ id, frente, nome, status: "ideia", resumo: (fd.get("resumo") || "").trim() || "Ainda sem descrição.", detalhes: [], proximo: "", papeis: resp ? [[resp, "Responsável"]] : [], tarefas: [], ideias: [], nota: "", em: Date.now(), criador: UI.me });
     save(); $("#overlay").innerHTML = ""; toast("Projeto criado."); return go("projeto", { proj: id, tab: "sobre" });
