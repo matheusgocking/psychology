@@ -1,0 +1,856 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mapa do Psychology</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout (desenho do Matheus, 21/10/2026): barra com Início e Integrantes à esquerda, Calendário e o perfil à direita.
+   O Início é a árvore dos projetos: projetos em cima, frentes embaixo, ligados por linhas. Cada coisa abre em tela própria. */
+:root {
+  --bg: #ffffff; --panel: #f6f6f6; --raised: #ffffff; --line: #e4e4e4; --line-strong: #cfcfcf;
+  --fg: #222222; --muted: #5c5c5c; --faint: #707070; --dot: #e4e4e4;
+  --accent: #7852ee; --accent-soft: color-mix(in oklch, #7852ee 12%, transparent); --on-accent: #ffffff;
+  --c-red: #e93147; --c-orange: #ec7500; --c-yellow: #c99a00; --c-green: #08b94e; --c-cyan: #00a8a6; --c-purple: #7852ee; --c-pink: #d53984; --c-gray: #8a8a8a;
+  --ok: #08b94e; --warn: #b88a00; --bad: #e93147;
+  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 18px rgba(0,0,0,.07);
+  --font: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r-s: 4px; --r-m: 8px; --r-l: 12px;
+  --fds-bg: #f3f3f5; --fds-line: #e2e2e6; --quente-bg: #fdeccd; --quente-fg: #7d5210; --quente-line: #e9c890; --chip: #ececec;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1c1c1c; --panel: #232323; --raised: #262626; --line: #333333; --line-strong: #444444;
+  --fg: #dadada; --muted: #a3a3a3; --faint: #8a8a8a; --dot: #2e2e2e;
+  --accent: #a882ff; --accent-soft: color-mix(in oklch, #a882ff 16%, transparent); --on-accent: #1c1c1c;
+  --c-red: #fb464c; --c-orange: #e9973f; --c-yellow: #e0de71; --c-green: #44cf6e; --c-cyan: #53dfdd; --c-purple: #a882ff; --c-pink: #fa99cd; --c-gray: #8f8f8f;
+  --ok: #44cf6e; --warn: #e0de71; --bad: #fb464c;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  --fds-bg: #212123; --fds-line: #2f2f33; --quente-bg: #3b2d11; --quente-fg: #f3cd83; --quente-line: #66501f; --chip: #2e2e2e;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #1c1c1c; --panel: #232323; --raised: #262626; --line: #333333; --line-strong: #444444;
+  --fg: #dadada; --muted: #a3a3a3; --faint: #8a8a8a; --dot: #2e2e2e;
+  --accent: #a882ff; --accent-soft: color-mix(in oklch, #a882ff 16%, transparent); --on-accent: #1c1c1c;
+  --c-red: #fb464c; --c-orange: #e9973f; --c-yellow: #e0de71; --c-green: #44cf6e; --c-cyan: #53dfdd; --c-purple: #a882ff; --c-pink: #fa99cd; --c-gray: #8f8f8f;
+  --ok: #44cf6e; --warn: #e0de71; --bad: #fb464c;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  --fds-bg: #212123; --fds-line: #2f2f33; --quente-bg: #3b2d11; --quente-fg: #f3cd83; --quente-line: #66501f; --chip: #2e2e2e;
+  color-scheme: dark;
+}
+[hidden] { display: none !important; }
+html, body { min-height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font); touch-action: manipulation; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--panel); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* barra */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: stretch; background: var(--panel); border-bottom: 1px solid var(--line); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); min-height: 52px; }
+.nav { display: flex; align-items: stretch; }
+.nav button { border: 0; border-right: 1px solid var(--line); background: none; padding: 0 18px; color: var(--muted); font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.nav button:first-child { padding-left: 0; }
+.nav button[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -2px 0 var(--accent); }
+.nav svg { color: var(--accent); }
+.right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.cal-btn { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line-strong); background: var(--raised); border-radius: 99px; padding: 5px 16px; min-height: 36px; font-weight: 500; }
+.cal-btn[aria-current="page"] { border-color: var(--accent); background: var(--accent-soft); }
+.me-btn { border: 0; background: none; padding: 0; border-radius: 50%; display: grid; }
+.me-btn[aria-current="page"] .av { box-shadow: 0 0 0 2px var(--accent); }
+
+/* avatares */
+.av { --s: 28px; width: var(--s); height: var(--s); border-radius: 50%; display: inline-grid; place-items: center; font-size: calc(var(--s) * .38); font-weight: 600; color: #fff; background: hsl(var(--h) 42% 46%); flex: none; overflow: hidden; box-sizing: border-box; border: 2px solid var(--raised); }
+.av img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.stack { display: inline-flex; align-items: center; }
+.stack .av + .av { margin-left: -9px; }
+.more { margin-left: 6px; font-size: 13px; color: var(--muted); }
+
+.screen { padding-block: 28px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1000px; margin: 0 auto; }
+h1 { font-size: 28px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.015em; text-wrap: balance; }
+.lede { color: var(--muted); margin: 0 0 20px; max-width: 62ch; }
+.back { border: 0; background: none; color: var(--muted); padding: 4px 0; margin-bottom: 14px; font-size: 14px; }
+.back:hover { color: var(--fg); }
+
+/* árvore */
+.home-head { text-align: center; margin-bottom: 8px; }
+.home-head h1 { font-size: 22px; letter-spacing: .02em; }
+.home-head p { margin: 0 auto; color: var(--muted); font-size: 14px; }
+.home-acts { display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+.tree-box { position: relative; margin: 18px auto 0; background-image: radial-gradient(var(--dot) 1.2px, transparent 1.3px); background-size: 22px 22px; border-radius: var(--r-l); }
+.tree { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.tree svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+.tree path { fill: none; stroke-width: 2; }
+.node { position: absolute; width: 176px; box-sizing: border-box; background: var(--raised); border: 1px solid var(--line-strong); border-radius: var(--r-l); padding: 10px 12px; text-align: left; touch-action: none; user-select: none; box-shadow: var(--shadow); }
+.node:hover { border-color: var(--fc); }
+.node.dragging { cursor: grabbing; z-index: 2; }
+.node.proj .nm { font-weight: 600; font-size: 14.5px; line-height: 1.3; display: block; }
+.node .who { display: flex; align-items: center; gap: 6px; margin-top: 8px; min-height: 30px; }
+.node .resp { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.node.frente { border-color: color-mix(in oklch, var(--fc) 70%, transparent); background: color-mix(in oklch, var(--fc) 8%, var(--raised)); text-align: center; }
+.node.frente .nm { font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.node.frente .nm::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--fc); }
+.node.frente .who { justify-content: center; }
+.node.frente.open { border-style: dashed; }
+.foot-note { text-align: center; margin-top: 18px; font-size: 14px; color: var(--muted); }
+.link { border: 0; background: none; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent); }
+
+/* projeto */
+.chipf { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); }
+.chipf::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--fc); }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 500; padding: 1px 9px; border-radius: 99px; background: var(--line); color: var(--muted); }
+.pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.pill.ativo { color: var(--ok); background: color-mix(in oklch, var(--ok) 14%, transparent); }
+.pill.feito { color: var(--accent); background: var(--accent-soft); }
+.proj-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); margin: 22px 0 18px; overflow-x: auto; scrollbar-width: none; }
+.tab { border: 0; background: none; padding: 8px 14px; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; min-height: 40px; }
+.tab[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 500; }
+.tab .c { font-size: 12px; color: var(--faint); margin-left: 4px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.sec { font-size: 13px; font-weight: 600; color: var(--muted); margin: 0 0 8px; }
+.facts { list-style: none; margin: 0 0 22px; padding: 0; display: grid; gap: 10px; }
+.facts li { display: grid; grid-template-columns: 120px 1fr; gap: 12px; }
+.facts b { font-weight: 500; color: var(--muted); }
+.people { display: grid; gap: 8px; }
+.person { display: flex; align-items: center; gap: 10px; border: 0; background: none; text-align: left; padding: 4px; border-radius: var(--r-m); width: 100%; }
+.person:hover { background: var(--panel); }
+.person small { display: block; color: var(--muted); font-size: 12.5px; }
+.next { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; margin-bottom: 22px; }
+.next p { margin: 0; }
+.btn { border: 1px solid var(--line-strong); background: var(--raised); border-radius: var(--r-m); padding: 6px 14px; min-height: 38px; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 500; }
+.btn.ghost { border-color: transparent; background: none; color: var(--muted); }
+.btn.small { min-height: 32px; padding: 3px 10px; font-size: 13px; }
+.field { border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-m); padding: 7px 10px; min-height: 38px; font-size: 16px; box-sizing: border-box; }
+textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 1.55; font-size: 15px; }
+.row-form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.row-form .field { flex: 1 1 160px; min-width: 0; }
+.empty { color: var(--faint); font-size: 14px; margin: 6px 0; }
+.task { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.task .t small { display: block; color: var(--faint); font-size: 12.5px; }
+.task.done .t > span { text-decoration: line-through; color: var(--faint); }
+.st { border: 1px solid var(--line); background: var(--raised); border-radius: 99px; font-size: 12.5px; padding: 2px 10px; min-height: 30px; white-space: nowrap; }
+.st.fazendo { color: var(--warn); border-color: color-mix(in oklch, var(--warn) 50%, transparent); }
+.st.feito { color: var(--ok); border-color: color-mix(in oklch, var(--ok) 50%, transparent); }
+.idea { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.idea .tx { flex: 1; min-width: 0; }
+.idea small { display: block; font-size: 12.5px; color: var(--faint); }
+.vote { border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-m); min-width: 48px; min-height: 42px; font-size: 13px; color: var(--muted); line-height: 1.1; }
+.vote[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.md { line-height: 1.65; max-width: 68ch; }
+.md p { margin: 0 0 10px; } .md ul { margin: 0 0 10px; padding-left: 20px; } .md h3 { font-size: 16px; margin: 16px 0 6px; }
+.wl { border: 0; background: none; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent); }
+.tag { border: 0; color: var(--accent); background: var(--accent-soft); border-radius: var(--r-s); padding: 0 5px; font-size: .92em; }
+.notice { font-size: 13.5px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-m); padding: 8px 12px; }
+
+/* entrada (versão na nuvem) */
+.gate { max-width: 440px; margin: 8vh auto 0; text-align: center; }
+.gate h1 { font-size: 30px; }
+.gate p { color: var(--muted); }
+.gate .form { text-align: left; margin: 18px auto 0; }
+.gate .who-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; max-height: 50vh; overflow: auto; text-align: left; margin-top: 12px; }
+.gate .who-pick button { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-m); padding: 6px 8px; font-size: 14px; }
+.gate .who-pick button:hover { border-color: var(--accent); }
+
+/* votações */
+.polls { display: grid; gap: 10px; }
+.poll { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: center; text-align: left; background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; width: 100%; }
+.poll:hover { border-color: var(--accent); }
+.poll b { font-weight: 600; font-size: 15.5px; }
+.poll .meta { font-size: 13px; color: var(--muted); }
+.poll .side { grid-row: span 2; text-align: right; font-size: 13px; color: var(--muted); }
+.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.badge.off { background: var(--line); color: var(--muted); }
+.badge.ok { background: color-mix(in oklch, var(--ok) 14%, transparent); color: var(--ok); }
+.opts { display: grid; gap: 8px; margin: 16px 0; max-width: 640px; }
+.opt { position: relative; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: var(--r-m); padding: 10px 12px; background: var(--raised); cursor: pointer; overflow: hidden; }
+.opt input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; position: relative; }
+.opt .bar { position: absolute; inset: 0 auto 0 0; background: var(--accent-soft); pointer-events: none; }
+.opt .tx { position: relative; flex: 1; }
+.opt .n { position: relative; font-size: 13px; color: var(--muted); white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+.opt.mine { border-color: var(--accent); }
+.opt.win .tx { font-weight: 600; }
+
+/* integrantes */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.chip { border: 1px solid var(--line); background: var(--raised); border-radius: 99px; padding: 3px 12px; font-size: 13.5px; min-height: 32px; color: var(--muted); display: inline-flex; align-items: center; gap: 6px; }
+.chip[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--fg); }
+.members { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.mcard { display: flex; gap: 12px; align-items: center; text-align: left; background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 10px 12px; }
+.mcard:hover { border-color: var(--accent); }
+.mcard b { display: block; font-weight: 600; line-height: 1.3; }
+.mcard span.sub { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+.mcard .none { color: var(--faint); }
+
+/* perfil */
+.prof-head { display: flex; gap: 18px; align-items: center; margin-bottom: 20px; }
+.kv { display: grid; grid-template-columns: 210px 1fr; gap: 8px 16px; margin: 0 0 22px; font-size: 14.5px; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; min-width: 0; }
+.form { display: grid; gap: 12px; max-width: 640px; }
+.form label { display: grid; gap: 4px; font-size: 13.5px; color: var(--muted); }
+.form .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.settings { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; border-top: 1px solid var(--line); margin-top: 28px; padding-top: 16px; font-size: 13.5px; color: var(--muted); }
+
+/* calendário (no jeito do Controle Único) */
+.seg { display: inline-flex; gap: 4px; background: var(--panel); padding: 4px; border-radius: var(--r-m); border: 1px solid var(--line); }
+.seg button { border: 0; background: transparent; color: var(--muted); padding: 6px 16px; border-radius: 6px; }
+.seg button[aria-pressed="true"] { background: var(--raised); color: var(--fg); box-shadow: 0 1px 2px rgba(0,0,0,.1); font-weight: 600; }
+.cbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin: 14px 0; }
+.cnav { display: flex; align-items: center; gap: 8px; }
+.cnav .btn { min-height: 34px; padding: 4px 10px; }
+.cnav .arrow { min-width: 34px; justify-content: center; font-size: 17px; padding: 4px 0; }
+.range { font-weight: 700; font-size: 17px; line-height: 1.2; }
+.range small { display: block; font-weight: 400; font-size: 12px; color: var(--muted); }
+.gwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--raised); box-shadow: var(--shadow); }
+.wk { display: grid; grid-template-columns: 56px repeat(7, minmax(104px, 1fr)); min-width: 780px; }
+.gh { position: sticky; top: 0; z-index: 3; background: var(--panel); padding: 8px 6px; text-align: center; border-bottom: 1px solid var(--line); }
+.gh .d { font-size: 11px; letter-spacing: .08em; color: var(--muted); }
+.gh .n { font-weight: 700; font-size: 17px; }
+.gh.today { background: var(--accent); color: var(--on-accent); } .gh.today .d { color: inherit; opacity: .85; }
+.hcol { border-right: 1px solid var(--line); }
+.hlab { height: 48px; box-sizing: border-box; border-bottom: 1px solid var(--line); font-size: 12px; font-weight: 600; color: var(--faint); text-align: right; padding: 2px 8px 0 0; }
+.trow-lab { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 11px; color: var(--faint); text-align: right; padding: 6px 8px 0 0; background: var(--panel); }
+.tcell { border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--panel); padding: 4px; display: flex; flex-direction: column; gap: 3px; min-width: 0; min-height: 30px; }
+.dcol { position: relative; border-right: 1px solid var(--line); background-image: repeating-linear-gradient(to bottom, transparent 0 47px, var(--line) 47px 48px); cursor: pointer; }
+.dcol.fds { background-color: color-mix(in oklch, var(--panel) 60%, transparent); }
+.dcol.today::after { content: ""; position: absolute; inset: 0; background: var(--accent); opacity: .05; pointer-events: none; }
+.evb { position: absolute; left: 3px; right: 3px; border: 0; border-left: 4px solid var(--fc, var(--accent)); background: color-mix(in oklch, var(--fc, var(--accent)) 16%, var(--raised)); border-radius: var(--r-s); padding: 3px 6px; text-align: left; font-size: 12px; line-height: 1.25; overflow: hidden; color: var(--fg); z-index: 1; }
+.evb b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.evb span { color: var(--muted); }
+.tchip { border: 0; border-left: 3px solid var(--fc, var(--accent)); background: var(--raised); border-radius: var(--r-s); padding: 3px 6px; text-align: left; font-size: 11.5px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--fg); }
+.tchip.done { color: var(--faint); text-decoration: line-through; }
+.now { position: absolute; left: 0; right: 0; height: 2px; background: var(--bad); z-index: 2; pointer-events: none; }
+/* mês igual ao do Controle Único */
+.stats { display: flex; gap: 10px; flex-wrap: wrap; }
+.stat { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-m); padding: 6px 12px; min-width: 104px; }
+.stat b { display: block; font-size: 18px; font-weight: 700; line-height: 1.2; }
+.stat span { color: var(--muted); font-size: 12.5px; }
+.range::first-letter { text-transform: uppercase; }
+.month { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.mh { text-align: center; font-size: 11.5px; color: var(--muted); letter-spacing: .06em; padding: 2px 0; }
+.mh.fds { color: var(--faint); background: var(--fds-bg); border-radius: 6px; }
+.day { background: var(--raised); border: 1px solid var(--line); border-radius: 9px; min-height: 88px; padding: 7px 8px; display: flex; flex-direction: column; gap: 5px; cursor: pointer; min-width: 0; box-sizing: border-box; }
+.day:hover { border-color: var(--accent); }
+.day.fds { background: var(--fds-bg); border-color: var(--fds-line); }
+.day.fds .num { color: var(--faint); font-weight: 400; }
+.day.fora { background: transparent; border-style: dashed; opacity: .5; }
+.day.hoje { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.day .num { font-weight: 700; font-size: 15px; }
+.day .linha { font-size: 11.5px; color: var(--muted); display: flex; gap: 6px; }
+.day .linha span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.day .linha.tk { color: var(--accent); }
+.dpill { align-self: flex-start; display: inline-flex; align-items: baseline; gap: 5px; background: var(--quente-bg); color: var(--quente-fg); border: 1px solid var(--quente-line); border-radius: 20px; padding: 2px 10px; font-size: 11.5px; font-weight: 600; }
+.dpill b { font-weight: 700; font-size: 16px; line-height: 1; }
+.dpill.vazio { background: var(--chip); border-color: transparent; color: var(--faint); font-weight: 400; }
+.mo { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.mo .dow { font-size: 11px; letter-spacing: .08em; color: var(--muted); padding: 8px; background: var(--panel); border-bottom: 1px solid var(--line); text-align: center; }
+.mday { min-height: 104px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 4px; display: flex; flex-direction: column; gap: 3px; min-width: 0; cursor: pointer; }
+.mday:nth-child(7n) { border-right: 0; }
+.mday.other { background: var(--panel); }
+.mday .n { font-size: 12px; color: var(--muted); padding: 2px 5px; align-self: flex-start; }
+.mday.other .n { color: var(--faint); opacity: .7; }
+.mday.today .n { background: var(--accent); color: var(--on-accent); border-radius: 99px; font-weight: 700; }
+.mchip { border: 0; border-left: 3px solid var(--fc, var(--accent)); background: color-mix(in oklch, var(--fc, var(--accent)) 12%, var(--raised)); border-radius: var(--r-s); padding: 2px 6px; font-size: 11.5px; text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--fg); }
+
+/* janela de criar e editar */
+.modal { position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.4); display: grid; place-items: center; padding: 16px; }
+.dialog { width: min(560px, 100%); max-height: calc(100vh - 32px); overflow: auto; background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-l); box-shadow: var(--shadow); padding: 20px; box-sizing: border-box; }
+.dialog h2 { margin: 0 0 14px; font-size: 20px; }
+.pick { display: flex; flex-wrap: wrap; gap: 6px; max-height: 170px; overflow: auto; padding: 2px; }
+.pick .chip { padding-left: 3px; }
+.pick .av { --s: 24px; border: 0; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 8px 16px; border-radius: var(--r-m); font-size: 14px; z-index: 40; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.on { opacity: 1; }
+
+@media (max-width: 760px) {
+  .nav button { padding: 0 10px; font-size: 14px; } .nav button:first-child svg { display: none; } .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
+  .grid2 { grid-template-columns: 1fr; }
+  .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
+  .facts li { grid-template-columns: 1fr; gap: 0; }
+  .form .two { grid-template-columns: 1fr; }
+  h1 { font-size: 24px; }
+  .month { gap: 4px; } .day { min-height: 64px; padding: 5px 4px; gap: 3px; overflow: hidden; } .day .num { font-size: 13px; } .dpill { padding: 2px 7px; } .dpill b { font-size: 14px; } .dpill .pw, .dpill.vazio { display: none; } .day .linha { font-size: 10px; }
+  .cbar .stats { order: 3; }
+  .modal { padding: 0; } .dialog { max-height: 100vh; height: 100%; border-radius: 0; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+</style>
+
+<header class="top">
+  <nav class="nav" aria-label="Seções">
+    <button data-act="go" data-v="inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18M5 4c0 5 3 8 7 8s7-3 7-8M5 4v3M19 4v3M12 3l-2 2M12 3l2 2"/></svg>Início</button>
+    <button data-act="go" data-v="integrantes">Integrantes</button>
+    <button data-act="go" data-v="votacoes">Votações</button>
+  </nav>
+  <div class="right">
+    <button class="cal-btn" data-act="go" data-v="calendario" aria-label="Calendário"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="lbl">Calendário</span></button>
+    <button class="me-btn" data-act="go" data-v="perfil" id="meBtn" aria-label="Meu perfil"></button>
+  </div>
+</header>
+<main id="screen" class="screen"></main>
+<div id="overlay"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ===== DADOS (lidos nos grupos do WhatsApp em 21/10/2026; fotos do WhatsApp, com o aceite de todos) ===== */
+const SEED = { versao: 3, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
+
+/* ===== NUVEM (Firebase). Só liga fora do claude.ai, quando existe firebase-config.js ao lado da página.
+   Os dados e as fotos ficam só no banco, atrás do login Google e do código do grupo; o código do site não guarda dado de ninguém. ===== */
+const COLS = ["membros", "frentes", "projetos", "eventos", "votacoes"];
+const NV = { on: false, db: null, user: null, acesso: null, last: {}, prontos: 0, pend: false };
+const loadScript = src => new Promise((ok, no) => { const el = document.createElement("script"); el.src = src; el.onload = ok; el.onerror = no; document.head.appendChild(el); });
+async function ligarNuvem() {
+  if (/claude|claudeusercontent/.test(location.hostname)) return false;
+  try { await loadScript("firebase-config.js"); } catch (e) { return false; }
+  if (!window.FIREBASE_CONFIG) return false;
+  for (const f of ["app", "auth", "firestore"]) await loadScript(`https://www.gstatic.com/firebasejs/10.12.2/firebase-${f}-compat.js`);
+  firebase.initializeApp(window.FIREBASE_CONFIG); NV.db = firebase.firestore(); NV.on = true; return true;
+}
+const tela = h => { $("#screen").innerHTML = `<div class="gate">${h}</div>`; document.querySelector("header.top").hidden = true; };
+function telaLogin() {
+  tela(`<h1>Clube de Psicologia</h1><p>O espaço do grupo Psychology para acompanhar projetos, agenda e votações.</p>
+  <button class="btn primary" data-act="login" style="margin-top:12px">Entrar com Google</button>`);
+}
+function telaCodigo(msg) {
+  tela(`<h1>Primeiro acesso</h1><p>Digite o código do grupo, que está no WhatsApp do Psychology.</p>
+  <form class="form" data-form="codigo"><input class="field" name="codigo" id="cod" autocomplete="off" placeholder="Código do grupo" style="width:100%">${msg ? `<p style="color:var(--bad);margin:0">${esc(msg)}</p>` : ""}
+  <button class="btn primary">Entrar</button></form><p style="font-size:13px;margin-top:18px">Entrou como ${esc(NV.user.email)}. <button class="link" data-act="sair">Usar outra conta</button></p>`);
+}
+function telaImportar(msg) {
+  tela(`<h1>Banco vazio</h1><p>Falta carregar os dados iniciais do grupo (projetos, integrantes e fotos). Escolha o arquivo <b>dados-iniciais.json</b>.</p>
+  <form class="form" data-form="importar"><input class="field" type="file" name="arq" id="arq" accept=".json,application/json">${msg ? `<p style="color:var(--bad);margin:0">${esc(msg)}</p>` : ""}<button class="btn primary">Carregar</button></form>`);
+}
+function telaQuem() {
+  tela(`<h1>Quem é você?</h1><p>Toque no seu nome. Isso liga a sua conta Google ao seu perfil no clube.</p>
+  <div class="who-pick">${S.membros.map(m => `<button data-act="souEu" data-id="${m.id}">${av(m.id, 28)}${esc(m.nome)}</button>`).join("")}</div>`);
+}
+async function entrarNuvem() {
+  firebase.auth().onAuthStateChanged(async u => {
+    NV.user = u; if (!u) return telaLogin();
+    const ref = NV.db.collection("acessos").doc(u.uid);
+    const snap = await ref.get().catch(() => null);
+    if (!snap || !snap.exists) return telaCodigo();
+    NV.acesso = snap.data(); assinar();
+  });
+}
+function assinar() {
+  S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [] }; NV.prontos = 0;
+  for (const c of COLS) NV.db.collection(c).onSnapshot(snap => {
+    S[c] = snap.docs.map(d => d.data()).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+    for (const k of Object.keys(NV.last)) if (k.startsWith(c + "/")) delete NV.last[k];
+    S[c].forEach(x => NV.last[c + "/" + x.id] = JSON.stringify(x));
+    if (NV.prontos < COLS.length) { NV.prontos++; if (NV.prontos === COLS.length) pronto(); return; }
+    agendarRender();
+  }, () => telaCodigo("Sem acesso ao banco. Confira o código."));
+}
+function pronto() {
+  if (!S.membros.length) return telaImportar();
+  if (!NV.acesso.membro || !M(NV.acesso.membro)) return telaQuem();
+  UI.me = NV.acesso.membro; document.querySelector("header.top").hidden = false; go("inicio");
+}
+const editando = () => !!$("#overlay").innerHTML || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && document.activeElement.closest("#screen")) || UI.edit;
+function agendarRender() { if (document.querySelector("header.top").hidden) return; if (editando()) { NV.pend = true; return; } NV.pend = false; render(); }
+document.addEventListener("focusout", () => setTimeout(() => { if (NV.pend && !editando()) agendarRender(); }, 50));
+function gravarNuvem() {
+  const batch = NV.db.batch(); let n = 0;
+  for (const c of COLS) {
+    const ids = new Set();
+    S[c].forEach((x, i) => {
+      if (x.ordem == null) x.ordem = Date.now() + i;
+      const k = c + "/" + x.id, j = JSON.stringify(x); ids.add(k);
+      if (NV.last[k] === j) return;
+      const ref = NV.db.collection(c).doc(x.id);
+      if (c === "votacoes" && NV.last[k]) {
+        /* voto de cada um gravado só no campo dele, para dois votos ao mesmo tempo não se apagarem */
+        const old = JSON.parse(NV.last[k]), upd = {};
+        for (const [f, v] of Object.entries(x)) if (f !== "votos" && JSON.stringify(v) !== JSON.stringify(old[f])) upd[f] = v;
+        const ks = new Set([...Object.keys(old.votos || {}), ...Object.keys(x.votos || {})]);
+        for (const m of ks) if (JSON.stringify((x.votos || {})[m]) !== JSON.stringify((old.votos || {})[m])) upd["votos." + m] = (x.votos || {})[m] ? x.votos[m] : firebase.firestore.FieldValue.delete();
+        if (Object.keys(upd).length) { batch.update(ref, upd); n++; }
+      } else { batch.set(ref, JSON.parse(j)); n++; }
+      NV.last[k] = j;
+    });
+    for (const k of Object.keys(NV.last)) if (k.startsWith(c + "/") && !ids.has(k)) { batch.delete(NV.db.collection(c).doc(k.slice(c.length + 1))); delete NV.last[k]; n++; }
+  }
+  if (n) batch.commit().catch(e => toast("Não consegui salvar: " + e.message));
+}
+
+/* ===== ESTADO (versão de teste: fica no navegador de quem usa) ===== */
+const KEY = "psychology-site-v2";
+let S;
+try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { S = null; }
+if (!S || S.versao !== SEED.versao) S = JSON.parse(JSON.stringify(SEED));
+const UI = { v: "inicio", proj: null, tab: "sobre", person: null, filtro: "todos", cal: "semana", ref: null, me: "matheus", edit: false };
+try { const u = JSON.parse(localStorage.getItem(KEY + "-ui") || "{}"); if (u.me) UI.me = u.me; if (u.cal) UI.cal = u.cal; } catch (e) {}
+const save = () => { if (NV.on) return gravarNuvem(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const saveUI = () => { try { localStorage.setItem(KEY + "-ui", JSON.stringify({ me: UI.me, cal: UI.cal })); } catch (e) {} };
+
+/* ===== AJUDANTES ===== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const M = id => S.membros.find(m => m.id === id), P = id => S.projetos.find(p => p.id === id), F = id => S.frentes.find(f => f.id === id);
+const fc = f => `var(--c-${f ? f.cor : "gray"})`;
+const hue = id => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
+const ini = m => m.nome.split(/\s+/).filter(w => w.length > 2).slice(0, 2).map(w => w[0]).join("").toUpperCase() || m.nome[0];
+function av(id, s = 28) { const m = M(id); if (!m) return ""; return `<span class="av" style="--s:${s}px;--h:${hue(id)}" title="${esc(m.nome)}">${m.foto ? `<img src="${esc(m.foto)}" alt="" loading="lazy">` : esc(ini(m))}</span>`; }
+function stack(ids, max = 4, s = 28) { const u = [...new Set(ids)]; return `<span class="stack">${u.slice(0, max).map(i => av(i, s)).join("")}${u.length > max ? `<span class="more">+${u.length - max}</span>` : ""}</span>`; }
+const pessoasProj = p => [...new Set(p.papeis.map(r => r[0]))];
+const respProj = p => (p.papeis.find(r => r[1] === "Responsável") || [])[0];
+const projsFrente = f => S.projetos.filter(p => p.frente === f.id);
+const pessoasFrente = f => [...new Set((f.resp ? [f.resp] : []).concat(...projsFrente(f).map(pessoasProj)))];
+const semProjeto = () => { const c = new Set(S.projetos.flatMap(pessoasProj).concat(S.frentes.map(f => f.resp).filter(Boolean))); return S.membros.filter(m => !c.has(m.id)); };
+const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
+const MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const DIAS = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SÁB"];
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const dm = s => s ? s.slice(8, 10) + "/" + s.slice(5, 7) : "";
+const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const toast = t => { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("on"), 2200); };
+const STATUS = { ativo: "Em andamento", ideia: "Ideia", pausado: "Pausado", feito: "Concluído" };
+
+/* ===== NAVEGAÇÃO ===== */
+function go(v, extra) {
+  Object.assign(UI, { v, edit: false }, extra || {});
+  const marca = v === "projeto" ? "inicio" : v === "pessoa" ? "integrantes" : v === "votacao" ? "votacoes" : v;
+  document.querySelectorAll("header [data-act=go]").forEach(b => b.setAttribute("aria-current", b.dataset.v === marca ? "page" : "false"));
+  $("#meBtn").innerHTML = av(UI.me, 34);
+  render(); scrollTo(0, 0);
+}
+function render() {
+  const el = $("#screen");
+  if (UI.v === "inicio") { el.innerHTML = homeHTML(); mountTree(); }
+  if (UI.v === "projeto") el.innerHTML = projHTML(P(UI.proj));
+  if (UI.v === "integrantes") el.innerHTML = membersHTML();
+  if (UI.v === "pessoa" || UI.v === "perfil") el.innerHTML = personHTML(M(UI.v === "perfil" ? UI.me : UI.person));
+  if (UI.v === "calendario") el.innerHTML = calHTML();
+  if (UI.v === "votacoes") el.innerHTML = votacoesHTML();
+  if (UI.v === "votacao") el.innerHTML = votacaoHTML(S.votacoes.find(x => x.id === UI.vot));
+}
+
+/* ===== INÍCIO: a árvore ===== */
+function homeHTML() {
+  const sp = semProjeto().length;
+  const mexeu = Object.keys(POS).length > 0;
+  return `<div class="wrap" style="max-width:1400px"><div class="home-head"><h1>Projetos</h1><p>Em cima, os projetos; embaixo, a frente de cada um. Clique num projeto para ver tudo sobre ele.</p>
+  <div class="home-acts"><button class="btn primary" data-act="newproj">+ Novo projeto</button>${mexeu ? `<button class="btn ghost" data-act="arrumar">Arrumar a árvore</button>` : ""}</div></div>
+  <div class="tree-box" id="treeBox"><div class="tree" id="tree"><svg id="treeLines" width="1" height="1"></svg>
+  ${S.projetos.map(p => { const f = F(p.frente), r = respProj(p), outros = pessoasProj(p).filter(x => x !== r);
+    return `<button class="node proj" data-node="p:${p.id}" style="--fc:${fc(f)}"><span class="nm">${esc(p.nome)}</span>
+      <span class="who">${stack(outros, 2, 30)}</span>${r ? `<span class="resp">${av(r, 22)} ${esc(M(r).curto)}, responsável</span>` : `<span class="resp">Sem responsável</span>`}</button>`; }).join("")}
+  ${S.frentes.map(f => { const ppl = pessoasFrente(f);
+    return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}"><span class="nm">${esc(f.nome)}</span>
+      <span class="who">${stack(ppl, 4, 28)}</span><span class="resp" style="justify-content:center">${plural(ppl.length, "pessoa", "pessoas")}</span></button>`; }).join("")}
+  </div></div>
+  <p class="foot-note">${plural(S.membros.length, "integrante", "integrantes")}. ${sp ? `${plural(sp, "ainda não está", "ainda não estão")} em nenhum projeto: <button class="link" data-act="go" data-v="integrantes" data-filtro="sem">ver quem</button>.` : ""}</p></div>`;
+}
+const T = { nodes: {}, links: [], scale: 1, raf: 0 };
+/* onde cada um deixou os blocos (só no navegador de quem mexeu); o desenho da árvore continua o mesmo */
+let POS = {};
+try { POS = JSON.parse(localStorage.getItem(KEY + "-pos") || "{}"); } catch (e) {}
+const savePOS = () => { try { localStorage.setItem(KEY + "-pos", JSON.stringify(POS)); } catch (e) {} };
+const LIMITE = 45;
+function mountTree() {
+  const box = $("#treeBox"), tree = $("#tree"); const narrow = box.clientWidth < 700;
+  const N = {}; tree.querySelectorAll(".node").forEach(el => { const k = el.dataset.node, o = POS[(narrow ? "n:" : "w:") + k] || [0, 0];
+    N[k] = { el, w: el.offsetWidth, h: el.offsetHeight, x: 0, y: 0, ox: o[0], oy: o[1], vx: 0, vy: 0, tx: o[0], ty: o[1], rx: o[0], ry: o[1] }; });
+  const order = S.frentes.flatMap(f => projsFrente(f));
+  const GAP = 18, GROUP = 34, ROWGAP = 110;
+  let W, H;
+  if (!narrow) {
+    let x = 0; const ph = Math.max(...order.map(p => N["p:" + p.id].h));
+    S.frentes.forEach(f => { const xs = [];
+      projsFrente(f).forEach(p => { const n = N["p:" + p.id]; n.x = x; n.y = 0; xs.push(x + n.w / 2); x += n.w + GAP; });
+      const nf = N["f:" + f.id]; const cx = xs.length ? (xs[0] + xs[xs.length - 1]) / 2 : x + nf.w / 2; nf.x = cx - nf.w / 2; nf.y = ph + ROWGAP; x += GROUP - GAP; });
+    W = x - GROUP; H = ph + ROWGAP + Math.max(...S.frentes.map(f => N["f:" + f.id].h));
+  } else {
+    let y = 0; const fw = Math.max(...S.frentes.map(f => N["f:" + f.id].w)); const px = fw + 50;
+    S.frentes.forEach(f => { const ys = [];
+      projsFrente(f).forEach(p => { const n = N["p:" + p.id]; n.x = px; n.y = y; ys.push(y + n.h / 2); y += n.h + 12; });
+      const nf = N["f:" + f.id]; nf.x = 0; nf.y = (ys[0] + ys[ys.length - 1]) / 2 - nf.h / 2; y += 22; });
+    W = px + Math.max(...order.map(p => N["p:" + p.id].w)); H = y - 22;
+  }
+  T.nodes = N; T.narrow = narrow;
+  T.links = S.projetos.map(p => ({ a: "p:" + p.id, b: "f:" + p.frente, cor: fc(F(p.frente)) }));
+  const pad = 24, avail = box.clientWidth - pad * 2;
+  T.scale = Math.min(1, avail / W);
+  tree.style.transform = `translate(${pad + Math.max(0, (avail - W * T.scale) / 2)}px, ${pad}px) scale(${T.scale})`;
+  box.style.height = (H * T.scale + pad * 2) + "px";
+  Object.values(N).forEach(n => { n.el.style.left = n.x + "px"; n.el.style.top = n.y + "px"; });
+  drawTree();
+}
+function drawTree() {
+  const N = T.nodes; let d = "";
+  for (const l of T.links) {
+    const a = N[l.a], b = N[l.b]; if (!a || !b) continue;
+    let p1, p2, path;
+    if (!T.narrow) { p1 = { x: a.x + a.ox + a.w / 2, y: a.y + a.oy + a.h }; p2 = { x: b.x + b.ox + b.w / 2, y: b.y + b.oy }; const m = (p2.y - p1.y) / 2; path = `M${p1.x},${p1.y} C${p1.x},${p1.y + m} ${p2.x},${p2.y - m} ${p2.x},${p2.y}`; }
+    else { p1 = { x: a.x + a.ox, y: a.y + a.oy + a.h / 2 }; p2 = { x: b.x + b.ox + b.w, y: b.y + b.oy + b.h / 2 }; const m = (p1.x - p2.x) / 2; path = `M${p1.x},${p1.y} C${p1.x - m},${p1.y} ${p2.x + m},${p2.y} ${p2.x},${p2.y}`; }
+    d += `<path d="${path}" stroke="${l.cor}"/>`;
+  }
+  const svg = $("#treeLines"); if (svg) svg.innerHTML = d;
+  for (const n of Object.values(N)) n.el.style.transform = n.ox || n.oy ? `translate(${n.ox}px,${n.oy}px)` : "";
+}
+/* mexer no bloco como na rede de notas do Obsidian: ele fica onde for solto (até LIMITE px do lugar
+   original, para a árvore não se desfazer) e os vizinhos só acompanham de leve e voltam devagar */
+const vizinhos = k => T.links.filter(l => l.a === k || l.b === k).map(l => l.a === k ? l.b : l.a);
+const prende = (x, y) => { const d = Math.hypot(x, y); return d > LIMITE ? [x * LIMITE / d, y * LIMITE / d] : [x, y]; };
+function animar() {
+  cancelAnimationFrame(T.raf);
+  const step = () => { let mov = false;
+    for (const n of Object.values(T.nodes)) { if (n.held) continue; n.vx = (n.vx + (n.tx - n.ox) * .06) * .8; n.vy = (n.vy + (n.ty - n.oy) * .06) * .8; n.ox += n.vx; n.oy += n.vy; if (Math.abs(n.vx) + Math.abs(n.vy) + Math.abs(n.tx - n.ox) + Math.abs(n.ty - n.oy) > .3) mov = true; else { n.ox = n.tx; n.oy = n.ty; } }
+    drawTree(); if (mov) T.raf = requestAnimationFrame(step); };
+  T.raf = requestAnimationFrame(step);
+}
+let DRAG = null;
+document.addEventListener("pointerdown", e => {
+  const el = e.target.closest(".node"); if (!el || e.button > 0) return;
+  DRAG = { k: el.dataset.node, x: e.clientX, y: e.clientY, moved: false }; el.setPointerCapture(e.pointerId);
+});
+document.addEventListener("pointermove", e => {
+  if (!DRAG || DRAG.done) return; const dx = (e.clientX - DRAG.x) / T.scale, dy = (e.clientY - DRAG.y) / T.scale;
+  if (!DRAG.moved && Math.hypot(dx, dy) < 8) return; DRAG.moved = true;
+  const n = T.nodes[DRAG.k]; if (!n) return; n.held = true; n.el.classList.add("dragging");
+  [n.ox, n.oy] = prende(n.rx + dx, n.ry + dy);
+  for (const k of vizinhos(DRAG.k)) { const v = T.nodes[k]; v.tx = v.rx + (n.ox - n.rx) * .15; v.ty = v.ry + (n.oy - n.ry) * .15; }
+  animar();
+});
+document.addEventListener("pointerup", () => {
+  if (!DRAG) return; const n = T.nodes[DRAG.k];
+  if (DRAG.moved && n) {
+    n.held = false; n.el.classList.remove("dragging"); n.rx = n.tx = n.ox; n.ry = n.ty = n.oy; n.vx = n.vy = 0;
+    POS[(T.narrow ? "n:" : "w:") + DRAG.k] = [Math.round(n.ox), Math.round(n.oy)]; savePOS();
+    Object.values(T.nodes).forEach(m => { if (m !== n) { m.tx = m.rx; m.ty = m.ry; } }); animar();
+    if (!$("[data-act=arrumar]")) $(".home-acts").insertAdjacentHTML("beforeend", `<button class="btn ghost" data-act="arrumar">Arrumar a árvore</button>`);
+    DRAG.done = true; setTimeout(() => DRAG = null, 0); return;
+  }
+  DRAG = null;
+});
+window.addEventListener("resize", () => { if (UI.v === "inicio") mountTree(); });
+
+/* ===== PROJETO (tela cheia) ===== */
+function projHTML(p) {
+  const f = F(p.frente), me = UI.me, dentro = pessoasProj(p).includes(me);
+  const abertas = p.tarefas.filter(t => t.st !== "feito").length;
+  const evs = S.eventos.filter(e => e.proj === p.id);
+  const tabs = [["sobre", "Sobre"], ["tarefas", "Tarefas", abertas], ["ideias", "Ideias", p.ideias.length], ["notas", "Notas"]];
+  let h = `<div class="wrap"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button>
+  <div class="proj-head"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span></div>
+  <h1>${esc(p.nome)}</h1><p class="lede">${esc(p.resumo)}</p>
+  ${dentro ? `<button class="btn small" data-act="leave">Sair do projeto</button>` : `<button class="btn primary" data-act="join">Quero participar</button>`}
+  <div class="tabs" role="tablist">${tabs.map(([k, l, c]) => `<button class="tab" role="tab" aria-selected="${UI.tab === k}" data-act="tab" data-tab="${k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</div>`;
+  if (UI.tab === "sobre") {
+    if (UI.edit) return h + `<form class="form" data-form="sobre">
+      <label>Situação<select class="field" name="status" id="sb-status">${Object.entries(STATUS).map(([v, l]) => `<option value="${v}"${p.status === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
+      <label>Em uma frase, o que é<input class="field" name="resumo" id="sb-resumo" value="${esc(p.resumo)}"></label>
+      <label>Detalhes, um por linha, no formato Título: texto<textarea class="field" name="detalhes" id="sb-det" style="min-height:130px" placeholder="Quando: segundas, às 8h&#10;Como funciona: ...">${esc(p.detalhes.map(([k, v]) => k + ": " + v).join(String.fromCharCode(10)))}</textarea></label>
+      <label>Próximo passo<input class="field" name="proximo" id="sb-prox" value="${esc(p.proximo)}"></label>
+      <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="editnote" data-on="0">Cancelar</button></div></form></div>`;
+    h += `<div class="grid2"><div>
+      <h2 class="sec" style="display:flex;align-items:center;gap:8px">Detalhes <button class="btn ghost small" data-act="editnote" data-on="1">Editar</button></h2><ul class="facts">${p.detalhes.map(([k, v]) => `<li><b>${esc(k)}</b><span>${esc(v)}</span></li>`).join("") || '<li class="empty">Ainda sem detalhes.</li>'}</ul>
+      ${S.votacoes.filter(v => v.proj === p.id).length ? `<h2 class="sec">Votações</h2>${S.votacoes.filter(v => v.proj === p.id).map(v => `<p style="margin:0 0 6px"><button class="wl" data-act="vot" data-id="${v.id}">${esc(v.titulo)}</button> <span style="color:var(--muted);font-size:13.5px">${fechada(v) ? "encerrada" : "aberta"}</span></p>`).join("")}<div style="height:14px"></div>` : ""}
+      <div class="next"><h2 class="sec">Próximo passo</h2><p>${esc(p.proximo || "A definir.")}</p></div>
+      ${evs.length ? `<h2 class="sec">No calendário</h2>${evs.map(e => `<p style="margin:0 0 4px"><button class="wl" data-act="ev" data-id="${e.id}">${esc(e.titulo)}</button> <span style="color:var(--muted);font-size:13.5px">${e.semanal ? "toda " + ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][new Date(e.data + "T12:00").getDay()] : dm(e.data)}, ${e.ini}</span></p>`).join("")}` : ""}
+    </div><div><h2 class="sec">Quem participa (${pessoasProj(p).length})</h2><div class="people">${p.papeis.map(([id, papel]) => `<button class="person" data-act="person" data-id="${id}">${av(id, 40)}<span><b>${esc(M(id).curto)}</b><small>${esc(papel)}</small></span></button>`).join("")}</div></div></div>`;
+  }
+  if (UI.tab === "tarefas") {
+    const ST = { afazer: "A fazer", fazendo: "Fazendo", feito: "Feito" };
+    h += p.tarefas.map((t, i) => `<div class="task${t.st === "feito" ? " done" : ""}"><button class="st ${t.st}" data-act="cyc" data-i="${i}" aria-label="Mudar a situação">${ST[t.st]}</button>
+      <span class="t"><span>${esc(t.t)}</span><small>${t.prazo ? "até " + dm(t.prazo) : "sem prazo"}</small></span>${t.quem ? av(t.quem, 30) : `<button class="btn small" data-act="take" data-i="${i}">Pegar</button>`}</div>`).join("") || '<p class="empty">Nenhuma tarefa ainda.</p>';
+    h += `<form class="row-form" data-form="tarefa"><input class="field" name="t" id="nt" placeholder="Nova tarefa" aria-label="Nova tarefa">
+      <select class="field" name="quem" id="ntq" aria-label="Com quem"><option value="">Com quem?</option>${S.membros.map(m => `<option value="${m.id}">${esc(m.curto)}</option>`).join("")}</select>
+      <input class="field" type="date" name="prazo" id="ntp" aria-label="Prazo"><button class="btn">Adicionar</button></form>`;
+  }
+  if (UI.tab === "ideias") {
+    h += [...p.ideias.map((x, i) => ({ ...x, i }))].sort((a, b) => b.votos.length - a.votos.length).map(x => `<div class="idea"><button class="vote" data-act="vote" data-i="${x.i}" aria-pressed="${x.votos.includes(me)}" aria-label="Votar">▲<br>${x.votos.length}</button><span class="tx">${esc(x.t)}<small>Sugerida por ${esc(M(x.por)?.curto || "")}</small></span></div>`).join("") || '<p class="empty">Nenhuma ideia ainda. Escreva a primeira.</p>';
+    h += `<form class="row-form" data-form="ideia"><input class="field" name="t" id="ni" placeholder="Escreva uma ideia" aria-label="Nova ideia"><button class="btn">Adicionar ideia</button></form>`;
+  }
+  if (UI.tab === "notas") {
+    h += UI.edit ? `<textarea class="field" id="nota" aria-label="Nota do projeto">${esc(p.nota)}</textarea><div class="row-form"><button class="btn primary" data-act="savenote">Salvar nota</button><button class="btn ghost" data-act="editnote" data-on="0">Cancelar</button></div>
+      <p style="font-size:13px;color:var(--faint)">[[Nome de outro projeto]] cria um link, #tema marca o assunto, **texto** fica em negrito e - no começo da linha faz lista.</p>`
+      : `<div class="md">${md(p.nota) || '<p class="empty">Ninguém escreveu ainda.</p>'}</div><button class="btn" data-act="editnote" data-on="1">${p.nota ? "Editar nota" : "Escrever"}</button>`;
+    if (p.frente === "intervisao") h += `<p class="notice" style="margin-top:16px">Sigilo: não escreva nada que identifique paciente.</p>`;
+  }
+  return h + "</div>";
+}
+function md(src) {
+  const byName = n => S.projetos.find(p => p.nome.toLowerCase() === n.trim().toLowerCase());
+  const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    .replace(/\[\[([^\]]+)\]\]/g, (_, n) => { const p = byName(n); return p ? `<button class="wl" data-act="proj" data-id="${p.id}">${n}</button>` : `<span style="color:var(--faint)">${n}</span>`; })
+    .replace(/(^|\s)#([\p{L}\d_-]+)/gu, '$1<span class="tag">#$2</span>');
+  let out = "", list = false;
+  for (const l of String(src || "").split("\n")) {
+    if (/^\s*- /.test(l)) { if (!list) { out += "<ul>"; list = true; } out += `<li>${inl(l.replace(/^\s*- /, ""))}</li>`; continue; }
+    if (list) { out += "</ul>"; list = false; }
+    if (/^#{1,3} /.test(l)) out += `<h3>${inl(l.replace(/^#+ /, ""))}</h3>`; else if (l.trim()) out += `<p>${inl(l)}</p>`;
+  }
+  return out + (list ? "</ul>" : "");
+}
+
+/* ===== INTEGRANTES ===== */
+function membersHTML() {
+  const sp = new Set(semProjeto().map(m => m.id));
+  const projDe = id => S.projetos.filter(p => pessoasProj(p).includes(id));
+  const lista = S.membros.filter(m => UI.filtro === "todos" || (UI.filtro === "sem" ? sp.has(m.id) : projDe(m.id).some(p => p.frente === UI.filtro)));
+  const chip = (k, l, n, cor) => `<button class="chip" data-act="filtro" data-k="${k}" aria-pressed="${UI.filtro === k}">${cor ? `<span class="chipf" style="--fc:${cor}"></span>` : ""}${l} · ${n}</button>`;
+  return `<div class="wrap"><h1>Integrantes</h1><p class="lede">Quem está no clube e em que projeto cada um está. Clique numa pessoa para ver o perfil.</p>
+  <div class="filters">${chip("todos", "Todos", S.membros.length)}${chip("sem", "Sem projeto", sp.size)}${S.frentes.map(f => chip(f.id, esc(f.nome), S.membros.filter(m => projDe(m.id).some(p => p.frente === f.id)).length, fc(f))).join("")}</div>
+  <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${esc(m.nome)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
+}
+
+/* ===== VOTAÇÕES ===== */
+const hojeISO = () => ymd(new Date());
+const fechada = v => v.encerrada || (v.prazo && v.prazo < hojeISO());
+const votantes = v => Object.keys(v.votos || {}).filter(k => (v.votos[k] || []).length);
+function votacoesHTML() {
+  const ord = [...S.votacoes].sort((a, b) => (fechada(a) - fechada(b)) || String(b.criada).localeCompare(String(a.criada)));
+  return `<div class="wrap"><div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><h1>Votações</h1><p class="lede">Decisões do clube no voto. Qualquer integrante pode abrir uma votação.</p></div><button class="btn primary" data-act="newvot">+ Nova votação</button></div>
+  <div class="polls">${ord.map(v => { const fx = fechada(v), eu = (v.votos[UI.me] || []).length > 0, p = P(v.proj);
+    return `<button class="poll" data-act="vot" data-id="${v.id}"><b>${esc(v.titulo)}</b>
+      <span class="side">${stack(votantes(v), 4, 26)}<br>${plural(votantes(v).length, "voto", "votos")}</span>
+      <span class="meta">${fx ? '<span class="badge off">Encerrada</span>' : eu ? '<span class="badge ok">Você já votou</span>' : '<span class="badge">Aberta</span>'} ${v.multipla ? "Pode marcar várias" : "Escolha uma"}${v.prazo && !fx ? ` · até ${dm(v.prazo)}` : ""}${p ? ` · ${esc(p.nome)}` : ""}</span></button>`; }).join("") || '<p class="empty">Nenhuma votação ainda.</p>'}</div></div>`;
+}
+function votacaoHTML(v) {
+  if (!v) return `<div class="wrap"><button class="back" data-act="go" data-v="votacoes">‹ Votações</button><p class="empty">Essa votação não existe mais.</p></div>`;
+  const fx = fechada(v), meus = v.votos[UI.me] || [], vs = votantes(v), p = P(v.proj);
+  const cont = o => vs.filter(k => v.votos[k].includes(o.id));
+  const max = Math.max(1, ...v.opcoes.map(o => cont(o).length));
+  const verRes = fx || meus.length > 0;
+  return `<div class="wrap"><button class="back" data-act="go" data-v="votacoes">‹ Votações</button>
+  <div class="proj-head">${fx ? '<span class="badge off">Encerrada</span>' : '<span class="badge">Aberta</span>'}<span style="font-size:13px;color:var(--muted)">${v.multipla ? "Pode marcar várias" : "Escolha uma"}${v.prazo ? ` · ${fx ? "terminou em" : "até"} ${dm(v.prazo)}` : " · sem prazo"}</span></div>
+  <h1>${esc(v.titulo)}</h1>${v.desc ? `<p class="lede">${esc(v.desc)}</p>` : ""}
+  ${p ? `<p style="margin:-8px 0 12px;font-size:14px;color:var(--muted)">Projeto: <button class="wl" data-act="proj" data-id="${p.id}">${esc(p.nome)}</button></p>` : ""}
+  <form data-form="votar"><div class="opts">${v.opcoes.map(o => { const c = cont(o), mine = meus.includes(o.id);
+    return `<label class="opt${mine ? " mine" : ""}${verRes && c.length === max ? " win" : ""}">${verRes ? `<span class="bar" style="width:${vs.length ? c.length / vs.length * 100 : 0}%"></span>` : ""}
+      <input type="${v.multipla ? "checkbox" : "radio"}" name="op" value="${o.id}" id="op-${o.id}"${mine ? " checked" : ""}${fx ? " disabled" : ""}><span class="tx">${esc(o.t)}</span>
+      ${verRes ? `<span class="n">${c.length ? stack(c, 3, 22) : ""}${plural(c.length, "voto", "votos")}</span>` : ""}</label>`; }).join("")}</div>
+  ${fx ? "" : `<div class="row-form"><button class="btn primary">${meus.length ? "Mudar meu voto" : "Votar"}</button>${meus.length ? `<button type="button" class="btn ghost" data-act="tirarvoto">Tirar meu voto</button>` : ""}</div>`}</form>
+  <p style="font-size:13.5px;color:var(--muted);margin-top:16px">${verRes ? `${plural(vs.length, "pessoa votou", "pessoas votaram")}.` : "O resultado aparece depois que você vota."} Aberta por ${esc(M(v.criador)?.curto || "alguém")}.</p>
+  ${v.criador === UI.me && !fx ? `<button class="btn small" data-act="encerrar">Encerrar agora</button>` : ""}</div>`;
+}
+function abrirVotacao() {
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Nova votação"><h2>Nova votação</h2>
+  <form class="form" data-form="novavot">
+    <label>Pergunta<input class="field" name="titulo" id="nv-t" required placeholder="Ex.: Qual livro lemos primeiro?"></label>
+    <label>Explicação, se precisar<input class="field" name="desc" id="nv-d"></label>
+    <label>Opções, uma por linha<textarea class="field" name="opcoes" id="nv-o" style="min-height:120px" placeholder="Opção 1&#10;Opção 2"></textarea></label>
+    <div class="two"><label>Como votar<select class="field" name="multipla" id="nv-m"><option value="0">Escolha uma</option><option value="1">Pode marcar várias</option></select></label>
+    <label>Prazo<input class="field" type="date" name="prazo" id="nv-p"></label></div>
+    <label>Projeto<select class="field" name="proj" id="nv-proj"><option value="">Nenhum</option>${S.projetos.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join("")}</select></label>
+    <div class="row-form"><button class="btn primary">Abrir votação</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div>
+  </form></div></div>`;
+  $("#nv-t").focus();
+}
+
+/* ===== PERFIL ===== */
+const CAMPOS = [["formacao", "Formação"], ["abordagem", "Abordagens"], ["publico", "Público que atende"], ["extra", "Habilidades fora da psicologia"], ["disp", "Dias e horários livres"], ["horas", "Horas por semana para o clube"], ["link", "Instagram ou Lattes"], ["quer", "O que quer do clube"]];
+function personHTML(m) {
+  const meu = m.id === UI.me, pf = m.perfil || {};
+  const ps = S.projetos.filter(p => pessoasProj(p).includes(m.id));
+  const tk = S.projetos.flatMap(p => p.tarefas.filter(t => t.quem === m.id && t.st !== "feito").map(t => ({ ...t, p })));
+  let h = `<div class="wrap">${UI.v === "pessoa" ? `<button class="back" data-act="go" data-v="integrantes">‹ Integrantes</button>` : ""}
+  <div class="prof-head">${av(m.id, 96)}<div><h1 style="margin:0">${esc(m.nome)}</h1><div style="color:var(--muted)">${esc(m.bio || "")}</div></div></div>`;
+  if (meu && UI.edit) {
+    return h + `<form class="form" data-form="perfil"><div class="two"><label>Nome<input class="field" name="nome" id="pf-nome" value="${esc(m.nome)}"></label><label>Como prefere ser chamado<input class="field" name="curto" id="pf-curto" value="${esc(m.curto)}"></label></div>
+      <label>Uma frase sobre você<input class="field" name="bio" id="pf-bio" value="${esc(m.bio)}"></label>
+      <label>Afinidades, separadas por vírgula<input class="field" name="afin" id="pf-afin" value="${esc(m.afin.join(", "))}"></label>
+      ${CAMPOS.map(([k, l]) => `<label>${l}<input class="field" name="${k}" id="pf-${k}" value="${esc(pf[k] || "")}"></label>`).join("")}
+      <div class="row-form"><button class="btn primary">Salvar perfil</button><button type="button" class="btn ghost" data-act="editprof" data-on="0">Cancelar</button></div></form></div>`;
+  }
+  h += `${meu ? `<button class="btn" data-act="editprof" data-on="1" style="margin-bottom:20px">Editar meu perfil</button>` : ""}
+  <div class="grid2"><div>
+    <h2 class="sec">Projetos</h2>${ps.map(p => `<button class="person" data-act="proj" data-id="${p.id}"><span class="chipf" style="--fc:${fc(F(p.frente))}"></span><span><b>${esc(p.nome)}</b><small>${esc(p.papeis.find(r => r[0] === m.id)[1])}</small></span></button>`).join("") || '<p class="empty">Ainda não está em nenhum projeto.</p>'}
+    <h2 class="sec" style="margin-top:22px">Ficha de inscrição</h2><dl class="kv">${CAMPOS.map(([k, l]) => `<dt>${l}</dt><dd>${pf[k] ? esc(pf[k]) : '<span style="color:var(--faint)">ainda não preencheu</span>'}</dd>`).join("")}</dl>
+  </div><div>
+    <h2 class="sec">Afinidades</h2><p style="margin:0 0 22px">${m.afin.length ? m.afin.map(esc).join(", ") : '<span style="color:var(--faint)">Nenhuma escrita ainda.</span>'}</p>
+    ${tk.length ? `<h2 class="sec">Tarefas abertas</h2>${tk.map(t => `<p style="margin:0 0 6px">${esc(t.t)}<br><span style="color:var(--muted);font-size:13px">${esc(t.p.nome)}${t.prazo ? ", até " + dm(t.prazo) : ""}</span></p>`).join("")}` : ""}
+  </div></div>`;
+  if (meu) h += `<div class="settings"><button class="btn small" data-act="theme">Trocar tema claro ou escuro</button>
+    ${NV.on ? `<button class="btn ghost small" data-act="sair">Sair da conta</button>` : `<label for="meSel">Versão de teste, ver o site como</label>`}<select class="field" id="meSel" style="font-size:14px"${NV.on ? " hidden" : ""}>${S.membros.map(x => `<option value="${x.id}"${x.id === UI.me ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select>
+    ${NV.on ? "" : `<button class="btn ghost small" data-act="reset">Voltar aos dados de exemplo</button>`}</div>`;
+  return h + "</div>";
+}
+
+/* ===== CALENDÁRIO ===== */
+const H0 = 7, H1 = 22, HH = 48;
+const inicioSemana = d => addD(new Date(d.getFullYear(), d.getMonth(), d.getDate()), -d.getDay());
+const corEv = e => { const p = P(e.proj); return fc(p ? F(p.frente) : null); };
+function ocorrencias(de, ate) {
+  const out = [];
+  for (const e of S.eventos) {
+    if (!e.semanal) { if (e.data >= de && e.data <= ate) out.push({ e, d: e.data }); continue; }
+    for (let d = new Date(e.data + "T12:00"); ymd(d) <= ate; d = addD(d, 7)) if (ymd(d) >= de) out.push({ e, d: ymd(d) });
+  }
+  return out;
+}
+const tarefasEm = d => S.projetos.flatMap(p => p.tarefas.map((t, i) => ({ ...t, i, p }))).filter(t => t.prazo === d);
+const mins = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
+function calHTML() {
+  const ref = UI.ref ? new Date(UI.ref + "T12:00") : new Date(); const hoje = ymd(new Date());
+  let range, sub, body, stats = "";
+  if (UI.cal === "semana") {
+    const s = inicioSemana(ref), e = addD(s, 6), dias = [...Array(7)].map((_, i) => addD(s, i));
+    range = `${s.getDate()} de ${MESES[s.getMonth()]} a ${e.getDate()} de ${MESES[e.getMonth()]}`; sub = dias.some(d => ymd(d) === hoje) ? "semana atual" : "semana de " + e.getFullYear();
+    const occ = ocorrencias(ymd(s), ymd(e)); const agora = new Date();
+    body = `<div class="gwrap"><div class="wk"><div class="gh"></div>${dias.map(d => `<div class="gh${ymd(d) === hoje ? " today" : ""}"><div class="d">${DIAS[d.getDay()]}</div><div class="n">${d.getDate()}</div></div>`).join("")}
+      <div class="trow-lab">Tarefas</div>${dias.map(d => `<div class="tcell">${tarefasEm(ymd(d)).map(t => `<button class="tchip${t.st === "feito" ? " done" : ""}" style="--fc:${fc(F(t.p.frente))}" data-act="proj" data-id="${t.p.id}" data-tab="tarefas" title="${esc(t.t)} (${esc(t.p.nome)})">${esc(t.t)}</button>`).join("")}</div>`).join("")}
+      <div class="hcol">${[...Array(H1 - H0)].map((_, i) => `<div class="hlab">${pad(H0 + i)}h</div>`).join("")}</div>
+      ${dias.map(d => { const k = ymd(d); return `<div class="dcol${k === hoje ? " today" : ""}${d.getDay() % 6 === 0 ? " fds" : ""}" data-act="newat" data-date="${k}" style="height:${(H1 - H0) * HH}px">
+        ${occ.filter(o => o.d === k).map(o => { const top = (mins(o.e.ini) - H0 * 60) / 60 * HH, hgt = Math.max(26, (mins(o.e.fim || o.e.ini) - mins(o.e.ini)) / 60 * HH - 2);
+          return `<button class="evb" data-act="ev" data-id="${o.e.id}" style="top:${top}px;height:${hgt}px;--fc:${corEv(o.e)}"><b>${esc(o.e.titulo)}</b><span>${o.e.ini}${o.e.fim ? "–" + o.e.fim : ""}</span></button>`; }).join("")}
+        ${k === hoje && agora.getHours() >= H0 && agora.getHours() < H1 ? `<span class="now" style="top:${(agora.getHours() * 60 + agora.getMinutes() - H0 * 60) / 60 * HH}px"></span>` : ""}</div>`; }).join("")}
+    </div></div>`;
+  } else {
+    /* o mês do Controle Único: um cartão por dia, a etiqueta com quantos compromissos e os horários embaixo; clicar abre a semana */
+    const first = new Date(ref.getFullYear(), ref.getMonth(), 1), s = inicioSemana(first), dias = [...Array(42)].map((_, i) => addD(s, i));
+    range = `${MESES[ref.getMonth()]} de ${ref.getFullYear()}`; sub = "";
+    const occ = ocorrencias(ymd(dias[0]), ymd(dias[41]));
+    const noMes = d => d.getMonth() === ref.getMonth();
+    const nComp = occ.filter(o => noMes(new Date(o.d + "T12:00"))).length, nTar = dias.filter(noMes).reduce((n, d) => n + tarefasEm(ymd(d)).length, 0);
+    stats = `<div class="stats"><div class="stat"><b>${nComp}</b><span>Compromissos no mês</span></div><div class="stat"><b>${nTar}</b><span>Tarefas com prazo</span></div></div>`;
+    body = `<div class="month">${DIAS.map((d, i) => `<div class="mh${i % 6 === 0 ? " fds" : ""}">${d}</div>`).join("")}</div>
+      <div class="month" style="margin-top:6px">${dias.map(d => { const k = ymd(d), evs = occ.filter(o => o.d === k).sort((a, b) => a.e.ini.localeCompare(b.e.ini)), tk = tarefasEm(k);
+        const lbl = `${d.getDate()} de ${MESES[d.getMonth()]}: ${evs.length ? plural(evs.length, "compromisso", "compromissos") : "livre"}${tk.length ? ", " + plural(tk.length, "tarefa", "tarefas") : ""}. Abrir a semana`;
+        return `<div class="day${d.getDay() % 6 === 0 ? " fds" : ""}${noMes(d) ? "" : " fora"}${k === hoje ? " hoje" : ""}" role="button" tabindex="0" data-act="abresemana" data-date="${k}" aria-label="${lbl}">
+          <div class="num">${d.getDate()}</div>
+          <span class="dpill${evs.length ? "" : " vazio"}">${evs.length ? `<b>${evs.length}</b><span class="pw">${evs.length > 1 ? "compromissos" : "compromisso"}</span>` : "livre"}</span>
+          ${evs.length ? `<div class="linha"><span>${evs.map(o => { const [hh, mm] = o.e.ini.split(":").map(Number); return hh + "h" + (mm ? pad(mm) : ""); }).join(" · ")}</span></div>` : ""}
+          ${tk.length ? `<div class="linha tk"><span>${plural(tk.length, "tarefa", "tarefas")}</span></div>` : ""}</div>`; }).join("")}</div>`;
+  }
+  return `<div class="wrap" style="max-width:1200px"><h1>Calendário</h1>
+  <div class="seg" role="group" aria-label="Ver a semana ou o mês"><button data-act="calv" data-c="semana" aria-pressed="${UI.cal === "semana"}">Semana</button><button data-act="calv" data-c="mes" aria-pressed="${UI.cal === "mes"}">Mês</button></div>
+  <div class="cbar"><div class="cnav"><button class="btn arrow" data-act="calnav" data-d="-1" aria-label="${UI.cal === "semana" ? "Semana anterior" : "Mês anterior"}">‹</button><button class="btn" data-act="calnav" data-d="0">${UI.cal === "semana" ? "Hoje" : "Mês atual"}</button><button class="btn arrow" data-act="calnav" data-d="1" aria-label="${UI.cal === "semana" ? "Próxima semana" : "Próximo mês"}">›</button>
+    <div class="range">${range}${sub ? `<small>${sub}</small>` : ""}</div></div>${stats}
+    <div style="display:flex;gap:8px"><button class="btn" data-act="newtask">+ Tarefa</button><button class="btn primary" data-act="newev">+ Compromisso</button></div></div>${body}</div>`;
+}
+
+/* janela de compromisso */
+function abrirEvento(id, data) {
+  const novo = !id; const e = novo ? { id: "e" + Date.now(), titulo: "", data: data || ymd(new Date()), ini: "19:00", fim: "20:00", local: "Google Meet", proj: UI.v === "projeto" ? UI.proj : "", quem: [UI.me], semanal: false, desc: "" } : JSON.parse(JSON.stringify(S.eventos.find(x => x.id === id)));
+  UI.draft = e; UI.confirmDel = false; desenharEvento();
+}
+function desenharEvento() {
+  const e = UI.draft, novo = !S.eventos.some(x => x.id === e.id);
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Compromisso"><h2>${novo ? "Novo compromisso" : "Compromisso"}</h2>
+  <form class="form" data-form="evento">
+    <label>Título<input class="field" name="titulo" id="ev-t" value="${esc(e.titulo)}" placeholder="Ex.: Reunião da revista"></label>
+    <div class="two"><label>Dia<input class="field" type="date" name="data" id="ev-d" value="${e.data}"></label><label>Onde<input class="field" name="local" id="ev-l" value="${esc(e.local)}"></label></div>
+    <div class="two"><label>Começa<input class="field" type="time" name="ini" id="ev-i" value="${e.ini}"></label><label>Termina<input class="field" type="time" name="fim" id="ev-f" value="${e.fim}"></label></div>
+    <label>Projeto<select class="field" name="proj" id="ev-p"><option value="">Nenhum</option>${S.projetos.map(p => `<option value="${p.id}"${p.id === e.proj ? " selected" : ""}>${esc(p.nome)}</option>`).join("")}</select></label>
+    <label style="display:flex;gap:8px;align-items:center;color:var(--fg)"><input type="checkbox" name="semanal" id="ev-s"${e.semanal ? " checked" : ""}> Repete toda semana</label>
+    <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:4px">Quem vai (${e.quem.length})</div><div class="pick">${S.membros.map(m => `<button type="button" class="chip" data-act="who" data-id="${m.id}" aria-pressed="${e.quem.includes(m.id)}">${av(m.id, 24)}${esc(m.curto)}</button>`).join("")}</div></div>
+    <label>Observações<textarea class="field" name="desc" id="ev-o" style="min-height:80px">${esc(e.desc)}</textarea></label>
+    <div class="row-form"><button class="btn primary">${novo ? "Criar compromisso" : "Salvar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${novo ? "" : `<button type="button" class="btn ghost" data-act="delev" style="margin-left:auto;color:var(--bad)">${UI.confirmDel ? "Clique de novo para apagar" : "Apagar"}</button>`}</div>
+  </form></div></div>`;
+}
+function lerEvento() { const f = document.querySelector('[data-form="evento"]'); if (!f) return; const fd = new FormData(f), e = UI.draft; ["titulo", "data", "local", "ini", "fim", "proj", "desc"].forEach(k => e[k] = fd.get(k) || ""); e.semanal = !!fd.get("semanal"); }
+function abrirTarefa(data) {
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Nova tarefa"><h2>Nova tarefa</h2>
+  <form class="form" data-form="tarefa-cal"><label>O que fazer<input class="field" name="t" id="tk-t" required></label>
+  <label>Projeto<select class="field" name="proj" id="tk-p" required>${S.projetos.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join("")}</select></label>
+  <div class="two"><label>Com quem<select class="field" name="quem" id="tk-q"><option value="">Ninguém ainda</option>${S.membros.map(m => `<option value="${m.id}"${m.id === UI.me ? " selected" : ""}>${esc(m.curto)}</option>`).join("")}</select></label><label>Prazo<input class="field" type="date" name="prazo" id="tk-d" value="${data || ""}"></label></div>
+  <div class="row-form"><button class="btn primary">Criar tarefa</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div></form></div></div>`;
+}
+
+/* janela de projeto novo */
+function abrirProjeto() {
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Novo projeto"><h2>Novo projeto</h2>
+  <form class="form" data-form="projeto">
+    <label>Nome do projeto<input class="field" name="nome" id="np-nome" required placeholder="Ex.: Grupo de estudos de ACT"></label>
+    <label>Em uma frase, o que é<input class="field" name="resumo" id="np-resumo" placeholder="Para quem está de fora entender"></label>
+    <label>Frente<select class="field" name="frente" id="np-frente" data-act="npfrente">${S.frentes.map(f => `<option value="${f.id}">${esc(f.nome)}</option>`).join("")}<option value="__nova">Uma frente nova...</option></select></label>
+    <label id="np-nova-l" hidden>Nome da frente nova<input class="field" name="nova" id="np-nova" placeholder="Ex.: Estudos"></label>
+    <label>Responsável<select class="field" name="resp" id="np-resp"><option value="">Ninguém ainda</option>${S.membros.map(m => `<option value="${m.id}"${m.id === UI.me ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select></label>
+    <div class="row-form"><button class="btn primary">Criar projeto</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div>
+  </form></div></div>`;
+  $("#np-nome").focus();
+}
+const CORES_LIVRES = ["purple", "red", "yellow", "orange", "green", "cyan", "pink"];
+
+/* ===== AÇÕES ===== */
+document.addEventListener("click", e => {
+  const node = e.target.closest(".node");
+  if (node) { if (DRAG && DRAG.done) return; const [k, id] = node.dataset.node.split(":"); return k === "p" ? go("projeto", { proj: id, tab: "sobre" }) : go("integrantes", { filtro: id }); }
+  const t = e.target.closest("[data-act]"); if (!t) return;
+  const a = t.dataset.act, p = UI.v === "projeto" ? P(UI.proj) : null;
+  if (a === "closemodal") { if (e.target === t || t.tagName === "BUTTON") $("#overlay").innerHTML = ""; return; }
+  if (a === "go") return go(t.dataset.v, t.dataset.filtro ? { filtro: t.dataset.filtro } : t.dataset.v === "integrantes" ? { filtro: "todos" } : {});
+  if (a === "proj") { $("#overlay").innerHTML = ""; return go("projeto", { proj: t.dataset.id, tab: t.dataset.tab || "sobre" }); }
+  if (a === "person") return t.dataset.id === UI.me ? go("perfil") : go("pessoa", { person: t.dataset.id });
+  if (a === "tab") { UI.tab = t.dataset.tab; UI.edit = false; return render(); }
+  if (a === "filtro") { UI.filtro = t.dataset.k; return render(); }
+  if (a === "join") { p.papeis.push([UI.me, "Participa"]); save(); toast("Você entrou no projeto."); return render(); }
+  if (a === "leave") { p.papeis = p.papeis.filter(r => r[0] !== UI.me); save(); toast("Você saiu do projeto."); return render(); }
+  if (a === "cyc") { const x = p.tarefas[+t.dataset.i]; x.st = { afazer: "fazendo", fazendo: "feito", feito: "afazer" }[x.st]; save(); return render(); }
+  if (a === "take") { p.tarefas[+t.dataset.i].quem = UI.me; save(); return render(); }
+  if (a === "vote") { const x = p.ideias[+t.dataset.i]; x.votos = x.votos.includes(UI.me) ? x.votos.filter(v => v !== UI.me) : x.votos.concat(UI.me); save(); return render(); }
+  if (a === "editnote") { UI.edit = t.dataset.on === "1"; return render(); }
+  if (a === "savenote") { p.nota = $("#nota").value; UI.edit = false; save(); toast("Nota salva."); return render(); }
+  if (a === "editprof") { UI.edit = t.dataset.on === "1"; return render(); }
+  if (a === "theme") { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem(KEY + "-theme", r.dataset.theme); } catch (x) {} return; }
+  if (a === "reset") { if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para confirmar"; return; } S = JSON.parse(JSON.stringify(SEED)); save(); toast("Dados de exemplo restaurados."); return render(); }
+  if (a === "login") { const pr = new firebase.auth.GoogleAuthProvider(); return firebase.auth().signInWithPopup(pr).catch(() => firebase.auth().signInWithRedirect(pr)); }
+  if (a === "sair") return firebase.auth().signOut().then(() => location.reload());
+  if (a === "souEu") { NV.db.collection("acessos").doc(NV.user.uid).update({ membro: t.dataset.id }).then(() => { NV.acesso.membro = t.dataset.id; pronto(); }); return; }
+  if (a === "newproj") return abrirProjeto();
+  if (a === "newvot") return abrirVotacao();
+  if (a === "vot") return go("votacao", { vot: t.dataset.id });
+  if (a === "tirarvoto") { const v = S.votacoes.find(x => x.id === UI.vot); delete v.votos[UI.me]; save(); toast("Seu voto foi retirado."); return render(); }
+  if (a === "encerrar") { const v = S.votacoes.find(x => x.id === UI.vot); v.encerrada = true; save(); toast("Votação encerrada."); return render(); }
+  if (a === "arrumar") { POS = {}; savePOS(); toast("Árvore de volta ao desenho original."); return render(); }
+  if (a === "abresemana") { UI.cal = "semana"; UI.ref = t.dataset.date; saveUI(); return render(); }
+  if (a === "calv") { UI.cal = t.dataset.c; saveUI(); return render(); }
+  if (a === "calnav") { const d = +t.dataset.d; if (!d) UI.ref = null; else { const r = UI.ref ? new Date(UI.ref + "T12:00") : new Date(); if (UI.cal === "semana") r.setDate(r.getDate() + 7 * d); else r.setMonth(r.getMonth() + d, 1); UI.ref = ymd(r); } return render(); }
+  if (a === "ev") { e.stopPropagation(); return abrirEvento(t.dataset.id); }
+  if (a === "newev") return abrirEvento(null);
+  if (a === "newtask") return abrirTarefa("");
+  if (a === "newat") return abrirEvento(null, t.dataset.date);
+  if (a === "who") { lerEvento(); const q = UI.draft.quem, id = t.dataset.id; UI.draft.quem = q.includes(id) ? q.filter(x => x !== id) : q.concat(id); return desenharEvento(); }
+  if (a === "delev") { if (!UI.confirmDel) { lerEvento(); UI.confirmDel = true; return desenharEvento(); } S.eventos = S.eventos.filter(x => x.id !== UI.draft.id); save(); $("#overlay").innerHTML = ""; toast("Compromisso apagado."); return render(); }
+});
+document.addEventListener("change", e => { if (e.target.id === "np-frente") { $("#np-nova-l").hidden = e.target.value !== "__nova"; if (e.target.value === "__nova") $("#np-nova").focus(); return; }
+  if (e.target.id === "meSel") { UI.me = e.target.value; saveUI(); toast("Agora você vê o site como " + M(UI.me).curto + "."); go("perfil"); } });
+document.addEventListener("submit", e => {
+  e.preventDefault(); const f = e.target, fd = new FormData(f), k = f.dataset.form, p = UI.v === "projeto" ? P(UI.proj) : null;
+  if (k === "tarefa") { const t = (fd.get("t") || "").trim(); if (!t) return; p.tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "" }); save(); toast("Tarefa criada."); return render(); }
+  if (k === "ideia") { const t = (fd.get("t") || "").trim(); if (!t) return; p.ideias.push({ t, por: UI.me, votos: [] }); save(); toast("Ideia adicionada."); return render(); }
+  if (k === "sobre") {
+    p.status = fd.get("status"); p.resumo = (fd.get("resumo") || "").trim() || p.resumo; p.proximo = (fd.get("proximo") || "").trim();
+    p.detalhes = String(fd.get("detalhes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => { const i = l.indexOf(":"); return i > 0 ? [l.slice(0, i).trim(), l.slice(i + 1).trim()] : ["Detalhe", l]; });
+    UI.edit = false; save(); toast("Projeto atualizado."); return render();
+  }
+  if (k === "codigo") { const c = (fd.get("codigo") || "").trim(); NV.db.collection("acessos").doc(NV.user.uid).set({ codigo: c, email: NV.user.email, membro: "" }).then(() => { NV.acesso = { membro: "" }; assinar(); }).catch(() => telaCodigo("Código errado.")); return; }
+  if (k === "importar") {
+    const f = fd.get("arq"); if (!f || !f.size) return telaImportar("Escolha o arquivo.");
+    f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), { ...x, ordem: i })); return b.commit(); })
+      .then(() => toast("Dados carregados.")).catch(e => telaImportar("Não deu certo: " + e.message)); return;
+  }
+  if (k === "votar") { const v = S.votacoes.find(x => x.id === UI.vot); const ops = fd.getAll("op"); if (!ops.length) return toast("Marque uma opção."); v.votos[UI.me] = ops; save(); toast("Voto registrado."); return render(); }
+  if (k === "novavot") {
+    const titulo = (fd.get("titulo") || "").trim(), ops = String(fd.get("opcoes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    if (!titulo) return toast("Escreva a pergunta."); if (ops.length < 2) return toast("Coloque pelo menos duas opções, uma por linha.");
+    const v = { id: "v" + Date.now(), titulo, desc: (fd.get("desc") || "").trim(), proj: fd.get("proj") || "", multipla: fd.get("multipla") === "1", prazo: fd.get("prazo") || "", criador: UI.me, criada: hojeISO(), opcoes: ops.map((t, i) => ({ id: "o" + i, t })), votos: {}, encerrada: false };
+    S.votacoes.push(v); save(); $("#overlay").innerHTML = ""; toast("Votação aberta."); return go("votacao", { vot: v.id });
+  }
+  if (k === "projeto") {
+    const nome = (fd.get("nome") || "").trim(); if (!nome) return toast("Dê um nome ao projeto.");
+    let frente = fd.get("frente");
+    if (frente === "__nova") { const nf = (fd.get("nova") || "").trim(); if (!nf) return toast("Dê um nome à frente nova.");
+      frente = "f" + Date.now(); const usadas = S.frentes.map(f => f.cor); S.frentes.push({ id: frente, nome: nf, cor: CORES_LIVRES.find(c => !usadas.includes(c)) || "purple", resp: fd.get("resp") || null }); }
+    const id = "p" + Date.now(), resp = fd.get("resp");
+    S.projetos.push({ id, frente, nome, status: "ideia", resumo: (fd.get("resumo") || "").trim() || "Ainda sem descrição.", detalhes: [], proximo: "", papeis: resp ? [[resp, "Responsável"]] : [], tarefas: [], ideias: [], nota: "" });
+    save(); $("#overlay").innerHTML = ""; toast("Projeto criado."); return go("projeto", { proj: id, tab: "sobre" });
+  }
+  if (k === "tarefa-cal") { const t = (fd.get("t") || "").trim(); if (!t) return; P(fd.get("proj")).tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "" }); save(); $("#overlay").innerHTML = ""; toast("Tarefa criada."); return render(); }
+  if (k === "evento") { lerEvento(); const d = UI.draft; if (!d.titulo.trim()) return toast("Dê um título ao compromisso."); const i = S.eventos.findIndex(x => x.id === d.id); if (i >= 0) S.eventos[i] = d; else S.eventos.push(d); save(); $("#overlay").innerHTML = ""; toast(i >= 0 ? "Compromisso salvo." : "Compromisso criado."); return render(); }
+  if (k === "perfil") { const m = M(UI.me); m.nome = fd.get("nome") || m.nome; m.curto = fd.get("curto") || m.curto; m.bio = fd.get("bio") || ""; m.afin = String(fd.get("afin") || "").split(",").map(s => s.trim()).filter(Boolean); m.perfil = Object.fromEntries(CAMPOS.map(([c]) => [c, fd.get(c) || ""])); UI.edit = false; save(); toast("Perfil salvo."); return render(); }
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") $("#overlay").innerHTML = ""; if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".day[data-act]")) { e.preventDefault(); e.target.click(); } });
+
+try { const th = localStorage.getItem(KEY + "-theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+ligarNuvem().then(on => on ? entrarNuvem() : go("inicio")).catch(() => go("inicio"));
+</script>
