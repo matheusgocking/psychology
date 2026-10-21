@@ -1,6 +1,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mapa do Psychology</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#7852ee">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -267,12 +270,39 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 8px 16px; border-radius: var(--r-m); font-size: 14px; z-index: 40; opacity: 0; transition: opacity .2s; pointer-events: none; }
 .toast.on { opacity: 1; }
 
+/* online, sala agora, início e conversa (21/10/2026) */
+.av { overflow: visible; position: relative; }
+.av img { border-radius: 50%; }
+.av.on::after { content: ""; position: absolute; right: -2px; bottom: -2px; width: max(9px, calc(var(--s) * .3)); height: max(9px, calc(var(--s) * .3)); border-radius: 50%; background: var(--c-green); border: 2px solid var(--bg); box-sizing: border-box; }
+.agora { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; max-width: 1400px; margin: 0 auto; padding: 8px 16px 0; font-size: 14px; color: var(--muted); }
+.agora:empty { display: none; }
+.agora .live { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%; box-sizing: border-box; background: color-mix(in oklch, var(--c-green) 12%, transparent); border: 1px solid color-mix(in oklch, var(--c-green) 40%, transparent); color: var(--fg); border-radius: var(--r-m); padding: 8px 12px; }
+.agora .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--c-green); flex: none; }
+.agora .esp { flex: 1; }
+a.btn { text-decoration: none; color: inherit; }
+a.btn.primary { color: var(--on-accent); }
+.home-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px auto 0; max-width: 1100px; }
+.card { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; min-width: 0; }
+.card h2 { font-size: 15px; margin: 0 0 6px; }
+.li { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid var(--line); padding: 7px 0; font-size: 14px; color: var(--fg); }
+.card h2 + .li { border-top: 0; }
+.li .tx { flex: 1; min-width: 0; }
+.li small { display: block; color: var(--faint); font-size: 12.5px; }
+.li .late { color: var(--bad); font-weight: 600; }
+.chat { display: grid; gap: 10px; margin: 6px 0 4px; max-height: 60vh; overflow: auto; padding: 4px 4px 4px 0; }
+.msg { display: flex; gap: 10px; align-items: flex-start; }
+.msg .bub { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-l); padding: 7px 11px; min-width: 0; }
+.msg.meu .bub { background: var(--accent-soft); }
+.msg .bub small { display: block; font-size: 12px; color: var(--faint); margin-bottom: 2px; }
+.msg .bub p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg .x { background: none; border: 0; padding: 0 0 0 6px; color: var(--faint); font-size: 12px; text-decoration: underline; }
 @media (max-width: 760px) {
   .nav button { padding: 0 10px; font-size: 14px; } .nav button:first-child svg { display: none; } .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
   .grid2 { grid-template-columns: 1fr; }
   .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
   .facts li { grid-template-columns: 1fr; gap: 0; }
   .form .two { grid-template-columns: 1fr; }
+  .home-row { grid-template-columns: 1fr; }
   h1 { font-size: 24px; }
   .month { gap: 4px; } .day { min-height: 64px; padding: 5px 4px; gap: 3px; overflow: hidden; } .day .num { font-size: 13px; } .dpill { padding: 2px 7px; } .dpill b { font-size: 14px; } .dpill .pw, .dpill.vazio { display: none; } .day .linha { font-size: 10px; }
   .cbar .stats { order: 3; }
@@ -292,13 +322,14 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
     <button class="me-btn" data-act="go" data-v="perfil" id="meBtn" aria-label="Meu perfil"></button>
   </div>
 </header>
+<div id="agora" class="agora"></div>
 <main id="screen" class="screen"></main>
 <div id="overlay"></div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 /* ===== DADOS (lidos nos grupos do WhatsApp em 21/10/2026; fotos do WhatsApp, com o aceite de todos) ===== */
-const SEED = { versao: 5, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
+const SEED = { versao: 6, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
 
 /* ===== NUVEM (Firebase). Só liga fora do claude.ai, quando existe firebase-config.js ao lado da página.
    Os dados e as fotos ficam só no banco, atrás do login Google e do código do grupo; o código do site não guarda dado de ninguém. ===== */
@@ -315,7 +346,7 @@ async function ligarNuvem() {
   for (const f of ["app", "auth", "firestore"]) await loadScript(`https://www.gstatic.com/firebasejs/10.12.2/firebase-${f}-compat.js`);
   firebase.initializeApp(window.FIREBASE_CONFIG); NV.db = firebase.firestore(); NV.on = true; return true;
 }
-const tela = h => { $("#screen").innerHTML = `<div class="gate">${h}</div>`; document.querySelector("header.top").hidden = true; };
+const tela = h => { $("#screen").innerHTML = `<div class="gate">${h}</div>`; document.querySelector("header.top").hidden = true; $("#agora").innerHTML = ""; };
 function telaLogin(msg) {
   tela(`<h1>Clube de Psicologia</h1><p>O espaço do grupo Psychology para acompanhar projetos, agenda e votações.</p>
   <button class="btn primary" data-act="login" style="margin-top:12px">Entrar com Google</button>${msg ? `<p style="color:var(--bad);margin-top:14px">${esc(msg)}</p>` : ""}`);
@@ -357,7 +388,10 @@ async function entrarNuvem() {
   });
 }
 function assinar() {
-  S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [] }; NV.prontos = 0;
+  S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [], mensagens: [] }; NV.prontos = 0;
+  /* a conversa e o online ficam fora do salvamento geral: cada mensagem e cada sinal é um documento próprio */
+  NV.db.collection("mensagens").orderBy("em", "desc").limit(300).onSnapshot(snap => { S.mensagens = snap.docs.map(d => d.data()); if (UI.v === "projeto" && UI.tab === "conversa") renderChat(); else if (UI.v === "inicio") agendarRender(); }, () => {});
+  NV.db.collection("online").onSnapshot(snap => { snap.docs.forEach(d => ON[d.id] = d.data().t || 0); marcarOnline(); }, () => {});
   for (const c of COLS) NV.db.collection(c).onSnapshot(snap => {
     S[c] = snap.docs.map(d => volta(d.data())).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
     for (const k of Object.keys(NV.last)) if (k.startsWith(c + "/")) delete NV.last[k];
@@ -374,6 +408,7 @@ function pronto() {
   UI.me = NV.acesso.membro;
   /* cada perfil guarda a conta Google que é dele: assim ninguém entra como outra pessoa */
   if (!M(UI.me).uid) { M(UI.me).uid = NV.user.uid; save(); } document.querySelector("header.top").hidden = false; go("inicio");
+  if (!NV.pulso) { NV.pulso = setInterval(pulsar, 120e3); pulsar(); }
 }
 const editando = () => !!$("#overlay").innerHTML || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && document.activeElement.closest("#screen")) || UI.edit;
 function agendarRender() { if (document.querySelector("header.top").hidden) return; if (editando()) { NV.pend = true; return; } NV.pend = false; render(); }
@@ -407,8 +442,10 @@ const KEY = "psychology-site-v2";
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { S = null; }
 if (!S || S.versao !== SEED.versao) S = JSON.parse(JSON.stringify(SEED));
+S.mensagens = S.mensagens || [];
 const UI = { v: "inicio", proj: null, tab: "sobre", person: null, filtro: "todos", cal: "semana", ref: null, me: "matheus", edit: false };
 try { const u = JSON.parse(localStorage.getItem(KEY + "-ui") || "{}"); if (u.me) UI.me = u.me; if (u.cal) UI.cal = u.cal; } catch (e) {}
+if (!S.membros.some(m => m.id === UI.me)) UI.me = S.membros[0] ? S.membros[0].id : UI.me;
 const save = () => { if (NV.on) return gravarNuvem(); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const saveUI = () => { try { localStorage.setItem(KEY + "-ui", JSON.stringify({ me: UI.me, cal: UI.cal })); } catch (e) {} };
 
@@ -427,12 +464,59 @@ const fotoPequena = arq => new Promise((ok, no) => { const img = new Image();
   img.onload = () => { const n = 256, c = document.createElement("canvas"), k = Math.max(n / img.width, n / img.height); c.width = c.height = n;
     c.getContext("2d").drawImage(img, (n - img.width * k) / 2, (n - img.height * k) / 2, img.width * k, img.height * k); URL.revokeObjectURL(img.src); ok(c.toDataURL("image/jpeg", .82)); };
   img.onerror = () => no(new Error("não consegui abrir a foto; use uma foto JPG ou PNG")); img.src = URL.createObjectURL(arq); });
+/* online: cada site aberto avisa o banco a cada 2 minutos; quem deu sinal há menos de 4 minutos ganha a bolinha verde */
+const ON = {};
+const online = id => !!ON[id] && Date.now() - ON[id] < 4 * 60e3;
+function pulsar() { if (!NV.on || !UI.me || document.visibilityState !== "visible") return; ON[UI.me] = Date.now(); NV.db.collection("online").doc(UI.me).set({ t: Date.now() }).catch(() => {}); }
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") pulsar(); });
+addEventListener("pagehide", () => { if (NV.on && UI.me && NV.pulso) NV.db.collection("online").doc(UI.me).set({ t: 0 }).catch(() => {}); });
+function marcarOnline() { document.querySelectorAll(".av[data-id]").forEach(el => el.classList.toggle("on", online(el.dataset.id))); renderAgora(); }
+setInterval(() => marcarOnline(), 60e3);
+const ehLink = x => /^https?:\/\/\S+$/i.test(String(x || "").trim());
+const hm = d => pad(d.getHours()) + ":" + pad(d.getMinutes());
+/* reunião agora: compromissos do calendário neste horário, e a sala aberta na hora pelo botão */
+function acontecendo() { const h = hojeISO(), n = mins(hm(new Date())); return ocorrencias(h, h).map(o => o.e).filter(e => mins(e.ini) <= n && n < (e.fim ? mins(e.fim) : mins(e.ini) + 60)); }
+function renderAgora() {
+  const el = $("#agora"); if (!el) return;
+  if (document.querySelector("header.top").hidden) { el.innerHTML = ""; return; }
+  const on = S.membros.filter(m => online(m.id)).map(m => m.id);
+  el.innerHTML = acontecendo().map(e => `<div class="live"><span class="pulse"></span><span><b>Acontecendo agora:</b> ${esc(e.titulo)} <span style="color:var(--muted)">até ${e.fim || "?"}</span></span><span class="esp"></span>${ehLink(e.local) ? `<a class="btn primary small" href="${esc(e.local.trim())}" target="_blank" rel="noopener">Entrar</a>` : e.local ? `<span style="color:var(--muted)">${esc(e.local)}</span>` : ""}${e.sala && (e.criador === UI.me || souAdm()) ? `<button class="btn ghost small" data-act="fechasala" data-id="${e.id}">Encerrar sala</button>` : ""}</div>`).join("")
+    + `<span class="pulse" style="background:${on.length ? "var(--c-green)" : "var(--line-strong)"}"></span><span>${on.length ? plural(on.length, "pessoa online", "pessoas online") : "Ninguém online agora"}</span>${on.length ? stack(on, 6, 24) : ""}<span class="esp"></span><button class="btn small" data-act="sala">Abrir sala agora</button>`;
+}
+const quando = ms => { const d = new Date(ms), k = ymd(d); return (k === hojeISO() ? "hoje" : k === ymd(addD(new Date(), -1)) ? "ontem" : dm(k)) + ", " + hm(d); };
+const msgsDe = pid => (S.mensagens || []).filter(m => m.proj === pid).sort((a, b) => a.em - b.em);
+function chatHTML(pid) {
+  return msgsDe(pid).map(m => `<div class="msg${m.por === UI.me ? " meu" : ""}">${av(m.por, 30)}<div class="bub"><small>${esc((M(m.por) || {}).curto || "alguém")} · ${quando(m.em)}${m.por === UI.me || souAdm() ? `<button class="x" data-act="delmsg" data-id="${m.id}">apagar</button>` : ""}</small><p>${esc(m.t)}</p></div></div>`).join("")
+    || '<p class="empty">Ninguém escreveu ainda. Comece a conversa do projeto.</p>';
+}
+function renderChat() { const el = $("#chatList"); if (!el) return; const fim = el.scrollHeight - el.scrollTop - el.clientHeight < 60; el.innerHTML = chatHTML(UI.proj); if (fim) el.scrollTop = el.scrollHeight; }
+/* últimas atividades: só o que tem hora registrada (o que foi feito a partir de 21/10/2026), dos últimos 14 dias */
+function atividades() {
+  const it = [], curto = x => esc(x.length > 70 ? x.slice(0, 70) + "…" : x), pj = (p, tab) => `data-act="proj" data-id="${p.id}" data-tab="${tab}"`;
+  (S.mensagens || []).forEach(m => { const p = P(m.proj); if (p) it.push({ em: m.em, quem: m.por, tx: `escreveu na conversa de <b>${esc(p.nome)}</b>: “${curto(m.t)}”`, act: pj(p, "conversa") }); });
+  S.membros.forEach(m => { if (m.entrou) it.push({ em: m.entrou, quem: m.id, tx: "entrou no clube", act: `data-act="person" data-id="${m.id}"` }); });
+  S.projetos.forEach(p => {
+    if (p.em) it.push({ em: p.em, quem: p.criador, tx: `criou o projeto <b>${esc(p.nome)}</b>`, act: pj(p, "sobre") });
+    p.tarefas.forEach(t => { if (t.st === "feito" && t.feitoEm) it.push({ em: t.feitoEm, quem: t.feitoPor, tx: `concluiu “${curto(t.t)}” em <b>${esc(p.nome)}</b>`, act: pj(p, "tarefas") }); });
+    p.ideias.forEach(x => { if (x.em) it.push({ em: x.em, quem: x.por, tx: `deu uma ideia em <b>${esc(p.nome)}</b>: “${curto(x.t)}”`, act: pj(p, "ideias") }); });
+  });
+  S.votacoes.forEach(v => { if (v.em) it.push({ em: v.em, quem: v.criador, tx: `abriu a votação <b>${esc(v.titulo)}</b>`, act: `data-act="vot" data-id="${v.id}"` }); });
+  S.eventos.forEach(e => { if (e.em) it.push({ em: e.em, quem: e.criador, tx: e.sala ? "abriu uma sala de conversa" : `marcou <b>${esc(e.titulo)}</b> para ${dm(e.data)}`, act: `data-act="ev" data-id="${e.id}"` }); });
+  const lim = Date.now() - 14 * 864e5;
+  return it.filter(x => x.em > lim && M(x.quem)).sort((a, b) => b.em - a.em).slice(0, 6);
+}
+/* botão "Pôr na minha agenda do Google": abre o Google Agenda com o compromisso preenchido */
+function gcal(e) {
+  const d = e.data.replace(/-/g, ""), h = x => x.replace(":", "") + "00";
+  return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(e.titulo) + "&dates=" + d + "T" + h(e.ini) + "/" + d + "T" + h(e.fim || e.ini)
+    + "&ctz=America/Sao_Paulo&details=" + encodeURIComponent((e.desc || "") + (ehLink(e.local) ? "\n" + e.local.trim() : "")) + "&location=" + encodeURIComponent(e.local || "") + (e.semanal ? "&recur=" + encodeURIComponent("RRULE:FREQ=WEEKLY") : "");
+}
 const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM">👑</span>' : "";
 const M = id => S.membros.find(m => m.id === id), P = id => S.projetos.find(p => p.id === id), F = id => S.frentes.find(f => f.id === id);
 const fc = f => `var(--c-${f ? f.cor : "gray"})`;
 const hue = id => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
 const ini = m => m.nome.split(/\s+/).filter(w => w.length > 2).slice(0, 2).map(w => w[0]).join("").toUpperCase() || m.nome[0];
-function av(id, s = 28) { const m = M(id); if (!m) return ""; return `<span class="av" style="--s:${s}px;--h:${hue(id)}" title="${esc(m.nome)}">${m.foto ? `<img src="${esc(m.foto)}" alt="" loading="lazy">` : esc(ini(m))}</span>`; }
+function av(id, s = 28) { const m = M(id); if (!m) return ""; return `<span class="av${online(id) ? " on" : ""}" data-id="${id}" style="--s:${s}px;--h:${hue(id)}" title="${esc(m.nome)}${online(id) ? " (online)" : ""}">${m.foto ? `<img src="${esc(m.foto)}" alt="" loading="lazy">` : esc(ini(m))}</span>`; }
 function stack(ids, max = 4, s = 28) { const u = [...new Set(ids)]; return `<span class="stack">${u.slice(0, max).map(i => av(i, s)).join("")}${u.length > max ? `<span class="more">+${u.length - max}</span>` : ""}</span>`; }
 const pessoasProj = p => [...new Set(p.papeis.map(r => r[0]))];
 const respProj = p => (p.papeis.find(r => r[1] === "Responsável") || [])[0];
@@ -466,6 +550,7 @@ function render() {
   if (UI.v === "calendario") el.innerHTML = calHTML();
   if (UI.v === "votacoes") el.innerHTML = votacoesHTML();
   if (UI.v === "votacao") el.innerHTML = votacaoHTML(S.votacoes.find(x => x.id === UI.vot));
+  renderAgora(); const ch = $("#chatList"); if (ch) ch.scrollTop = ch.scrollHeight;
 }
 
 /* ===== INÍCIO: a árvore ===== */
@@ -474,6 +559,7 @@ function homeHTML() {
   const mexeu = Object.keys(POS).length > 0;
   return `<div class="wrap" style="max-width:1400px"><div class="home-head"><h1>Projetos</h1><p>Em cima, os projetos; embaixo, a frente de cada um. Clique num projeto para ver tudo sobre ele.</p>
   <div class="home-acts"><button class="btn primary" data-act="newproj">+ Novo projeto</button>${mexeu ? `<button class="btn ghost" data-act="arrumar">Arrumar a árvore</button>` : ""}</div></div>
+  ${inicioCards()}
   <div class="tree-box" id="treeBox"><div class="tree" id="tree"><svg id="treeLines" width="1" height="1"></svg>
   ${S.projetos.map(p => { const f = F(p.frente), r = respProj(p), outros = pessoasProj(p).filter(x => x !== r);
     return `<button class="node proj" data-node="p:${p.id}" style="--fc:${fc(f)}"><span class="nm">${esc(p.nome)}</span>
@@ -483,6 +569,14 @@ function homeHTML() {
       <span class="who">${stack(ppl, 4, 28)}</span><span class="resp" style="justify-content:center">${plural(ppl.length, "pessoa", "pessoas")}</span></button>`; }).join("")}
   </div></div>
   <p class="foot-note">${plural(S.membros.length, "integrante", "integrantes")}. ${sp ? `${plural(sp, "ainda não está", "ainda não estão")} em nenhum projeto: <button class="link" data-act="go" data-v="integrantes" data-filtro="sem">ver quem</button>.` : ""}</p></div>`;
+}
+function inicioCards() {
+  const hoje = hojeISO();
+  const minhas = S.projetos.flatMap(p => p.tarefas.map(t => ({ ...t, p }))).filter(t => t.quem === UI.me && t.st !== "feito").sort((a, b) => (a.prazo || "9").localeCompare(b.prazo || "9"));
+  const ats = atividades();
+  return `<div class="home-row"><div class="card"><h2>Minhas tarefas${minhas.length ? ` · ${minhas.length}` : ""}</h2>${minhas.slice(0, 5).map(t => `<button class="li" data-act="proj" data-id="${t.p.id}" data-tab="tarefas"><span class="tx">${esc(t.t)}<small>${esc(t.p.nome)}</small></span><span style="font-size:13px;white-space:nowrap"${t.prazo && t.prazo < hoje ? ' class="late"' : ""}>${t.prazo ? (t.prazo < hoje ? "atrasada, " : "até ") + dm(t.prazo) : "sem prazo"}</span></button>`).join("")
+      || '<p class="empty" style="margin:0">Nenhuma tarefa com você. Pegue uma dentro de um projeto.</p>'}${minhas.length > 5 ? `<p class="empty" style="margin:4px 0 0">e mais ${minhas.length - 5} no seu perfil.</p>` : ""}</div>
+    <div class="card"><h2>Últimas atividades</h2>${ats.map(x => `<button class="li" ${x.act}>${av(x.quem, 28)}<span class="tx"><b>${esc(M(x.quem).curto)}</b> ${x.tx}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:0">Nada nos últimos 14 dias.</p>'}</div></div>`;
 }
 const T = { nodes: {}, links: [], scale: 1, raf: 0 };
 /* onde cada um deixou os blocos (só no navegador de quem mexeu); o desenho da árvore continua o mesmo */
@@ -573,7 +667,7 @@ function projHTML(p) {
   const f = F(p.frente), me = UI.me, dentro = pessoasProj(p).includes(me), podeEd = dentro || souAdm(), podeResp = souAdm() || respProj(p) === me;
   const abertas = p.tarefas.filter(t => t.st !== "feito").length;
   const evs = S.eventos.filter(e => e.proj === p.id);
-  const tabs = [["sobre", "Sobre"], ["tarefas", "Tarefas", abertas], ["ideias", "Ideias", p.ideias.length], ["notas", "Notas"]];
+  const tabs = [["sobre", "Sobre"], ["tarefas", "Tarefas", abertas], ["ideias", "Ideias", p.ideias.length], ["notas", "Notas"], ["conversa", "Conversa", msgsDe(p.id).length]];
   let h = `<div class="wrap"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button>
   <div class="proj-head"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span></div>
   <h1>${esc(p.nome)}</h1><p class="lede">${esc(p.resumo)}</p>
@@ -605,6 +699,11 @@ function projHTML(p) {
   if (UI.tab === "ideias") {
     h += [...p.ideias.map((x, i) => ({ ...x, i }))].sort((a, b) => b.votos.length - a.votos.length).map(x => `<div class="idea"><button class="vote" data-act="vote" data-i="${x.i}" aria-pressed="${x.votos.includes(me)}" aria-label="Votar">▲<br>${x.votos.length}</button><span class="tx">${esc(x.t)}<small>Sugerida por ${esc(M(x.por)?.curto || "")}</small></span></div>`).join("") || '<p class="empty">Nenhuma ideia ainda. Escreva a primeira.</p>';
     h += `<form class="row-form" data-form="ideia"><input class="field" name="t" id="ni" placeholder="Escreva uma ideia" aria-label="Nova ideia"><button class="btn">Adicionar ideia</button></form>`;
+  }
+  if (UI.tab === "conversa") {
+    h += `<div class="chat" id="chatList">${chatHTML(p.id)}</div>
+      <form class="row-form" data-form="msg"><textarea class="field" name="t" id="msgT" rows="2" maxlength="2000" placeholder="Escreva para o projeto (Enter envia, Shift+Enter pula linha)" aria-label="Mensagem" style="flex:1 1 240px;min-height:46px;resize:vertical"></textarea><button class="btn primary">Enviar</button></form>`;
+    if (p.frente === "intervisao") h += `<p class="notice" style="margin-top:12px">Sigilo: não escreva nada que identifique paciente.</p>`;
   }
   if (UI.tab === "notas") {
     h += UI.edit ? `<textarea class="field" id="nota" aria-label="Nota do projeto">${esc(p.nota)}</textarea><div class="row-form"><button class="btn primary" data-act="savenote">Salvar nota</button><button class="btn ghost" data-act="editnote" data-on="0">Cancelar</button></div>
@@ -768,7 +867,7 @@ function calHTML() {
 
 /* janela de compromisso */
 function abrirEvento(id, data) {
-  const novo = !id; const e = novo ? { id: "e" + Date.now(), titulo: "", data: data || ymd(new Date()), ini: "19:00", fim: "20:00", local: "Google Meet", proj: UI.v === "projeto" ? UI.proj : "", quem: [UI.me], semanal: false, desc: "", criador: UI.me } : JSON.parse(JSON.stringify(S.eventos.find(x => x.id === id)));
+  const novo = !id; const e = novo ? { id: "e" + Date.now(), titulo: "", data: data || ymd(new Date()), ini: "19:00", fim: "20:00", local: "", proj: UI.v === "projeto" ? UI.proj : "", quem: [UI.me], semanal: false, desc: "", criador: UI.me, em: Date.now() } : JSON.parse(JSON.stringify(S.eventos.find(x => x.id === id)));
   UI.draft = e; UI.confirmDel = false; desenharEvento();
 }
 function desenharEvento() {
@@ -776,14 +875,14 @@ function desenharEvento() {
   $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Compromisso"><h2>${novo ? "Novo compromisso" : "Compromisso"}</h2>
   <form class="form" data-form="evento">
     <label>Título<input class="field" name="titulo" id="ev-t" value="${esc(e.titulo)}" placeholder="Ex.: Reunião da revista"></label>
-    <div class="two"><label>Dia<input class="field" type="date" name="data" id="ev-d" value="${e.data}"></label><label>Onde<input class="field" name="local" id="ev-l" value="${esc(e.local)}"></label></div>
+    <div class="two"><label>Dia<input class="field" type="date" name="data" id="ev-d" value="${e.data}"></label><label>Onde (cole o link da reunião)<input class="field" name="local" id="ev-l" value="${esc(e.local)}" placeholder="https://meet.google.com/..."></label></div>
     <div class="two"><label>Começa<input class="field" type="time" name="ini" id="ev-i" value="${e.ini}"></label><label>Termina<input class="field" type="time" name="fim" id="ev-f" value="${e.fim}"></label></div>
     <label>Projeto<select class="field" name="proj" id="ev-p"><option value="">Nenhum</option>${S.projetos.map(p => `<option value="${p.id}"${p.id === e.proj ? " selected" : ""}>${esc(p.nome)}</option>`).join("")}</select></label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--fg)"><input type="checkbox" name="semanal" id="ev-s"${e.semanal ? " checked" : ""}> Repete toda semana</label>
     <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:4px">Quem vai (${e.quem.length})</div><div class="pick">${S.membros.map(m => `<button type="button" class="chip" data-act="who" data-id="${m.id}" aria-pressed="${e.quem.includes(m.id)}">${av(m.id, 24)}${esc(m.curto)}</button>`).join("")}</div></div>
     <label>Observações<textarea class="field" name="desc" id="ev-o" style="min-height:80px">${esc(e.desc)}</textarea></label>
     <div class="row-form"><button class="btn primary">${novo ? "Criar compromisso" : "Salvar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${novo || !(souAdm() || e.criador === UI.me) ? "" : `<button type="button" class="btn ghost" data-act="delev" style="margin-left:auto;color:var(--bad)">${UI.confirmDel ? "Clique de novo para apagar" : "Apagar"}</button>`}</div>
-  </form></div></div>`;
+  </form>${novo ? "" : `<p style="margin:14px 0 0;font-size:14px"><a class="link" href="${esc(gcal(e))}" target="_blank" rel="noopener">Pôr na minha agenda do Google</a>${ehLink(e.local) ? ` · <a class="link" href="${esc(e.local.trim())}" target="_blank" rel="noopener">Entrar na reunião</a>` : ""}</p>`}</div></div>`;
 }
 function lerEvento() { const f = document.querySelector('[data-form="evento"]'); if (!f) return; const fd = new FormData(f), e = UI.draft; ["titulo", "data", "local", "ini", "fim", "proj", "desc"].forEach(k => e[k] = fd.get(k) || ""); e.semanal = !!fd.get("semanal"); }
 function abrirTarefa(data) {
@@ -823,7 +922,7 @@ document.addEventListener("click", e => {
   if (a === "filtro") { UI.filtro = t.dataset.k; return render(); }
   if (a === "join") { p.papeis.push([UI.me, "Participa"]); save(); toast("Você entrou no projeto."); return render(); }
   if (a === "leave") { p.papeis = p.papeis.filter(r => r[0] !== UI.me); save(); toast("Você saiu do projeto."); return render(); }
-  if (a === "cyc") { const x = p.tarefas[+t.dataset.i]; x.st = { afazer: "fazendo", fazendo: "feito", feito: "afazer" }[x.st]; save(); return render(); }
+  if (a === "cyc") { const x = p.tarefas[+t.dataset.i]; x.st = { afazer: "fazendo", fazendo: "feito", feito: "afazer" }[x.st]; if (x.st === "feito") { x.feitoEm = Date.now(); x.feitoPor = UI.me; } else { delete x.feitoEm; delete x.feitoPor; } save(); return render(); }
   if (a === "take") { p.tarefas[+t.dataset.i].quem = UI.me; save(); return render(); }
   if (a === "vote") { const x = p.ideias[+t.dataset.i]; x.votos = x.votos.includes(UI.me) ? x.votos.filter(v => v !== UI.me) : x.votos.concat(UI.me); save(); return render(); }
   if (a === "editnote") { UI.edit = t.dataset.on === "1"; return render(); }
@@ -837,6 +936,13 @@ document.addEventListener("click", e => {
   if (a === "souEu") { const id = t.dataset.id, b = NV.db.batch(); b.update(NV.db.collection("membros").doc(id), { uid: NV.user.uid }); b.update(NV.db.collection("acessos").doc(NV.user.uid), { membro: id });
     b.commit().then(() => { NV.acesso.membro = id; M(id).uid = NV.user.uid; NV.last["membros/" + id] = JSON.stringify(M(id)); pronto(); }).catch(() => toast("Esse perfil já está ligado a outra conta. Se é você, fale com o Matheus.")); return; }
   if (a === "cadastro") return telaCadastro();
+  if (a === "sala") {
+    const url = "https://meet.jit.si/Psychology-" + Math.random().toString(36).slice(2, 10), d = new Date(), f = new Date(d.getTime() + 60 * 60e3);
+    S.eventos.push({ id: "e" + Date.now(), titulo: "Sala aberta por " + M(UI.me).curto, data: hojeISO(), ini: hm(d), fim: f.getDate() === d.getDate() ? hm(f) : "23:59", local: url, proj: "", quem: [UI.me], semanal: false, desc: "Sala aberta na hora pelo botão do site.", criador: UI.me, sala: true, em: Date.now() });
+    save(); window.open(url, "_blank", "noopener"); toast("Sala aberta. Quem estiver no site vê o aviso para entrar."); return render();
+  }
+  if (a === "fechasala") { const x = S.eventos.find(y => y.id === t.dataset.id); if (x) { x.fim = hm(new Date()); if (x.fim < x.ini) x.fim = x.ini; save(); } toast("Sala encerrada."); return render(); }
+  if (a === "delmsg") { const id = t.dataset.id; S.mensagens = S.mensagens.filter(m => m.id !== id); if (NV.on) NV.db.collection("mensagens").doc(id).delete().catch(x => toast("Não deu para apagar: " + x.message)); else save(); return renderChat(); }
   if (a === "voltaquem") return telaQuem();
   if (a === "togadm") { const m = M(UI.person); m.adm = !m.adm; save(); toast(m.adm ? m.curto + " agora é ADM." : m.curto + " não é mais ADM."); return render(); }
   if (a === "newproj") return abrirProjeto();
@@ -860,8 +966,8 @@ document.addEventListener("change", e => { if (e.target.id === "np-frente") { $(
   if (e.target.id === "meSel") { UI.me = e.target.value; saveUI(); toast("Agora você vê o site como " + M(UI.me).curto + "."); go("perfil"); } });
 document.addEventListener("submit", e => {
   e.preventDefault(); const f = e.target, fd = new FormData(f), k = f.dataset.form, p = UI.v === "projeto" ? P(UI.proj) : null;
-  if (k === "tarefa") { const t = (fd.get("t") || "").trim(); if (!t) return; p.tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "" }); save(); toast("Tarefa criada."); return render(); }
-  if (k === "ideia") { const t = (fd.get("t") || "").trim(); if (!t) return; p.ideias.push({ t, por: UI.me, votos: [] }); save(); toast("Ideia adicionada."); return render(); }
+  if (k === "tarefa") { const t = (fd.get("t") || "").trim(); if (!t) return; p.tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "", em: Date.now() }); save(); toast("Tarefa criada."); return render(); }
+  if (k === "ideia") { const t = (fd.get("t") || "").trim(); if (!t) return; p.ideias.push({ t, por: UI.me, votos: [], em: Date.now() }); save(); toast("Ideia adicionada."); return render(); }
   if (k === "sobre") {
     p.status = fd.get("status"); p.resumo = (fd.get("resumo") || "").trim() || p.resumo; p.proximo = (fd.get("proximo") || "").trim();
     if (fd.has("resp")) { const r0 = respProj(p), r1 = fd.get("resp");
@@ -875,13 +981,20 @@ document.addEventListener("submit", e => {
     f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), ida({ ...x, ordem: i }))); return b.commit(); })
       .then(() => { toast("Dados carregados."); setTimeout(pronto, 800); }).catch(e => telaImportar("Não deu certo: " + e.message)); return;
   }
+  if (k === "msg") {
+    const t = String(fd.get("t") || "").trim(); if (!t) return;
+    const m = { id: "c" + Date.now() + Math.random().toString(36).slice(2, 6), proj: p.id, por: UI.me, t: t.slice(0, 2000), em: Date.now() };
+    S.mensagens.push(m); f.reset(); const ch = $("#chatList"); if (ch) { ch.innerHTML = chatHTML(p.id); ch.scrollTop = ch.scrollHeight; }
+    if (NV.on) NV.db.collection("mensagens").doc(m.id).set(m).catch(x => toast("Não consegui enviar: " + x.message)); else save();
+    return;
+  }
   if (k === "cadastro") {
     const tx = c => String(fd.get(c) || "").trim(), arq = fd.get("foto"), bt = f.querySelector(".btn.primary");
     if (["nome", "curto", "bio", ...OBRIG].some(c => !tx(c))) return toast("Preencha tudo o que tem *.");
     if (!arq || !arq.size) return toast("Escolha uma foto.");
     bt.disabled = true; bt.textContent = "Salvando...";
     fotoPequena(arq).then(foto => {
-      const id = "m" + Date.now(), m = { id, nome: tx("nome"), curto: tx("curto"), bio: tx("bio"), afin: tx("afin").split(",").map(x => x.trim()).filter(Boolean), foto, adm: false, ordem: Date.now(), perfil: Object.fromEntries(CAMPOS.map(([c]) => [c, tx(c)])) };
+      const id = "m" + Date.now(), m = { id, nome: tx("nome"), curto: tx("curto"), bio: tx("bio"), afin: tx("afin").split(",").map(x => x.trim()).filter(Boolean), foto, adm: false, ordem: Date.now(), entrou: Date.now(), perfil: Object.fromEntries(CAMPOS.map(([c]) => [c, tx(c)])) };
       if (!NV.on) { S.membros.push(m); save(); toast("Cadastro feito."); UI.me = id; saveUI(); document.querySelector("header.top").hidden = false; return go("perfil"); }
       m.uid = NV.user.uid; const b = NV.db.batch();
       b.set(NV.db.collection("membros").doc(id), ida(m)); b.update(NV.db.collection("acessos").doc(NV.user.uid), { membro: id });
@@ -893,7 +1006,7 @@ document.addEventListener("submit", e => {
   if (k === "novavot") {
     const titulo = (fd.get("titulo") || "").trim(), ops = String(fd.get("opcoes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     if (!titulo) return toast("Escreva a pergunta."); if (ops.length < 2) return toast("Coloque pelo menos duas opções, uma por linha.");
-    const v = { id: "v" + Date.now(), titulo, desc: (fd.get("desc") || "").trim(), proj: fd.get("proj") || "", multipla: fd.get("multipla") === "1", prazo: fd.get("prazo") || "", criador: UI.me, criada: hojeISO(), opcoes: ops.map((t, i) => ({ id: "o" + i, t })), votos: {}, encerrada: false };
+    const v = { id: "v" + Date.now(), titulo, desc: (fd.get("desc") || "").trim(), proj: fd.get("proj") || "", multipla: fd.get("multipla") === "1", prazo: fd.get("prazo") || "", criador: UI.me, criada: hojeISO(), em: Date.now(), opcoes: ops.map((t, i) => ({ id: "o" + i, t })), votos: {}, encerrada: false };
     S.votacoes.push(v); save(); $("#overlay").innerHTML = ""; toast("Votação aberta."); return go("votacao", { vot: v.id });
   }
   if (k === "projeto") {
@@ -902,17 +1015,19 @@ document.addEventListener("submit", e => {
     if (frente === "__nova") { const nf = (fd.get("nova") || "").trim(); if (!nf) return toast("Dê um nome à frente nova.");
       frente = "f" + Date.now(); const usadas = S.frentes.map(f => f.cor); S.frentes.push({ id: frente, nome: nf, cor: CORES_LIVRES.find(c => !usadas.includes(c)) || "purple", resp: fd.get("resp") || null }); }
     const id = "p" + Date.now(), resp = fd.get("resp");
-    S.projetos.push({ id, frente, nome, status: "ideia", resumo: (fd.get("resumo") || "").trim() || "Ainda sem descrição.", detalhes: [], proximo: "", papeis: resp ? [[resp, "Responsável"]] : [], tarefas: [], ideias: [], nota: "" });
+    S.projetos.push({ id, frente, nome, status: "ideia", resumo: (fd.get("resumo") || "").trim() || "Ainda sem descrição.", detalhes: [], proximo: "", papeis: resp ? [[resp, "Responsável"]] : [], tarefas: [], ideias: [], nota: "", em: Date.now(), criador: UI.me });
     save(); $("#overlay").innerHTML = ""; toast("Projeto criado."); return go("projeto", { proj: id, tab: "sobre" });
   }
-  if (k === "tarefa-cal") { const t = (fd.get("t") || "").trim(); if (!t) return; P(fd.get("proj")).tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "" }); save(); $("#overlay").innerHTML = ""; toast("Tarefa criada."); return render(); }
+  if (k === "tarefa-cal") { const t = (fd.get("t") || "").trim(); if (!t) return; P(fd.get("proj")).tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "", em: Date.now() }); save(); $("#overlay").innerHTML = ""; toast("Tarefa criada."); return render(); }
   if (k === "evento") { lerEvento(); const d = UI.draft; if (!d.titulo.trim()) return toast("Dê um título ao compromisso."); const i = S.eventos.findIndex(x => x.id === d.id); if (i >= 0) S.eventos[i] = d; else S.eventos.push(d); save(); $("#overlay").innerHTML = ""; toast(i >= 0 ? "Compromisso salvo." : "Compromisso criado."); return render(); }
   if (k === "perfil") { const m = M(UI.v === "perfil" ? UI.me : UI.person), arq = fd.get("foto");
     if (arq && arq.size) return fotoPequena(arq).then(ft => { m.foto = ft; fd.delete("foto"); f.querySelector("#pf-foto").value = ""; f.requestSubmit(); }).catch(x => toast("Não deu: " + x.message));
     m.nome = fd.get("nome") || m.nome; m.curto = fd.get("curto") || m.curto; m.bio = fd.get("bio") || ""; m.afin = String(fd.get("afin") || "").split(",").map(s => s.trim()).filter(Boolean); m.perfil = Object.fromEntries(CAMPOS.map(([c]) => [c, fd.get(c) || ""])); UI.edit = false; save(); toast("Perfil salvo."); return render(); }
 });
-document.addEventListener("keydown", e => { if (e.key === "Escape") $("#overlay").innerHTML = ""; if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".day[data-act]")) { e.preventDefault(); e.target.click(); } });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && e.target.id === "msgT") { e.preventDefault(); e.target.form.requestSubmit(); return; }
+  if (e.key === "Escape") $("#overlay").innerHTML = ""; if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".day[data-act]")) { e.preventDefault(); e.target.click(); } });
 
 try { const th = localStorage.getItem(KEY + "-theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+if ("serviceWorker" in navigator && location.protocol === "https:" && !/claude/.test(location.hostname)) navigator.serviceWorker.register("sw.js").catch(() => {});
 ligarNuvem().then(on => on ? entrarNuvem() : go("inicio")).catch(() => go("inicio"));
 </script>
