@@ -302,6 +302,9 @@ const SEED = { versao: 3, membros: [], frentes: [], projetos: [], votacoes: [], 
    Os dados e as fotos ficam só no banco, atrás do login Google e do código do grupo; o código do site não guarda dado de ninguém. ===== */
 const COLS = ["membros", "frentes", "projetos", "eventos", "votacoes"];
 const NV = { on: false, db: null, user: null, acesso: null, last: {}, prontos: 0, pend: false };
+/* o Firestore não guarda lista dentro de lista: ida embrulha cada lista interna em {_a: [...]}, volta desembrulha */
+const ida = x => Array.isArray(x) ? x.map(y => Array.isArray(y) ? { _a: ida(y) } : ida(y)) : x && typeof x === "object" ? Object.fromEntries(Object.entries(x).map(([k, v]) => [k, ida(v)])) : x;
+const volta = x => Array.isArray(x) ? x.map(volta) : x && typeof x === "object" ? (Array.isArray(x._a) && Object.keys(x).length === 1 ? volta(x._a) : Object.fromEntries(Object.entries(x).map(([k, v]) => [k, volta(v)]))) : x;
 const loadScript = src => new Promise((ok, no) => { const el = document.createElement("script"); el.src = src; el.onload = ok; el.onerror = no; document.head.appendChild(el); });
 async function ligarNuvem() {
   if (/claude|claudeusercontent/.test(location.hostname)) return false;
@@ -340,7 +343,7 @@ async function entrarNuvem() {
 function assinar() {
   S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [] }; NV.prontos = 0;
   for (const c of COLS) NV.db.collection(c).onSnapshot(snap => {
-    S[c] = snap.docs.map(d => d.data()).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+    S[c] = snap.docs.map(d => volta(d.data())).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
     for (const k of Object.keys(NV.last)) if (k.startsWith(c + "/")) delete NV.last[k];
     S[c].forEach(x => NV.last[c + "/" + x.id] = JSON.stringify(x));
     if (NV.prontos < COLS.length) { NV.prontos++; if (NV.prontos === COLS.length) pronto(); return; }
@@ -367,11 +370,11 @@ function gravarNuvem() {
       if (c === "votacoes" && NV.last[k]) {
         /* voto de cada um gravado só no campo dele, para dois votos ao mesmo tempo não se apagarem */
         const old = JSON.parse(NV.last[k]), upd = {};
-        for (const [f, v] of Object.entries(x)) if (f !== "votos" && JSON.stringify(v) !== JSON.stringify(old[f])) upd[f] = v;
+        for (const [f, v] of Object.entries(x)) if (f !== "votos" && JSON.stringify(v) !== JSON.stringify(old[f])) upd[f] = ida(v);
         const ks = new Set([...Object.keys(old.votos || {}), ...Object.keys(x.votos || {})]);
         for (const m of ks) if (JSON.stringify((x.votos || {})[m]) !== JSON.stringify((old.votos || {})[m])) upd["votos." + m] = (x.votos || {})[m] ? x.votos[m] : firebase.firestore.FieldValue.delete();
         if (Object.keys(upd).length) { batch.update(ref, upd); n++; }
-      } else { batch.set(ref, JSON.parse(j)); n++; }
+      } else { batch.set(ref, ida(JSON.parse(j))); n++; }
       NV.last[k] = j;
     });
     for (const k of Object.keys(NV.last)) if (k.startsWith(c + "/") && !ids.has(k)) { batch.delete(NV.db.collection(c).doc(k.slice(c.length + 1))); delete NV.last[k]; n++; }
@@ -827,7 +830,7 @@ document.addEventListener("submit", e => {
   if (k === "codigo") { const c = (fd.get("codigo") || "").trim(); NV.db.collection("acessos").doc(NV.user.uid).set({ codigo: c, email: NV.user.email, membro: "" }).then(() => { NV.acesso = { membro: "" }; assinar(); }).catch(() => telaCodigo("Código errado.")); return; }
   if (k === "importar") {
     const f = fd.get("arq"); if (!f || !f.size) return telaImportar("Escolha o arquivo.");
-    f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), { ...x, ordem: i })); return b.commit(); })
+    f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), ida({ ...x, ordem: i }))); return b.commit(); })
       .then(() => toast("Dados carregados.")).catch(e => telaImportar("Não deu certo: " + e.message)); return;
   }
   if (k === "votar") { const v = S.votacoes.find(x => x.id === UI.vot); const ops = fd.getAll("op"); if (!ops.length) return toast("Marque uma opção."); v.votos[UI.me] = ops; save(); toast("Voto registrado."); return render(); }
