@@ -280,27 +280,64 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .toast.on { opacity: 1; }
 
 /* página do projeto como o Obsidian, notas e tarefas (21/10/2026) */
-.pwrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 22px; margin-top: 16px; align-items: start; }
-.pside { border: 1px solid var(--line); border-radius: var(--r-l); background: var(--panel); padding: 8px; position: sticky; top: 64px; max-height: calc(100vh - 84px); overflow: auto; }
-.pfix button, .ti { display: flex; align-items: center; gap: 6px; width: 100%; box-sizing: border-box; text-align: left; background: none; border: 0; border-radius: var(--r-s); padding: 5px 8px; font-size: 14px; color: var(--fg); min-height: 30px; }
-.pfix button[aria-current="true"], .ti.sel { background: var(--accent-soft); color: var(--accent); }
-.pfix button:hover, .ti:hover { background: color-mix(in oklch, var(--fg) 7%, transparent); }
-.pfix .c { margin-left: auto; font-size: 12px; color: var(--faint); }
-.phead { display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 11.5px; text-transform: uppercase; letter-spacing: .04em; color: var(--faint); margin: 14px 4px 4px 8px; }
-.phead button { background: none; border: 0; color: var(--muted); font-size: 12.5px; padding: 3px 5px; border-radius: var(--r-s); text-transform: none; letter-spacing: 0; }
+/* tela limpa (desenho de 21/10/2026, 17h): uma moldura só, coluna da esquerda com os três botões e as notas, e à direita só o que foi aberto.
+   Medidas da árvore e da barra da nota tiradas do próprio Obsidian (app.css da versão 1.14.4, lido com o REA): recuo de 12px + 4px com linha guia
+   de 1px, item com 4px em cima e embaixo, barra de 40px com o nome da nota no meio. */
+.pwrap { display: grid; grid-template-columns: 250px minmax(0, 1fr); margin-top: 12px; align-items: stretch; border: 1px solid var(--line); border-radius: var(--r-l); background: linear-gradient(to right, var(--panel) 0 249px, var(--line) 249px 250px, var(--raised) 250px); min-height: calc(100vh - 150px); }
+.pside { padding: 10px 9px 10px 8px; position: sticky; top: 56px; align-self: start; max-height: calc(100vh - 76px); overflow: auto; box-sizing: border-box; }
+.pside .back { display: inline-block; margin: 0 0 8px 4px; }
+.pfix { display: grid; gap: 6px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.pfix button { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; box-sizing: border-box; background: var(--raised); border: 1px solid var(--line-strong); border-radius: 999px; padding: 6px 12px; font-size: 14px; color: var(--fg); min-height: 34px; }
+.pfix button[aria-current="true"] { background: var(--accent-soft); border-color: color-mix(in oklch, var(--accent) 45%, transparent); color: var(--accent); font-weight: 600; }
+.pfix button:hover { border-color: var(--accent); }
+.pfix .c { font-size: 12px; color: var(--faint); font-weight: 400; }
+.ti { display: flex; align-items: center; gap: 6px; width: 100%; box-sizing: border-box; text-align: left; background: none; border: 0; border-radius: var(--r-s); padding: 4px 8px 4px 6px; margin-bottom: 2px; font-size: 14px; line-height: 1.3; color: var(--fg); min-height: 28px; }
+.ti.sel { background: var(--accent-soft); color: var(--accent); }
+.ti:hover { background: color-mix(in oklch, var(--fg) 7%, transparent); }
+.phead { display: flex; align-items: center; justify-content: space-between; gap: 4px; font-size: 13px; font-weight: 600; color: var(--muted); margin: 12px 4px 6px 6px; }
+.phead button { background: none; border: 0; color: var(--muted); font-size: 12.5px; font-weight: 400; padding: 3px 5px; border-radius: var(--r-s); }
 .phead button:hover { background: color-mix(in oklch, var(--fg) 7%, transparent); color: var(--fg); }
-.ti { padding-left: calc(6px + var(--n) * 14px); }
+.tch { margin-left: 12px; padding-left: 4px; border-left: 1px solid color-mix(in oklch, var(--fg) 12%, transparent); }
 .ti .nm { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ti .car { display: inline-block; width: 12px; flex: none; color: var(--faint); transition: transform .15s; }
 .ti.aberta .car { transform: rotate(90deg); }
-.ti.nota { color: var(--muted); padding-left: calc(24px + var(--n) * 14px); }
+.ti.nota { color: var(--muted); padding-left: 24px; }
 .ti.nota.sel { color: var(--accent); }
-.pmain { min-width: 0; }
+.pmain { min-width: 0; padding: 14px 22px 26px; }
 .pcard { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 14px 16px; margin-bottom: 14px; }
-.nbar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 14px; }
+.nbar { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: var(--r-m); padding: 5px 6px 5px 12px; min-height: 40px; box-sizing: border-box; margin-bottom: 18px; }
 .nbar .ncam { font-size: 13px; color: var(--faint); }
+.nbar .nnome { font-size: 15px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nbar .esp { flex: 1; }
+.ler { max-width: 720px; margin: 0 auto; }
 .ntitle { font-size: 24px; margin: 0 0 12px; }
+/* escopo do projeto: o nome no meio, os campos em lista e a trilha de documentos */
+.esc-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.esc-top .esp { flex: 1; }
+.esc-nome { text-align: center; margin: 14px 0 18px; font-size: 30px; }
+.campos { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 9px 16px; margin: 0; }
+.campos dt { color: var(--muted); font-size: 14px; padding-top: 2px; }
+.campos dd { margin: 0; font-size: 15px; }
+.campos .vazio { color: var(--faint); }
+.pchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pchip { display: inline-flex; align-items: center; gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 2px 10px 2px 2px; font-size: 13.5px; color: var(--fg); }
+.pchip small { color: var(--faint); font-size: 12px; }
+.docs-h { display: flex; align-items: center; gap: 8px; margin: 26px 0 10px; }
+.docs-h h2 { margin: 0; }
+.trilha { display: flex; gap: 26px; flex-wrap: wrap; align-items: stretch; }
+.doc { position: relative; display: flex; flex-direction: column; gap: 4px; width: 170px; min-height: 150px; box-sizing: border-box; text-align: left; background: var(--bg); border: 1px solid var(--line-strong); border-radius: var(--r-m); padding: 14px 14px 12px; color: var(--fg); box-shadow: 0 1px 0 var(--line), 3px 3px 0 -1px var(--panel), 3px 3px 0 0 var(--line); }
+.doc:hover { border-color: var(--accent); }
+.doc + .doc::before { content: ""; position: absolute; left: -27px; top: 50%; width: 26px; border-top: 1px solid var(--line-strong); }
+.doc .num { position: absolute; right: -10px; bottom: -10px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--raised); border: 1px solid var(--line-strong); font-size: 13px; font-weight: 600; }
+.doc .dt { font-weight: 600; font-size: 14.5px; line-height: 1.3; }
+.doc small { color: var(--faint); font-size: 12px; margin-top: auto; }
+.doc.novo { border-style: dashed; box-shadow: none; color: var(--muted); justify-content: center; align-items: center; text-align: center; }
+.folha { background: #fff; color: #1d1d1f; max-width: 760px; margin: 0 auto; padding: 46px 54px; box-sizing: border-box; border-radius: 4px; box-shadow: 0 2px 14px rgba(0,0,0,.18); min-height: 60vh; }
+.folha .md, .folha h1, .folha h3 { color: #1d1d1f; }
+.folha .fcab { font-size: 12px; color: #6e6e73; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-bottom: 22px; }
+.folha h1 { font-size: 26px; margin: 0 0 16px; }
+.pdfbox { width: 100%; height: 78vh; border: 1px solid var(--line); border-radius: var(--r-m); background: #fff; }
+@media print { body * { visibility: hidden; } .folha, .folha * { visibility: visible; } .folha { position: absolute; left: 0; top: 0; box-shadow: none; max-width: none; width: 100%; } }
 .ntit { font-size: 20px; font-weight: 600; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
 .nmove { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
 .nmove .field { font-size: 13px; }
@@ -344,7 +381,9 @@ a.btn.primary { color: var(--on-accent); }
   .facts li { grid-template-columns: 1fr; gap: 0; }
   .form .two { grid-template-columns: 1fr; }
   .home-row { grid-template-columns: 1fr; }
-  .pwrap { grid-template-columns: 1fr; } .pside { position: static; max-height: none; }
+  .pwrap { grid-template-columns: 1fr; min-height: 0; background: var(--raised); } .pside { position: static; max-height: none; background: var(--panel); border-bottom: 1px solid var(--line); border-radius: var(--r-l) var(--r-l) 0 0; }
+  .pmain { padding: 12px 14px 20px; } .campos { grid-template-columns: 1fr; gap: 2px; } .campos dd { margin-bottom: 8px; } .esc-nome { font-size: 24px; }
+  .trilha { gap: 18px; } .doc { width: calc(50% - 9px); } .doc + .doc::before { display: none; } .folha { padding: 26px 20px; }
   h1 { font-size: 24px; }
   .month { gap: 4px; } .day { min-height: 64px; padding: 5px 4px; gap: 3px; overflow: hidden; } .day .num { font-size: 13px; } .dpill { padding: 2px 7px; } .dpill b { font-size: 14px; } .dpill .pw, .dpill.vazio { display: none; } .day .linha { font-size: 10px; }
   .cbar .stats { order: 3; }
@@ -468,12 +507,13 @@ function gravarNuvem() {
       const k = c + "/" + x.id, j = JSON.stringify(x); ids.add(k);
       if (NV.last[k] === j) return;
       const ref = NV.db.collection(c).doc(x.id);
-      if (c === "votacoes" && NV.last[k]) {
-        /* voto de cada um gravado só no campo dele, para dois votos ao mesmo tempo não se apagarem */
+      if (NV.last[k]) {
+        /* grava só os campos que esta pessoa mudou: se um colega mexeu em outro campo do mesmo projeto ao mesmo tempo, a mudança dele fica.
+           Voto de cada um vai só no campo dele, para dois votos ao mesmo tempo não se apagarem. */
         const old = JSON.parse(NV.last[k]), upd = {};
-        for (const [f, v] of Object.entries(x)) if (f !== "votos" && JSON.stringify(v) !== JSON.stringify(old[f])) upd[f] = ida(v);
-        const ks = new Set([...Object.keys(old.votos || {}), ...Object.keys(x.votos || {})]);
-        for (const m of ks) if (JSON.stringify((x.votos || {})[m]) !== JSON.stringify((old.votos || {})[m])) upd["votos." + m] = (x.votos || {})[m] ? x.votos[m] : firebase.firestore.FieldValue.delete();
+        for (const f of new Set([...Object.keys(old), ...Object.keys(x)])) if (!(c === "votacoes" && f === "votos") && JSON.stringify(x[f]) !== JSON.stringify(old[f])) upd[f] = x[f] === undefined ? firebase.firestore.FieldValue.delete() : ida(x[f]);
+        if (c === "votacoes") { const ks = new Set([...Object.keys(old.votos || {}), ...Object.keys(x.votos || {})]);
+          for (const m of ks) if (JSON.stringify((x.votos || {})[m]) !== JSON.stringify((old.votos || {})[m])) upd["votos." + m] = (x.votos || {})[m] ? x.votos[m] : firebase.firestore.FieldValue.delete(); }
         if (Object.keys(upd).length) { batch.update(ref, upd); n++; }
       } else { batch.set(ref, ida(JSON.parse(j))); n++; }
       NV.last[k] = j;
@@ -724,10 +764,10 @@ const podeApagarNota = n => souAdm() || ((n.editores || []).length > 0 && n.edit
 const caminho = n => { const c = []; let x = n && NT(n.pai); while (x) { c.unshift(x.titulo); x = NT(x.pai); } return c; };
 const notaDaPasta = d => filhos(d.proj, d.id).find(n => n.tipo === "nota" && n.titulo.trim().toLowerCase() === d.titulo.trim().toLowerCase());
 function abrirAte(n) { let x = n && NT(n.pai); while (x) { UI.pastas[x.id] = true; x = NT(x.pai); } }
-function arvoreHTML(p, pai, nivel) {
+function arvoreHTML(p, pai) {
   return filhos(p.id, pai).map(n => n.tipo === "pasta"
-    ? `<button class="ti pasta${UI.pastas[n.id] ? " aberta" : ""}${UI.tab === "pasta:" + n.id ? " sel" : ""}" data-act="pasta" data-id="${n.id}" style="--n:${nivel}"><span class="car">›</span><span class="nm">${esc(n.titulo)}</span></button>${UI.pastas[n.id] ? arvoreHTML(p, n.id, nivel + 1) : ""}`
-    : `<button class="ti nota${UI.tab === "nota:" + n.id ? " sel" : ""}" data-act="abrenota" data-id="${n.id}" style="--n:${nivel}"><span class="nm">${esc(n.titulo)}</span></button>`).join("");
+    ? `<button class="ti pasta${UI.pastas[n.id] ? " aberta" : ""}${UI.tab === "pasta:" + n.id ? " sel" : ""}" data-act="pasta" data-id="${n.id}"><span class="car">›</span><span class="nm">${esc(n.titulo)}</span></button>${UI.pastas[n.id] && filhos(p.id, n.id).length ? `<div class="tch">${arvoreHTML(p, n.id)}</div>` : ""}`
+    : `<button class="ti nota${UI.tab === "nota:" + n.id ? " sel" : ""}" data-act="abrenota" data-id="${n.id}"><span class="nm">${esc(n.titulo)}</span></button>`).join("");
 }
 function gravarNota(n) { if (NV.on) NV.db.collection("notas").doc(n.id).set(ida(JSON.parse(JSON.stringify(n)))).catch(e => toast("Não consegui salvar: " + e.message)); else save(); }
 function novaNota(pid, pai, tipo) {
@@ -803,81 +843,133 @@ function projHTML(p) {
   if (!p) return `<div class="wrap"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button><p class="empty">Esse projeto não existe mais.</p></div>`;
   const f = F(p.frente), me = UI.me, dentro = pessoasProj(p).includes(me), podeEd = dentro || souAdm(), podeResp = souAdm() || respProj(p) === me;
   const abertas = p.tarefas.filter(t => t.st !== "feito").length;
-  const fixos = [["sobre", "Resumo"], ["tarefas", "Tarefas", abertas], ["ideias", "Ideias", p.ideias.length], ["conversa", "Conversa", msgsDe(p.id).length]];
+  /* três botões fixos, como no desenho; as ideias ficaram dentro de Tarefas (ideia é tarefa que ainda não nasceu), nada delas se perdeu */
+  if (UI.tab === "ideias") { UI.tab = "tarefas"; setTimeout(() => { const x = $("#ideias"); if (x) x.scrollIntoView({ block: "start" }); }, 0); }
+  const fixos = [["sobre", "Escopo do Projeto"], ["tarefas", "Tarefas", abertas], ["conversa", "Chat", msgsDe(p.id).length]];
   const tab = UI.tab || "sobre", nAb = tab.startsWith("nota:") ? NT(tab.slice(5)) : null, dAb = tab.startsWith("pasta:") ? NT(tab.slice(6)) : null;
   const pastaAtual = dAb ? dAb.id : nAb ? (nAb.pai || "") : (UI.pastaSel || "");
-  let h = `<div class="wrap" style="max-width:1200px"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button>
-  <div class="proj-head"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span></div>
-  <h1>${esc(p.nome)}</h1>
-  <div style="display:flex;gap:8px;flex-wrap:wrap">${dentro ? `<button class="btn small" data-act="leave">Sair do projeto</button>` : `<button class="btn primary" data-act="join">Quero participar</button>`}${respProj(p) ? "" : `<button class="btn" data-act="assumir">Assumir este projeto</button>`}</div>
-  <div class="pwrap"><aside class="pside" aria-label="Itens do projeto"><nav class="pfix">${fixos.map(([k, l, c]) => `<button data-act="tab" data-tab="${k}" aria-current="${tab === k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</nav>
-    <div class="phead"><span>Pastas e notas</span><span><button data-act="novanota" data-pai="${pastaAtual}" title="Nova nota${pastaAtual ? " nesta pasta" : ""}">+ nota</button><button data-act="novapasta" data-pai="${pastaAtual}" title="Nova pasta${pastaAtual ? " dentro desta" : ""}">+ pasta</button></span></div>
-    <div class="ptree">${arvoreHTML(p, "", 0) || '<p class="empty" style="padding:0 8px">Nenhuma nota ainda. Use + nota ou + pasta.</p>'}</div></aside><section class="pmain">`;
+  let h = `<div class="wrap" style="max-width:1280px">
+  <div class="pwrap"><aside class="pside" aria-label="Itens do projeto"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button><nav class="pfix">${fixos.map(([k, l, c]) => `<button data-act="tab" data-tab="${k}" aria-current="${tab === k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</nav>
+    <div class="phead"><span>Notas do Projeto</span><span><button data-act="novanota" data-pai="${pastaAtual}" title="Nova nota${pastaAtual ? " nesta pasta" : ""}">+ nota</button><button data-act="novapasta" data-pai="${pastaAtual}" title="Nova pasta${pastaAtual ? " dentro desta" : ""}">+ pasta</button></span></div>
+    <div class="ptree">${arvoreHTML(p, "") || '<p class="empty" style="padding:0 8px">Nenhuma nota ainda. Use + nota ou + pasta.</p>'}</div></aside><section class="pmain">`;
   if (tab === "sobre") {
-    if (UI.edit === true) return h + `<form class="form" data-form="sobre">
+    if (UI.edit === true) return h + `<div class="ler"><h2 class="sec">Editar o escopo</h2><form class="form" data-form="sobre">
       <label>Nome do projeto<input class="field" name="nome" id="sb-nome" value="${esc(p.nome)}"></label>
       ${souAdm() ? `<label>Frente<select class="field" name="frente" id="sb-frente">${S.frentes.map(x => `<option value="${x.id}"${x.id === p.frente ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select></label>` : ""}
       <label>Situação<select class="field" name="status" id="sb-status">${Object.entries(STATUS).map(([v, l]) => `<option value="${v}"${p.status === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
-      <label>Em uma frase, o que é<input class="field" name="resumo" id="sb-resumo" value="${esc(p.resumo)}"></label>
-      <label>Detalhes, um por linha, no formato Título: texto<textarea class="field" name="detalhes" id="sb-det" style="min-height:130px" placeholder="Quando: segundas, às 8h&#10;Como funciona: ...">${esc(p.detalhes.map(([k, v]) => k + ": " + v).join(String.fromCharCode(10)))}</textarea></label>
+      <label>Resumo, em uma frase<input class="field" name="resumo" id="sb-resumo" value="${esc(p.resumo)}"></label>
+      <label>Missão: aonde o projeto quer chegar<input class="field" name="missao" id="sb-missao" value="${esc(p.missao || "")}"></label>
+      <label>Início do projeto<input class="field" type="date" name="inicio" id="sb-inicio" value="${esc(p.inicio || "")}"></label>
+      <label>Outros campos, um por linha, no formato Título: texto<textarea class="field" name="detalhes" id="sb-det" style="min-height:110px" placeholder="Quando: segundas, às 8h&#10;Como funciona: ...">${esc(p.detalhes.map(([k, v]) => k + ": " + v).join(String.fromCharCode(10)))}</textarea></label>
       <label>Próximo passo<input class="field" name="proximo" id="sb-prox" value="${esc(p.proximo)}"></label>
       ${podeResp ? `<label>Responsável<select class="field" name="resp" id="sb-resp"><option value="">Ninguém</option>${S.membros.map(m => `<option value="${m.id}"${m.id === respProj(p) ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select></label>` : ""}
-      <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="editnote" data-on="0">Cancelar</button></div></form></section></div></div>`;
-    const evs = S.eventos.filter(e => e.proj === p.id), vts = S.votacoes.filter(v => v.proj === p.id), tks = p.tarefas.map((t, i) => ({ t, i })).filter(x => x.t.st !== "feito").sort((a, b) => ordTarefa(a.t, b.t)), ats = atividades(p.id);
-    h += `<div class="pcard"><h2 class="sec" style="display:flex;align-items:center;gap:8px">Resumo do projeto ${podeEd ? `<button class="btn ghost small" data-act="editnote" data-on="1">Editar</button>` : ""}</h2>
-      <p style="margin:0 0 12px">${esc(p.resumo)}</p><ul class="facts">${p.detalhes.map(([k, v]) => `<li><b>${esc(k)}</b><span>${esc(v)}</span></li>`).join("")}</ul>
-      <h2 class="sec">Quem participa (${pessoasProj(p).length})</h2><div class="people" style="grid-template-columns:repeat(auto-fill,minmax(170px,1fr))">${p.papeis.map(([id, papel]) => M(id) ? `<button class="person" data-act="person" data-id="${id}">${av(id, 36)}<span><b>${esc(M(id).curto)}</b><small>${esc(papel)}</small></span></button>` : "").join("")}</div></div>
-    <div class="pcard"><h2 class="sec">Últimas atualizações, próximos passos e tarefas</h2>
-      <div class="next" style="margin-bottom:14px"><h2 class="sec">Próximo passo</h2><p>${esc(p.proximo || "A definir.")}</p></div>
-      ${tks.length ? `<h2 class="sec">Tarefas abertas (${tks.length})</h2>${tks.slice(0, 5).map(x => tarefaHTML(x.t, p, x.i, false)).join("")}${tks.length > 5 ? `<p><button class="link" data-act="tab" data-tab="tarefas">ver todas</button></p>` : ""}<div style="height:14px"></div>` : ""}
-      ${evs.length ? `<h2 class="sec">No calendário</h2>${evs.map(e => `<p style="margin:0 0 4px"><button class="wl" data-act="ev" data-id="${e.id}">${esc(e.titulo)}</button> <span style="color:var(--muted);font-size:13.5px">${e.semanal ? "toda " + ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][new Date(e.data + "T12:00").getDay()] : dm(e.data)}, ${e.ini}</span></p>`).join("")}<div style="height:14px"></div>` : ""}
-      ${vts.length ? `<h2 class="sec">Votações</h2>${vts.map(v => `<p style="margin:0 0 6px"><button class="wl" data-act="vot" data-id="${v.id}">${esc(v.titulo)}</button> <span style="color:var(--muted);font-size:13.5px">${fechada(v) ? "encerrada" : "aberta"}</span></p>`).join("")}<div style="height:14px"></div>` : ""}
-      <h2 class="sec">Últimas atualizações</h2>${ats.map(x => `<button class="li" ${x.act}>${av(x.quem, 28)}<span class="tx"><b>${esc(M(x.quem).curto)}</b> ${x.tx}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:0">Nada nos últimos 14 dias.</p>'}</div>`;
+      <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="editnote" data-on="0">Cancelar</button></div></form></div></section></div></div>`;
+    h += escopoHTML(p, f, dentro, podeEd);
   }
   if (tab === "tarefas") {
     const tks = p.tarefas.map((t, i) => ({ t, i })).sort((a, b) => (a.t.st === "feito") - (b.t.st === "feito") || ordTarefa(a.t, b.t));
+    h += `<div class="nbar"><span class="nnome">Tarefas</span><span class="esp"></span><button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>`;
     h += tks.map(x => tarefaHTML(x.t, p, x.i, false)).join("") || '<p class="empty">Nenhuma tarefa ainda.</p>';
     h += `<form class="row-form" data-form="tarefa"><input class="field" name="t" id="nt" placeholder="Nova tarefa" aria-label="Nova tarefa">
       <select class="field" name="quem" id="ntq" aria-label="Com quem"><option value="">Com quem?</option>${S.membros.map(m => `<option value="${m.id}">${esc(m.curto)}</option>`).join("")}</select>
       <input class="field" type="date" name="prazo" id="ntp" aria-label="Prazo"><select class="field" name="prio" id="ntpr" aria-label="Prioridade">${opcoesPrio("")}</select><button class="btn">Adicionar</button></form>
       <p class="empty">Começo, repetição e o resto: clique na tarefa depois de criar.</p>`;
-  }
-  if (tab === "ideias") {
-    h += [...p.ideias.map((x, i) => ({ ...x, i }))].sort((a, b) => b.votos.length - a.votos.length).map(x => `<div class="idea"><button class="vote" data-act="vote" data-i="${x.i}" aria-pressed="${x.votos.includes(me)}" aria-label="Votar">▲<br>${x.votos.length}</button><span class="tx">${esc(x.t)}<small>Sugerida por ${esc(M(x.por)?.curto || "")}</small></span></div>`).join("") || '<p class="empty">Nenhuma ideia ainda. Escreva a primeira.</p>';
+    h += `<h2 class="sec" id="ideias" style="margin-top:28px">Ideias${p.ideias.length ? ` (${p.ideias.length})` : ""}</h2><p class="empty" style="margin-top:-4px">O que ainda não virou tarefa. Vote nas que valem a pena.</p>`;
+    h += [...p.ideias.map((x, i) => ({ ...x, i }))].sort((a, b) => b.votos.length - a.votos.length).map(x => `<div class="idea"><button class="vote" data-act="vote" data-i="${x.i}" aria-pressed="${x.votos.includes(me)}" aria-label="Votar">▲<br>${x.votos.length}</button><span class="tx">${esc(x.t)}<small>Sugerida por ${esc(M(x.por)?.curto || "")}</small></span></div>`).join("");
     h += `<form class="row-form" data-form="ideia"><input class="field" name="t" id="ni" placeholder="Escreva uma ideia" aria-label="Nova ideia"><button class="btn">Adicionar ideia</button></form>`;
   }
   if (tab === "conversa") {
+    h += `<div class="nbar"><span class="nnome">Chat</span><span class="esp"></span><button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>`;
     h += `<div class="chat" id="chatList">${chatHTML(p.id)}</div>
       <form class="row-form" data-form="msg"><textarea class="field" name="t" id="msgT" rows="2" maxlength="2000" placeholder="Escreva para o projeto (Enter envia, Shift+Enter pula linha)" aria-label="Mensagem" style="flex:1 1 240px;min-height:46px;resize:vertical"></textarea><button class="btn primary">Enviar</button></form>`;
     if (p.frente === "intervisao") h += `<p class="notice" style="margin-top:12px">Sigilo: não escreva nada que identifique paciente.</p>`;
   }
   if (tab.startsWith("nota:")) h += notaHTML(p, nAb);
   if (tab.startsWith("pasta:")) h += pastaHTML(p, dAb);
+  if (tab.startsWith("doc:")) h += docHTML(p, (p.docs || []).find(d => d.id === tab.slice(4)));
   return h + "</section></div></div>";
+}
+/* escopo: o que é o projeto, quem cuida e os documentos. Tarefas, chat e notas ficam cada um no seu botão. */
+const dmy = s => s ? s.slice(0, 10).split("-").reverse().join("/") : "";
+const dataDe = ms => ms ? new Date(ms).toLocaleDateString("pt-BR") : "";
+function escopoHTML(p, f, dentro, podeEd) {
+  const resp = p.papeis.filter(r => r[1] === "Responsável" && M(r[0])), outros = p.papeis.filter(r => r[1] !== "Responsável" && M(r[0]));
+  const chips = l => l.length ? `<div class="pchips">${l.map(([id, papel]) => `<button class="pchip" data-act="person" data-id="${id}">${av(id, 24)}<span>${esc(M(id).curto)}${papel && papel !== "Participa" && papel !== "Responsável" ? ` <small>${esc(papel)}</small>` : ""}</span></button>`).join("")}</div>` : '<span class="vazio">Ninguém ainda</span>';
+  const ev = S.eventos.filter(e => e.proj === p.id && !e.sala).map(e => ({ e, d: e.semanal ? proxSemanal(e.data) : e.data })).filter(x => x.d >= hojeISO()).sort((a, b) => (a.d + a.e.ini).localeCompare(b.d + b.e.ini))[0];
+  const inicio = p.inicio ? dmy(p.inicio) : p.em ? dataDe(p.em) : "";
+  const campo = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
+  const docs = p.docs || [];
+  return `<div class="ler"><div class="esc-top"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span><span class="esp"></span>
+    ${dentro ? `<button class="btn small ghost" data-act="leave">Sair do projeto</button>` : `<button class="btn small primary" data-act="join">Quero participar</button>`}${resp.length ? "" : `<button class="btn small" data-act="assumir">Assumir este projeto</button>`}${podeEd ? `<button class="btn small" data-act="editnote" data-on="1">Editar</button>` : ""}</div>
+  <h1 class="esc-nome">${esc(p.nome)}</h1>
+  <dl class="campos">${campo("Resumo", esc(p.resumo))}${campo("Missão", p.missao ? esc(p.missao) : '<span class="vazio">A definir</span>')}
+    ${campo("Responsáveis", chips(resp))}${campo("Participantes", chips(outros))}${campo("Início do projeto", inicio || '<span class="vazio">A definir</span>')}
+    ${p.detalhes.map(([k, v]) => campo(esc(k), esc(v))).join("")}
+    ${campo("Próximo passo", p.proximo ? esc(p.proximo) : '<span class="vazio">A definir</span>')}
+    ${ev ? campo("Próximo encontro", `<button class="wl" data-act="ev" data-id="${ev.e.id}">${esc(ev.e.titulo)}</button>, ${dm(ev.d)} às ${ev.e.ini}`) : ""}</dl>
+  <div class="docs-h"><h2 class="sec">Documentos do projeto</h2><span class="esp" style="flex:1"></span>${podeEd && docs.length ? `<button class="btn small" data-act="novodoc">+ Documento</button>` : ""}</div>
+  <div class="trilha">${docs.map((d, i) => `<button class="doc" data-act="tab" data-tab="doc:${d.id}"><span class="dt">${esc(docTitulo(d))}</span><small>${d.link ? "PDF" : "Nota"} · atualizado em ${docData(d) || "?"}</small><span class="num">${i + 1}</span></button>`).join("")}
+    ${!docs.length ? (podeEd ? `<button class="doc novo" data-act="novodoc"><span class="dt">+ Primeiro documento</span><small>O 1 é o resumo detalhado do projeto. Pode ser uma nota daqui ou um PDF do Google Drive.</small></button>` : '<p class="empty">Nenhum documento ainda.</p>') : ""}</div></div>`;
+}
+const proxSemanal = s => { const d = new Date(s + "T12:00"), h = new Date(hojeISO() + "T12:00"); while (d < h) d.setDate(d.getDate() + 7); return ymd(d); };
+/* documento da trilha: uma nota do projeto (a data vem sozinha da última edição) ou um PDF por link, com a data que a pessoa informou */
+const docNota = d => d && d.nota ? NT(d.nota) : null;
+const docTitulo = d => d.titulo || (docNota(d) || {}).titulo || "Documento";
+const docData = d => { const n = docNota(d); return n ? dataDe(n.alt || n.em) : d.alt ? dmy(d.alt) : ""; };
+const linkPreview = u => { const m = String(u || "").match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/); return m ? `https://drive.google.com/file/d/${m[1]}/preview` : u; };
+function docHTML(p, d) {
+  if (!d) return '<p class="empty">Esse documento saiu da trilha.</p>';
+  const docs = p.docs, i = docs.indexOf(d), n = docNota(d), ant = docs[i - 1], prox = docs[i + 1];
+  const quem = n ? (n.editores || []).map(id => (M(id) || {}).curto).filter(Boolean).join(", ") : (M(d.por) || {}).curto;
+  let h = `<div class="nbar"><span class="ncam">Documento ${i + 1} de ${docs.length} ·</span><span class="nnome">${esc(docTitulo(d))}</span><span class="esp"></span>
+    ${ant ? `<button class="btn small ghost" data-act="tab" data-tab="doc:${ant.id}" title="${esc(docTitulo(ant))}">‹ ${i}</button>` : ""}${prox ? `<button class="btn small ghost" data-act="tab" data-tab="doc:${prox.id}" title="${esc(docTitulo(prox))}">${i + 2} ›</button>` : ""}
+    ${n ? `<button class="btn small" data-act="abrenota" data-id="${n.id}">Editar o texto</button><button class="btn small" data-act="imprimir">Salvar em PDF</button>` : `<a class="btn small" href="${esc(d.link)}" target="_blank" rel="noopener">Abrir em outra aba</a>`}
+    <button class="btn small ghost" data-act="editdoc" data-id="${d.id}">Trocar</button><button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>`;
+  if (n) h += `<article class="folha"><div class="fcab">${esc(p.nome)} · Documento ${i + 1} · atualizado em ${docData(d)}${quem ? " por " + esc(quem) : ""}</div><h1>${esc(docTitulo(d))}</h1><div class="md">${md(n.texto, p.id) || "<p>Ainda sem texto.</p>"}</div></article>`;
+  else if (d.link) h += `<iframe class="pdfbox" src="${esc(linkPreview(d.link))}" title="${esc(docTitulo(d))}" loading="lazy" allow="autoplay"></iframe><p class="nmeta">Atualizado em ${docData(d) || "?"}${quem ? ", posto por " + esc(quem) : ""}. Se o PDF não aparecer, no Google Drive deixe o arquivo em "Qualquer pessoa com o link" ou use Abrir em outra aba.</p>`;
+  else h += '<p class="empty">Essa nota foi apagada. Use Trocar para escolher outra.</p>';
+  return h;
+}
+function abrirDoc(p, id) {
+  const d = (p.docs || []).find(x => x.id === id), notas = notasDe(p.id).filter(x => x.tipo === "nota").sort((a, b) => a.titulo.localeCompare(b.titulo, "pt")), n = (p.docs || []).length;
+  const tipo = d ? (d.link ? "link" : "nota") : "nota";
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Documento"><h2>${d ? "Documento " + ((p.docs.indexOf(d)) + 1) : "Novo documento"}</h2>
+  <form class="form" data-form="doc" data-id="${d ? d.id : ""}">
+    <label>Título<input class="field" name="titulo" id="dc-tit" value="${esc(d ? d.titulo || "" : "")}" placeholder="Ex.: Resumo detalhado"></label>
+    <label>De onde vem<select class="field" name="tipo" id="dc-tipo"><option value="nota"${tipo === "nota" ? " selected" : ""}>Uma nota deste projeto (escrita aqui no site)</option><option value="link"${tipo === "link" ? " selected" : ""}>Um PDF no Google Drive (link)</option></select></label>
+    <label id="dc-nota-l"${tipo === "link" ? ' style="display:none"' : ""}>Qual nota<select class="field" name="nota" id="dc-nota"><option value="__nova">Criar uma nota nova com esse título</option>${notas.map(x => `<option value="${x.id}"${d && d.nota === x.id ? " selected" : ""}>${esc([...caminho(x), x.titulo].join(" / "))}</option>`).join("")}</select></label>
+    <div class="two" id="dc-link-l"${tipo === "nota" ? ' style="display:none"' : ""}><label>Link do PDF<input class="field" name="link" id="dc-link" type="url" value="${esc(d ? d.link || "" : "")}" placeholder="https://drive.google.com/file/d/..."></label><label>Atualizado em<input class="field" type="date" name="alt" id="dc-alt" value="${esc(d && d.alt ? d.alt : hojeISO())}"></label></div>
+    ${n > 1 && d ? `<label>Posição na trilha<select class="field" name="pos" id="dc-pos">${p.docs.map((_, i) => `<option value="${i}"${p.docs[i] === d ? " selected" : ""}>${i + 1}</option>`).join("")}</select></label>` : ""}
+    <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${d ? `<button type="button" class="btn ghost" data-act="deldoc" data-id="${d.id}" style="margin-left:auto;color:var(--bad)">Tirar da trilha</button>` : ""}</div>
+    ${d ? '<p class="empty">Tirar da trilha não apaga a nota nem o PDF.</p>' : ""}</form></div></div>`;
+  $("#dc-tit").focus();
 }
 function notaHTML(p, n) {
   if (!n) return '<p class="empty">Essa nota não existe mais.</p>';
   const ed = UI.edit === n.id, cam = caminho(n), quem = (n.editores || []).map(id => (M(id) || {}).curto).filter(Boolean);
   const pastas = notasDe(p.id).filter(x => x.tipo === "pasta"), nomeP = d => [...caminho(d), d.titulo].join(" / ");
-  let h = `<div class="nbar"><button class="btn ghost small" data-act="tab" data-tab="sobre">‹ Voltar</button><span class="ncam">${cam.length ? esc(cam.join(" / ")) + " /" : ""}</span><span class="esp"></span>
+  const naTrilha = (p.docs || []).find(d => d.nota === n.id);
+  let h = `<div class="nbar"><span class="ncam">${cam.length ? esc(cam.join(" / ")) + " /" : ""}</span><span class="nnome">${esc(n.titulo)}</span><span class="esp"></span>
     ${ed ? `<button class="btn small primary" data-act="salvanota">Salvar</button><button class="btn small" data-act="desfaznota" title="Volta ao último texto salvo">Desfazer</button>` : `<button class="btn small primary" data-act="editanota">Editar</button>`}
     ${n.anterior ? `<button class="btn small ghost" data-act="versaoanterior">Versão anterior</button>` : ""}
     <button class="btn small ghost" data-act="novanota" data-pai="${n.pai || ""}">Nova nota</button>
-    ${podeApagarNota(n) ? `<button class="btn small ghost" data-act="apaganota" style="color:var(--bad)">Apagar</button>` : ""}</div>`;
+    ${naTrilha ? `<button class="btn small ghost" data-act="tab" data-tab="doc:${naTrilha.id}">Ver como documento</button>` : ""}
+    ${podeApagarNota(n) ? `<button class="btn small ghost" data-act="apaganota" style="color:var(--bad)">Apagar</button>` : ""}
+    <button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div><div class="ler">`;
   if (ed) h += `<input class="field ntit" id="ntTit" value="${esc(n.titulo)}" aria-label="Título da nota">
     <label class="nmove">Pasta <select class="field" id="ntPai"><option value="">(fora das pastas)</option>${pastas.map(d => `<option value="${d.id}"${d.id === n.pai ? " selected" : ""}>${esc(nomeP(d))}</option>`).join("")}</select></label>
     <textarea class="field ntxt" id="ntTxt" aria-label="Texto da nota">${esc(n.texto)}</textarea>
     <p class="nmeta">[[Nome de outra nota]] cria um link, #tema marca o assunto, **texto** fica em negrito, # no começo faz título e - faz lista. Ctrl+S salva; ao sair da nota ela também é salva.</p>`;
-  else h += `<h2 class="ntitle">${esc(n.titulo)}</h2><div class="md">${md(n.texto, p.id) || '<p class="empty">Nota vazia. Clique em Editar para escrever.</p>'}</div>`;
+  else h += `<div class="md">${md(n.texto, p.id) || '<p class="empty">Nota vazia. Clique em Editar para escrever.</p>'}</div>`;
   if (p.frente === "intervisao") h += `<p class="notice" style="margin-top:12px">Sigilo: não escreva nada que identifique paciente.</p>`;
-  return h + `<p class="nmeta">${quem.length ? "Editada por " + esc(quem.join(", ")) + " · " : ""}última mudança ${quando(n.alt || n.em)}</p>`;
+  return h + `<p class="nmeta">${quem.length ? "Editada por " + esc(quem.join(", ")) + " · " : ""}última mudança ${quando(n.alt || n.em)}</p></div>`;
 }
 function pastaHTML(p, d) {
   if (!d) return '<p class="empty">Essa pasta não existe mais.</p>';
   const fs = filhos(p.id, d.id), cam = caminho(d);
-  return `<div class="nbar"><button class="btn ghost small" data-act="tab" data-tab="sobre">‹ Voltar</button><span class="ncam">${cam.length ? esc(cam.join(" / ")) + " /" : ""}</span><span class="esp"></span>
+  return `<div class="nbar"><span class="ncam">${cam.length ? esc(cam.join(" / ")) + " /" : ""}</span><span class="nnome">📁 ${esc(d.titulo)}</span><span class="esp"></span>
     <button class="btn small" data-act="novanota" data-pai="${d.id}">Nova nota aqui</button><button class="btn small" data-act="novapasta" data-pai="${d.id}">Nova pasta aqui</button>
-    ${!fs.length && podeApagarNota(d) ? `<button class="btn small ghost" data-act="apaganota" style="color:var(--bad)">Apagar pasta</button>` : ""}</div>
+    ${!fs.length && podeApagarNota(d) ? `<button class="btn small ghost" data-act="apaganota" style="color:var(--bad)">Apagar pasta</button>` : ""}<button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>
   <form class="row-form" data-form="pasta" style="margin:0 0 16px"><input class="field" name="titulo" id="pstTit" value="${esc(d.titulo)}" aria-label="Nome da pasta" style="font-size:18px;font-weight:600"><button class="btn small">Renomear</button></form>
   ${fs.map(x => `<button class="li" data-act="${x.tipo === "pasta" ? "pasta" : "abrenota"}" data-id="${x.id}"><span class="tx">${x.tipo === "pasta" ? "📁 " : ""}${esc(x.titulo)}<small>${x.tipo === "pasta" ? plural(filhos(p.id, x.id).length, "item", "itens") : "última mudança " + quando(x.alt || x.em)}</small></span></button>`).join("") || '<p class="empty">Pasta vazia.</p>'}
   <p class="nmeta">Nota da pasta: uma nota com o mesmo nome da pasta abre sozinha quando alguém clica na pasta.</p>`;
@@ -1127,6 +1219,10 @@ document.addEventListener("click", e => {
   if (a === "take") { (P(t.dataset.p) || p).tarefas[+t.dataset.i].quem = UI.me; save(); return render(); }
   if (a === "vote") { const x = p.ideias[+t.dataset.i]; x.votos = x.votos.includes(UI.me) ? x.votos.filter(v => v !== UI.me) : x.votos.concat(UI.me); save(); return render(); }
   if (a === "editnote") { UI.edit = t.dataset.on === "1"; return render(); }
+  if (a === "novodoc") return abrirDoc(p, null);
+  if (a === "editdoc") return abrirDoc(p, t.dataset.id);
+  if (a === "deldoc") { if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para tirar"; return; } p.docs = (p.docs || []).filter(d => d.id !== t.dataset.id); save(); $("#overlay").innerHTML = ""; UI.tab = "sobre"; toast("Saiu da trilha. A nota ou o PDF continuam onde estavam."); return render(); }
+  if (a === "imprimir") return print();
   if (a === "savenote") { p.nota = $("#nota").value; UI.edit = false; save(); toast("Nota salva."); return render(); }
   if (a === "editprof") { UI.edit = t.dataset.on === "1"; return render(); }
   if (a === "theme") { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem(KEY + "-theme", r.dataset.theme); } catch (x) {} return; }
@@ -1167,14 +1263,27 @@ document.addEventListener("click", e => {
   if (a === "delev") { if (!UI.confirmDel) { lerEvento(); UI.confirmDel = true; return desenharEvento(); } S.eventos = S.eventos.filter(x => x.id !== UI.draft.id); save(); $("#overlay").innerHTML = ""; toast("Compromisso apagado."); return render(); }
 });
 document.addEventListener("change", e => { if (e.target.id === "np-frente") { $("#np-nova-l").hidden = e.target.value !== "__nova"; $("#np-nova-l").style.display = e.target.value === "__nova" ? "grid" : "none"; if (e.target.value === "__nova") $("#np-nova").focus(); return; }
+  if (e.target.id === "dc-tipo") { const nota = e.target.value === "nota"; $("#dc-nota-l").style.display = nota ? "" : "none"; $("#dc-link-l").style.display = nota ? "none" : ""; return; }
   if (e.target.id === "meSel") { UI.me = e.target.value; saveUI(); toast("Agora você vê o site como " + M(UI.me).curto + "."); go("perfil"); } });
 document.addEventListener("submit", e => {
   e.preventDefault(); const f = e.target, fd = new FormData(f), k = f.dataset.form, p = UI.v === "projeto" ? P(UI.proj) : null;
   if (k === "tarefa") { const t = (fd.get("t") || "").trim(); if (!t) return; p.tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "", prio: fd.get("prio") || "", em: Date.now() }); save(); toast("Tarefa criada."); return render(); }
   if (k === "ideia") { const t = (fd.get("t") || "").trim(); if (!t) return; p.ideias.push({ t, por: UI.me, votos: [], em: Date.now() }); save(); toast("Ideia adicionada."); return render(); }
+  if (k === "doc") {
+    const tipo = fd.get("tipo"), titulo = String(fd.get("titulo") || "").trim(), link = String(fd.get("link") || "").trim();
+    if (tipo === "link" && !/^https:\/\//.test(link)) return toast("Cole o link do PDF (começa com https://).");
+    let nota = "";
+    if (tipo === "nota") { nota = fd.get("nota"); if (nota === "__nova") { const n = novaNota(p.id, "", "nota"); n.titulo = titulo || "Resumo detalhado"; gravarNota(n); nota = n.id; } }
+    p.docs = p.docs || []; let d = p.docs.find(x => x.id === f.dataset.id);
+    if (!d) { d = { id: "doc" + Date.now() + Math.random().toString(36).slice(2, 5), por: UI.me, em: Date.now() }; p.docs.push(d); }
+    Object.assign(d, { titulo, nota: tipo === "nota" ? nota : "", link: tipo === "link" ? link : "", alt: tipo === "link" ? (fd.get("alt") || hojeISO()) : "" });
+    if (fd.has("pos")) { const i = +fd.get("pos"); p.docs = p.docs.filter(x => x !== d); p.docs.splice(i, 0, d); }
+    save(); $("#overlay").innerHTML = ""; UI.tab = "doc:" + d.id; toast("Documento na trilha."); return render();
+  }
   if (k === "sobre") {
     p.nome = String(fd.get("nome") || "").trim() || p.nome; if (fd.get("frente") && F(fd.get("frente"))) p.frente = fd.get("frente");
     p.status = fd.get("status"); p.resumo = (fd.get("resumo") || "").trim() || p.resumo; p.proximo = (fd.get("proximo") || "").trim();
+    p.missao = (fd.get("missao") || "").trim(); p.inicio = fd.get("inicio") || "";
     if (fd.has("resp")) { const r0 = respProj(p), r1 = fd.get("resp");
       if (r0 !== r1) { p.papeis = p.papeis.map(x => x[1] === "Responsável" ? [x[0], "Participa"] : x); if (r1) { const x = p.papeis.find(y => y[0] === r1); if (x) x[1] = "Responsável"; else p.papeis.unshift([r1, "Responsável"]); } } }
     p.detalhes = String(fd.get("detalhes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => { const i = l.indexOf(":"); return i > 0 ? [l.slice(0, i).trim(), l.slice(i + 1).trim()] : ["Detalhe", l]; });
