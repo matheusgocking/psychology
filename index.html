@@ -184,6 +184,7 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .mcard b { display: block; font-weight: 600; line-height: 1.3; }
 .mcard span.sub { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
 .mcard .none { color: var(--faint); }
+.adm { font-size: .85em; margin-left: 2px; }
 
 /* perfil */
 .prof-head { display: flex; gap: 18px; align-items: center; margin-bottom: 20px; }
@@ -296,7 +297,7 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 
 <script>
 /* ===== DADOS (lidos nos grupos do WhatsApp em 21/10/2026; fotos do WhatsApp, com o aceite de todos) ===== */
-const SEED = { versao: 3, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
+const SEED = { versao: 4, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
 
 /* ===== NUVEM (Firebase). Só liga fora do claude.ai, quando existe firebase-config.js ao lado da página.
    Os dados e as fotos ficam só no banco, atrás do login Google e do código do grupo; o código do site não guarda dado de ninguém. ===== */
@@ -352,6 +353,8 @@ function assinar() {
 }
 function pronto() {
   if (!S.membros.length) return telaImportar();
+  /* ADM (grupo Psychology Adm, 21/10/2026): marcados uma vez no banco; aqui só o código de cada id, para não pôr nome no GitHub */
+  if (!S.membros.some(m => "adm" in m)) { const H = ["1o1d5d2", "1p35xw4", "qzrim0", "g6shs1", "1a66rkq", "1weg7m6"]; S.membros.forEach(m => m.adm = H.includes([...m.id].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0, 2166136261).toString(36))); save(); }
   if (!NV.acesso.membro || !M(NV.acesso.membro)) return telaQuem();
   UI.me = NV.acesso.membro; document.querySelector("header.top").hidden = false; go("inicio");
 }
@@ -395,6 +398,7 @@ const saveUI = () => { try { localStorage.setItem(KEY + "-ui", JSON.stringify({ 
 /* ===== AJUDANTES ===== */
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM">👑</span>' : "";
 const M = id => S.membros.find(m => m.id === id), P = id => S.projetos.find(p => p.id === id), F = id => S.frentes.find(f => f.id === id);
 const fc = f => `var(--c-${f ? f.cor : "gray"})`;
 const hue = id => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
@@ -598,11 +602,11 @@ function md(src) {
 function membersHTML() {
   const sp = new Set(semProjeto().map(m => m.id));
   const projDe = id => S.projetos.filter(p => pessoasProj(p).includes(id));
-  const lista = S.membros.filter(m => UI.filtro === "todos" || (UI.filtro === "sem" ? sp.has(m.id) : projDe(m.id).some(p => p.frente === UI.filtro)));
+  const lista = S.membros.filter(m => UI.filtro === "todos" || (UI.filtro === "sem" ? sp.has(m.id) : projDe(m.id).some(p => p.frente === UI.filtro))).sort((a, b) => !!b.adm - !!a.adm);
   const chip = (k, l, n, cor) => `<button class="chip" data-act="filtro" data-k="${k}" aria-pressed="${UI.filtro === k}">${cor ? `<span class="chipf" style="--fc:${cor}"></span>` : ""}${l} · ${n}</button>`;
   return `<div class="wrap"><h1>Integrantes</h1><p class="lede">Quem está no clube e em que projeto cada um está. Clique numa pessoa para ver o perfil.</p>
   <div class="filters">${chip("todos", "Todos", S.membros.length)}${chip("sem", "Sem projeto", sp.size)}${S.frentes.map(f => chip(f.id, esc(f.nome), S.membros.filter(m => projDe(m.id).some(p => p.frente === f.id)).length, fc(f))).join("")}</div>
-  <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${esc(m.nome)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
+  <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${esc(m.nome)}${coroa(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
 }
 
 /* ===== VOTAÇÕES ===== */
@@ -656,7 +660,7 @@ function personHTML(m) {
   const ps = S.projetos.filter(p => pessoasProj(p).includes(m.id));
   const tk = S.projetos.flatMap(p => p.tarefas.filter(t => t.quem === m.id && t.st !== "feito").map(t => ({ ...t, p })));
   let h = `<div class="wrap">${UI.v === "pessoa" ? `<button class="back" data-act="go" data-v="integrantes">‹ Integrantes</button>` : ""}
-  <div class="prof-head">${av(m.id, 96)}<div><h1 style="margin:0">${esc(m.nome)}</h1><div style="color:var(--muted)">${esc(m.bio || "")}</div></div></div>`;
+  <div class="prof-head">${av(m.id, 96)}<div><h1 style="margin:0">${esc(m.nome)}${coroa(m)}</h1><div style="color:var(--muted)">${esc(m.bio || "")}</div></div></div>`;
   if (meu && UI.edit) {
     return h + `<form class="form" data-form="perfil"><div class="two"><label>Nome<input class="field" name="nome" id="pf-nome" value="${esc(m.nome)}"></label><label>Como prefere ser chamado<input class="field" name="curto" id="pf-curto" value="${esc(m.curto)}"></label></div>
       <label>Uma frase sobre você<input class="field" name="bio" id="pf-bio" value="${esc(m.bio)}"></label>
