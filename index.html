@@ -831,7 +831,7 @@ document.addEventListener("submit", e => {
   if (k === "importar") {
     const f = fd.get("arq"); if (!f || !f.size) return telaImportar("Escolha o arquivo.");
     f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), ida({ ...x, ordem: i }))); return b.commit(); })
-      .then(() => toast("Dados carregados.")).catch(e => telaImportar("Não deu certo: " + e.message)); return;
+      .then(() => { toast("Dados carregados."); setTimeout(pronto, 800); }).catch(e => telaImportar("Não deu certo: " + e.message)); return;
   }
   if (k === "votar") { const v = S.votacoes.find(x => x.id === UI.vot); const ops = fd.getAll("op"); if (!ops.length) return toast("Marque uma opção."); v.votos[UI.me] = ops; save(); toast("Voto registrado."); return render(); }
   if (k === "novavot") {
