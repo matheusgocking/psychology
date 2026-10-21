@@ -151,6 +151,7 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .gate h1 { font-size: 30px; }
 .gate p { color: var(--muted); }
 .gate .form { text-align: left; margin: 18px auto 0; }
+.gate .form .field { width: 100%; min-width: 0; box-sizing: border-box; }
 .gate .who-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; max-height: 50vh; overflow: auto; text-align: left; margin-top: 12px; }
 .gate .who-pick button { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-m); padding: 6px 8px; font-size: 14px; }
 .gate .who-pick button:hover { border-color: var(--accent); }
@@ -297,7 +298,7 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 
 <script>
 /* ===== DADOS (lidos nos grupos do WhatsApp em 21/10/2026; fotos do WhatsApp, com o aceite de todos) ===== */
-const SEED = { versao: 4, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
+const SEED = { versao: 5, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
 
 /* ===== NUVEM (Firebase). Só liga fora do claude.ai, quando existe firebase-config.js ao lado da página.
    Os dados e as fotos ficam só no banco, atrás do login Google e do código do grupo; o código do site não guarda dado de ninguém. ===== */
@@ -330,7 +331,21 @@ function telaImportar(msg) {
 }
 function telaQuem() {
   tela(`<h1>Quem é você?</h1><p>Toque no seu nome. Isso liga a sua conta Google ao seu perfil no clube.</p>
-  <div class="who-pick">${S.membros.map(m => `<button data-act="souEu" data-id="${m.id}">${av(m.id, 28)}${esc(m.nome)}</button>`).join("")}</div>`);
+  <div class="who-pick">${S.membros.filter(m => !m.uid).map(m => `<button data-act="souEu" data-id="${m.id}">${av(m.id, 28)}${esc(m.nome)}</button>`).join("")}</div>
+  <p style="margin-top:18px">Seu nome não está aí?</p><button class="btn primary" data-act="cadastro">Fazer meu cadastro</button>`);
+}
+const OBRIG = ["formacao", "abordagem", "publico", "horas", "quer"];
+function telaCadastro() {
+  tela(`<h1>Seu cadastro</h1><p>Preencha para entrar no clube. O que tem * é obrigatório; depois dá para mudar tudo no seu perfil.</p>
+  <form class="form" data-form="cadastro">
+    <label>Sua foto *<input class="field" type="file" name="foto" id="cd-foto" accept="image/jpeg,image/png,image/webp" required></label>
+    <label>Nome completo *<input class="field" name="nome" id="cd-nome" required></label>
+    <label>Como prefere ser chamado *<input class="field" name="curto" id="cd-curto" required></label>
+    <label>Uma frase sobre você *<input class="field" name="bio" id="cd-bio" required placeholder="Ex.: Psicóloga clínica, TCC, atende adultos online."></label>
+    <label>Afinidades, separadas por vírgula<input class="field" name="afin" id="cd-afin" placeholder="Ex.: Pesquisa, Instagram, Clube do livro"></label>
+    ${CAMPOS.map(([k, l]) => `<label>${l}${OBRIG.includes(k) ? " *" : ""}<input class="field" name="${k}" id="cd-${k}"${OBRIG.includes(k) ? " required" : ""}></label>`).join("")}
+    <div class="row-form"><button class="btn primary">Entrar no clube</button>${NV.on ? `<button type="button" class="btn ghost" data-act="voltaquem">Voltar à lista</button>` : ""}</div>
+  </form>`);
 }
 async function entrarNuvem() {
   firebase.auth().onAuthStateChanged(async u => {
@@ -354,9 +369,11 @@ function assinar() {
 function pronto() {
   if (!S.membros.length) return telaImportar();
   /* ADM (grupo Psychology Adm, 21/10/2026): marcados uma vez no banco; aqui só o código de cada id, para não pôr nome no GitHub */
-  if (!S.membros.some(m => "adm" in m)) { const H = ["1o1d5d2", "1p35xw4", "qzrim0", "g6shs1", "1a66rkq", "1weg7m6"]; S.membros.forEach(m => m.adm = H.includes([...m.id].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0, 2166136261).toString(36))); save(); }
+  if (souDono() && !S.membros.some(m => "adm" in m)) { const H = ["1o1d5d2", "1p35xw4", "qzrim0", "g6shs1", "1a66rkq", "1weg7m6"]; S.membros.forEach(m => m.adm = H.includes(h32(m.id))); save(); }
   if (!NV.acesso.membro || !M(NV.acesso.membro)) return telaQuem();
-  UI.me = NV.acesso.membro; document.querySelector("header.top").hidden = false; go("inicio");
+  UI.me = NV.acesso.membro;
+  /* cada perfil guarda a conta Google que é dele: assim ninguém entra como outra pessoa */
+  if (!M(UI.me).uid) { M(UI.me).uid = NV.user.uid; save(); } document.querySelector("header.top").hidden = false; go("inicio");
 }
 const editando = () => !!$("#overlay").innerHTML || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && document.activeElement.closest("#screen")) || UI.edit;
 function agendarRender() { if (document.querySelector("header.top").hidden) return; if (editando()) { NV.pend = true; return; } NV.pend = false; render(); }
@@ -398,6 +415,18 @@ const saveUI = () => { try { localStorage.setItem(KEY + "-ui", JSON.stringify({ 
 /* ===== AJUDANTES ===== */
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+/* papéis: o dono (Matheus) pode tudo; ADM troca responsáveis, cria frentes, edita qualquer projeto e apaga;
+   integrante cuida do próprio perfil e dos projetos em que está. O banco confere de novo (firestore.rules).
+   Os e-mails do dono vão só como código (h32), para não pôr dado pessoal no GitHub. */
+const h32 = s => [...String(s || "")].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0, 2166136261).toString(36);
+const DONO_H = ["ygdm63", "rvl9ke"];
+const souDono = () => NV.on ? !!(NV.user && DONO_H.includes(h32(String(NV.user.email).toLowerCase()))) : UI.me === SEED.dono;
+const souAdm = () => souDono() || !!(M(UI.me) || {}).adm;
+/* foto do cadastro e do perfil: quadrada, 256 px, para caber no banco */
+const fotoPequena = arq => new Promise((ok, no) => { const img = new Image();
+  img.onload = () => { const n = 256, c = document.createElement("canvas"), k = Math.max(n / img.width, n / img.height); c.width = c.height = n;
+    c.getContext("2d").drawImage(img, (n - img.width * k) / 2, (n - img.height * k) / 2, img.width * k, img.height * k); URL.revokeObjectURL(img.src); ok(c.toDataURL("image/jpeg", .82)); };
+  img.onerror = () => no(new Error("não consegui abrir a foto; use uma foto JPG ou PNG")); img.src = URL.createObjectURL(arq); });
 const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM">👑</span>' : "";
 const M = id => S.membros.find(m => m.id === id), P = id => S.projetos.find(p => p.id === id), F = id => S.frentes.find(f => f.id === id);
 const fc = f => `var(--c-${f ? f.cor : "gray"})`;
@@ -541,7 +570,7 @@ window.addEventListener("resize", () => { if (UI.v === "inicio") mountTree(); })
 
 /* ===== PROJETO (tela cheia) ===== */
 function projHTML(p) {
-  const f = F(p.frente), me = UI.me, dentro = pessoasProj(p).includes(me);
+  const f = F(p.frente), me = UI.me, dentro = pessoasProj(p).includes(me), podeEd = dentro || souAdm(), podeResp = souAdm() || respProj(p) === me;
   const abertas = p.tarefas.filter(t => t.st !== "feito").length;
   const evs = S.eventos.filter(e => e.proj === p.id);
   const tabs = [["sobre", "Sobre"], ["tarefas", "Tarefas", abertas], ["ideias", "Ideias", p.ideias.length], ["notas", "Notas"]];
@@ -556,9 +585,10 @@ function projHTML(p) {
       <label>Em uma frase, o que é<input class="field" name="resumo" id="sb-resumo" value="${esc(p.resumo)}"></label>
       <label>Detalhes, um por linha, no formato Título: texto<textarea class="field" name="detalhes" id="sb-det" style="min-height:130px" placeholder="Quando: segundas, às 8h&#10;Como funciona: ...">${esc(p.detalhes.map(([k, v]) => k + ": " + v).join(String.fromCharCode(10)))}</textarea></label>
       <label>Próximo passo<input class="field" name="proximo" id="sb-prox" value="${esc(p.proximo)}"></label>
+      ${podeResp ? `<label>Responsável<select class="field" name="resp" id="sb-resp"><option value="">Ninguém</option>${S.membros.map(m => `<option value="${m.id}"${m.id === respProj(p) ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select></label>` : ""}
       <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="editnote" data-on="0">Cancelar</button></div></form></div>`;
     h += `<div class="grid2"><div>
-      <h2 class="sec" style="display:flex;align-items:center;gap:8px">Detalhes <button class="btn ghost small" data-act="editnote" data-on="1">Editar</button></h2><ul class="facts">${p.detalhes.map(([k, v]) => `<li><b>${esc(k)}</b><span>${esc(v)}</span></li>`).join("") || '<li class="empty">Ainda sem detalhes.</li>'}</ul>
+      <h2 class="sec" style="display:flex;align-items:center;gap:8px">Detalhes ${podeEd ? `<button class="btn ghost small" data-act="editnote" data-on="1">Editar</button>` : ""}</h2><ul class="facts">${p.detalhes.map(([k, v]) => `<li><b>${esc(k)}</b><span>${esc(v)}</span></li>`).join("") || '<li class="empty">Ainda sem detalhes.</li>'}</ul>
       ${S.votacoes.filter(v => v.proj === p.id).length ? `<h2 class="sec">Votações</h2>${S.votacoes.filter(v => v.proj === p.id).map(v => `<p style="margin:0 0 6px"><button class="wl" data-act="vot" data-id="${v.id}">${esc(v.titulo)}</button> <span style="color:var(--muted);font-size:13.5px">${fechada(v) ? "encerrada" : "aberta"}</span></p>`).join("")}<div style="height:14px"></div>` : ""}
       <div class="next"><h2 class="sec">Próximo passo</h2><p>${esc(p.proximo || "A definir.")}</p></div>
       ${evs.length ? `<h2 class="sec">No calendário</h2>${evs.map(e => `<p style="margin:0 0 4px"><button class="wl" data-act="ev" data-id="${e.id}">${esc(e.titulo)}</button> <span style="color:var(--muted);font-size:13.5px">${e.semanal ? "toda " + ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][new Date(e.data + "T12:00").getDay()] : dm(e.data)}, ${e.ini}</span></p>`).join("")}` : ""}
@@ -606,6 +636,7 @@ function membersHTML() {
   const chip = (k, l, n, cor) => `<button class="chip" data-act="filtro" data-k="${k}" aria-pressed="${UI.filtro === k}">${cor ? `<span class="chipf" style="--fc:${cor}"></span>` : ""}${l} · ${n}</button>`;
   return `<div class="wrap"><h1>Integrantes</h1><p class="lede">Quem está no clube e em que projeto cada um está. Clique numa pessoa para ver o perfil.</p>
   <div class="filters">${chip("todos", "Todos", S.membros.length)}${chip("sem", "Sem projeto", sp.size)}${S.frentes.map(f => chip(f.id, esc(f.nome), S.membros.filter(m => projDe(m.id).some(p => p.frente === f.id)).length, fc(f))).join("")}</div>
+  ${F(UI.filtro) && !F(UI.filtro).aberta ? `<p class="notice" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px">Responsável pela frente ${esc(F(UI.filtro).nome)}: ${souAdm() ? `<select class="field" id="frResp" aria-label="Responsável pela frente" style="font-size:14px"><option value="">Ninguém</option>${S.membros.map(m => `<option value="${m.id}"${m.id === F(UI.filtro).resp ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select>` : `<b>${esc((M(F(UI.filtro).resp) || {}).nome || "ninguém ainda")}</b>`}</p>` : ""}
   <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${esc(m.nome)}${coroa(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
 }
 
@@ -637,7 +668,7 @@ function votacaoHTML(v) {
       ${verRes ? `<span class="n">${c.length ? stack(c, 3, 22) : ""}${plural(c.length, "voto", "votos")}</span>` : ""}</label>`; }).join("")}</div>
   ${fx ? "" : `<div class="row-form"><button class="btn primary">${meus.length ? "Mudar meu voto" : "Votar"}</button>${meus.length ? `<button type="button" class="btn ghost" data-act="tirarvoto">Tirar meu voto</button>` : ""}</div>`}</form>
   <p style="font-size:13.5px;color:var(--muted);margin-top:16px">${verRes ? `${plural(vs.length, "pessoa votou", "pessoas votaram")}.` : "O resultado aparece depois que você vota."} Aberta por ${esc(M(v.criador)?.curto || "alguém")}.</p>
-  ${v.criador === UI.me && !fx ? `<button class="btn small" data-act="encerrar">Encerrar agora</button>` : ""}</div>`;
+  ${(v.criador === UI.me || souAdm()) && !fx ? `<button class="btn small" data-act="encerrar">Encerrar agora</button>` : ""}</div>`;
 }
 function abrirVotacao() {
   $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Nova votação"><h2>Nova votação</h2>
@@ -656,19 +687,19 @@ function abrirVotacao() {
 /* ===== PERFIL ===== */
 const CAMPOS = [["formacao", "Formação"], ["abordagem", "Abordagens"], ["publico", "Público que atende"], ["extra", "Habilidades fora da psicologia"], ["disp", "Dias e horários livres"], ["horas", "Horas por semana para o clube"], ["link", "Instagram ou Lattes"], ["quer", "O que quer do clube"]];
 function personHTML(m) {
-  const meu = m.id === UI.me, pf = m.perfil || {};
+  const meu = m.id === UI.me, pf = m.perfil || {}, pode = meu || souDono();
   const ps = S.projetos.filter(p => pessoasProj(p).includes(m.id));
   const tk = S.projetos.flatMap(p => p.tarefas.filter(t => t.quem === m.id && t.st !== "feito").map(t => ({ ...t, p })));
   let h = `<div class="wrap">${UI.v === "pessoa" ? `<button class="back" data-act="go" data-v="integrantes">‹ Integrantes</button>` : ""}
   <div class="prof-head">${av(m.id, 96)}<div><h1 style="margin:0">${esc(m.nome)}${coroa(m)}</h1><div style="color:var(--muted)">${esc(m.bio || "")}</div></div></div>`;
-  if (meu && UI.edit) {
-    return h + `<form class="form" data-form="perfil"><div class="two"><label>Nome<input class="field" name="nome" id="pf-nome" value="${esc(m.nome)}"></label><label>Como prefere ser chamado<input class="field" name="curto" id="pf-curto" value="${esc(m.curto)}"></label></div>
+  if (pode && UI.edit) {
+    return h + `<form class="form" data-form="perfil"><label>${m.foto ? "Trocar a foto" : "Foto"}<input class="field" type="file" name="foto" id="pf-foto" accept="image/jpeg,image/png,image/webp"></label><div class="two"><label>Nome<input class="field" name="nome" id="pf-nome" value="${esc(m.nome)}"></label><label>Como prefere ser chamado<input class="field" name="curto" id="pf-curto" value="${esc(m.curto)}"></label></div>
       <label>Uma frase sobre você<input class="field" name="bio" id="pf-bio" value="${esc(m.bio)}"></label>
       <label>Afinidades, separadas por vírgula<input class="field" name="afin" id="pf-afin" value="${esc(m.afin.join(", "))}"></label>
       ${CAMPOS.map(([k, l]) => `<label>${l}<input class="field" name="${k}" id="pf-${k}" value="${esc(pf[k] || "")}"></label>`).join("")}
       <div class="row-form"><button class="btn primary">Salvar perfil</button><button type="button" class="btn ghost" data-act="editprof" data-on="0">Cancelar</button></div></form></div>`;
   }
-  h += `${meu ? `<button class="btn" data-act="editprof" data-on="1" style="margin-bottom:20px">Editar meu perfil</button>` : ""}
+  h += `${pode ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px"><button class="btn" data-act="editprof" data-on="1">${meu ? "Editar meu perfil" : "Editar perfil"}</button>${souDono() && !meu ? `<button class="btn ghost" data-act="togadm">${m.adm ? "Tirar de ADM" : "Tornar ADM"}</button>` : ""}</div>` : ""}
   <div class="grid2"><div>
     <h2 class="sec">Projetos</h2>${ps.map(p => `<button class="person" data-act="proj" data-id="${p.id}"><span class="chipf" style="--fc:${fc(F(p.frente))}"></span><span><b>${esc(p.nome)}</b><small>${esc(p.papeis.find(r => r[0] === m.id)[1])}</small></span></button>`).join("") || '<p class="empty">Ainda não está em nenhum projeto.</p>'}
     <h2 class="sec" style="margin-top:22px">Ficha de inscrição</h2><dl class="kv">${CAMPOS.map(([k, l]) => `<dt>${l}</dt><dd>${pf[k] ? esc(pf[k]) : '<span style="color:var(--faint)">ainda não preencheu</span>'}</dd>`).join("")}</dl>
@@ -737,7 +768,7 @@ function calHTML() {
 
 /* janela de compromisso */
 function abrirEvento(id, data) {
-  const novo = !id; const e = novo ? { id: "e" + Date.now(), titulo: "", data: data || ymd(new Date()), ini: "19:00", fim: "20:00", local: "Google Meet", proj: UI.v === "projeto" ? UI.proj : "", quem: [UI.me], semanal: false, desc: "" } : JSON.parse(JSON.stringify(S.eventos.find(x => x.id === id)));
+  const novo = !id; const e = novo ? { id: "e" + Date.now(), titulo: "", data: data || ymd(new Date()), ini: "19:00", fim: "20:00", local: "Google Meet", proj: UI.v === "projeto" ? UI.proj : "", quem: [UI.me], semanal: false, desc: "", criador: UI.me } : JSON.parse(JSON.stringify(S.eventos.find(x => x.id === id)));
   UI.draft = e; UI.confirmDel = false; desenharEvento();
 }
 function desenharEvento() {
@@ -751,7 +782,7 @@ function desenharEvento() {
     <label style="display:flex;gap:8px;align-items:center;color:var(--fg)"><input type="checkbox" name="semanal" id="ev-s"${e.semanal ? " checked" : ""}> Repete toda semana</label>
     <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:4px">Quem vai (${e.quem.length})</div><div class="pick">${S.membros.map(m => `<button type="button" class="chip" data-act="who" data-id="${m.id}" aria-pressed="${e.quem.includes(m.id)}">${av(m.id, 24)}${esc(m.curto)}</button>`).join("")}</div></div>
     <label>Observações<textarea class="field" name="desc" id="ev-o" style="min-height:80px">${esc(e.desc)}</textarea></label>
-    <div class="row-form"><button class="btn primary">${novo ? "Criar compromisso" : "Salvar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${novo ? "" : `<button type="button" class="btn ghost" data-act="delev" style="margin-left:auto;color:var(--bad)">${UI.confirmDel ? "Clique de novo para apagar" : "Apagar"}</button>`}</div>
+    <div class="row-form"><button class="btn primary">${novo ? "Criar compromisso" : "Salvar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${novo || !(souAdm() || e.criador === UI.me) ? "" : `<button type="button" class="btn ghost" data-act="delev" style="margin-left:auto;color:var(--bad)">${UI.confirmDel ? "Clique de novo para apagar" : "Apagar"}</button>`}</div>
   </form></div></div>`;
 }
 function lerEvento() { const f = document.querySelector('[data-form="evento"]'); if (!f) return; const fd = new FormData(f), e = UI.draft; ["titulo", "data", "local", "ini", "fim", "proj", "desc"].forEach(k => e[k] = fd.get(k) || ""); e.semanal = !!fd.get("semanal"); }
@@ -769,7 +800,7 @@ function abrirProjeto() {
   <form class="form" data-form="projeto">
     <label>Nome do projeto<input class="field" name="nome" id="np-nome" required placeholder="Ex.: Grupo de estudos de ACT"></label>
     <label>Em uma frase, o que é<input class="field" name="resumo" id="np-resumo" placeholder="Para quem está de fora entender"></label>
-    <label>Frente<select class="field" name="frente" id="np-frente" data-act="npfrente">${S.frentes.map(f => `<option value="${f.id}">${esc(f.nome)}</option>`).join("")}<option value="__nova">Uma frente nova...</option></select></label>
+    <label>Frente<select class="field" name="frente" id="np-frente" data-act="npfrente">${S.frentes.map(f => `<option value="${f.id}">${esc(f.nome)}</option>`).join("")}${souAdm() ? `<option value="__nova">Uma frente nova...</option>` : ""}</select></label>
     <label id="np-nova-l" hidden>Nome da frente nova<input class="field" name="nova" id="np-nova" placeholder="Ex.: Estudos"></label>
     <label>Responsável<select class="field" name="resp" id="np-resp"><option value="">Ninguém ainda</option>${S.membros.map(m => `<option value="${m.id}"${m.id === UI.me ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select></label>
     <div class="row-form"><button class="btn primary">Criar projeto</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div>
@@ -803,7 +834,11 @@ document.addEventListener("click", e => {
   if (a === "login") { const pr = new firebase.auth.GoogleAuthProvider(); pr.setCustomParameters({ prompt: "select_account" });
     return firebase.auth().signInWithPopup(pr).catch(e => telaLogin(e.code === "auth/popup-blocked" ? "O navegador bloqueou a janela de login. Libere as janelas pop-up deste site e tente de novo." : e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request" ? "" : "Não deu para entrar (" + e.code + ").")); }
   if (a === "sair") return firebase.auth().signOut().then(() => location.reload());
-  if (a === "souEu") { NV.db.collection("acessos").doc(NV.user.uid).update({ membro: t.dataset.id }).then(() => { NV.acesso.membro = t.dataset.id; pronto(); }); return; }
+  if (a === "souEu") { const id = t.dataset.id, b = NV.db.batch(); b.update(NV.db.collection("membros").doc(id), { uid: NV.user.uid }); b.update(NV.db.collection("acessos").doc(NV.user.uid), { membro: id });
+    b.commit().then(() => { NV.acesso.membro = id; M(id).uid = NV.user.uid; NV.last["membros/" + id] = JSON.stringify(M(id)); pronto(); }).catch(() => toast("Esse perfil já está ligado a outra conta. Se é você, fale com o Matheus.")); return; }
+  if (a === "cadastro") return telaCadastro();
+  if (a === "voltaquem") return telaQuem();
+  if (a === "togadm") { const m = M(UI.person); m.adm = !m.adm; save(); toast(m.adm ? m.curto + " agora é ADM." : m.curto + " não é mais ADM."); return render(); }
   if (a === "newproj") return abrirProjeto();
   if (a === "newvot") return abrirVotacao();
   if (a === "vot") return go("votacao", { vot: t.dataset.id });
@@ -821,6 +856,7 @@ document.addEventListener("click", e => {
   if (a === "delev") { if (!UI.confirmDel) { lerEvento(); UI.confirmDel = true; return desenharEvento(); } S.eventos = S.eventos.filter(x => x.id !== UI.draft.id); save(); $("#overlay").innerHTML = ""; toast("Compromisso apagado."); return render(); }
 });
 document.addEventListener("change", e => { if (e.target.id === "np-frente") { $("#np-nova-l").hidden = e.target.value !== "__nova"; if (e.target.value === "__nova") $("#np-nova").focus(); return; }
+  if (e.target.id === "frResp") { F(UI.filtro).resp = e.target.value || null; save(); toast("Responsável trocado."); return render(); }
   if (e.target.id === "meSel") { UI.me = e.target.value; saveUI(); toast("Agora você vê o site como " + M(UI.me).curto + "."); go("perfil"); } });
 document.addEventListener("submit", e => {
   e.preventDefault(); const f = e.target, fd = new FormData(f), k = f.dataset.form, p = UI.v === "projeto" ? P(UI.proj) : null;
@@ -828,6 +864,8 @@ document.addEventListener("submit", e => {
   if (k === "ideia") { const t = (fd.get("t") || "").trim(); if (!t) return; p.ideias.push({ t, por: UI.me, votos: [] }); save(); toast("Ideia adicionada."); return render(); }
   if (k === "sobre") {
     p.status = fd.get("status"); p.resumo = (fd.get("resumo") || "").trim() || p.resumo; p.proximo = (fd.get("proximo") || "").trim();
+    if (fd.has("resp")) { const r0 = respProj(p), r1 = fd.get("resp");
+      if (r0 !== r1) { p.papeis = p.papeis.map(x => x[1] === "Responsável" ? [x[0], "Participa"] : x); if (r1) { const x = p.papeis.find(y => y[0] === r1); if (x) x[1] = "Responsável"; else p.papeis.unshift([r1, "Responsável"]); } } }
     p.detalhes = String(fd.get("detalhes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => { const i = l.indexOf(":"); return i > 0 ? [l.slice(0, i).trim(), l.slice(i + 1).trim()] : ["Detalhe", l]; });
     UI.edit = false; save(); toast("Projeto atualizado."); return render();
   }
@@ -836,6 +874,20 @@ document.addEventListener("submit", e => {
     const f = fd.get("arq"); if (!f || !f.size) return telaImportar("Escolha o arquivo.");
     f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), ida({ ...x, ordem: i }))); return b.commit(); })
       .then(() => { toast("Dados carregados."); setTimeout(pronto, 800); }).catch(e => telaImportar("Não deu certo: " + e.message)); return;
+  }
+  if (k === "cadastro") {
+    const tx = c => String(fd.get(c) || "").trim(), arq = fd.get("foto"), bt = f.querySelector(".btn.primary");
+    if (["nome", "curto", "bio", ...OBRIG].some(c => !tx(c))) return toast("Preencha tudo o que tem *.");
+    if (!arq || !arq.size) return toast("Escolha uma foto.");
+    bt.disabled = true; bt.textContent = "Salvando...";
+    fotoPequena(arq).then(foto => {
+      const id = "m" + Date.now(), m = { id, nome: tx("nome"), curto: tx("curto"), bio: tx("bio"), afin: tx("afin").split(",").map(x => x.trim()).filter(Boolean), foto, adm: false, ordem: Date.now(), perfil: Object.fromEntries(CAMPOS.map(([c]) => [c, tx(c)])) };
+      if (!NV.on) { S.membros.push(m); save(); toast("Cadastro feito."); UI.me = id; saveUI(); document.querySelector("header.top").hidden = false; return go("perfil"); }
+      m.uid = NV.user.uid; const b = NV.db.batch();
+      b.set(NV.db.collection("membros").doc(id), ida(m)); b.update(NV.db.collection("acessos").doc(NV.user.uid), { membro: id });
+      return b.commit().then(() => { S.membros.push(m); NV.last["membros/" + id] = JSON.stringify(m); NV.acesso.membro = id; toast("Cadastro feito. Bem-vindo ao clube!"); pronto(); });
+    }).catch(x => { toast("Não deu para salvar: " + x.message); bt.disabled = false; bt.textContent = "Entrar no clube"; });
+    return;
   }
   if (k === "votar") { const v = S.votacoes.find(x => x.id === UI.vot); const ops = fd.getAll("op"); if (!ops.length) return toast("Marque uma opção."); v.votos[UI.me] = ops; save(); toast("Voto registrado."); return render(); }
   if (k === "novavot") {
@@ -855,7 +907,9 @@ document.addEventListener("submit", e => {
   }
   if (k === "tarefa-cal") { const t = (fd.get("t") || "").trim(); if (!t) return; P(fd.get("proj")).tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "" }); save(); $("#overlay").innerHTML = ""; toast("Tarefa criada."); return render(); }
   if (k === "evento") { lerEvento(); const d = UI.draft; if (!d.titulo.trim()) return toast("Dê um título ao compromisso."); const i = S.eventos.findIndex(x => x.id === d.id); if (i >= 0) S.eventos[i] = d; else S.eventos.push(d); save(); $("#overlay").innerHTML = ""; toast(i >= 0 ? "Compromisso salvo." : "Compromisso criado."); return render(); }
-  if (k === "perfil") { const m = M(UI.me); m.nome = fd.get("nome") || m.nome; m.curto = fd.get("curto") || m.curto; m.bio = fd.get("bio") || ""; m.afin = String(fd.get("afin") || "").split(",").map(s => s.trim()).filter(Boolean); m.perfil = Object.fromEntries(CAMPOS.map(([c]) => [c, fd.get(c) || ""])); UI.edit = false; save(); toast("Perfil salvo."); return render(); }
+  if (k === "perfil") { const m = M(UI.v === "perfil" ? UI.me : UI.person), arq = fd.get("foto");
+    if (arq && arq.size) return fotoPequena(arq).then(ft => { m.foto = ft; fd.delete("foto"); f.querySelector("#pf-foto").value = ""; f.requestSubmit(); }).catch(x => toast("Não deu: " + x.message));
+    m.nome = fd.get("nome") || m.nome; m.curto = fd.get("curto") || m.curto; m.bio = fd.get("bio") || ""; m.afin = String(fd.get("afin") || "").split(",").map(s => s.trim()).filter(Boolean); m.perfil = Object.fromEntries(CAMPOS.map(([c]) => [c, fd.get(c) || ""])); UI.edit = false; save(); toast("Perfil salvo."); return render(); }
 });
 document.addEventListener("keydown", e => { if (e.key === "Escape") $("#overlay").innerHTML = ""; if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".day[data-act]")) { e.preventDefault(); e.target.click(); } });
 
