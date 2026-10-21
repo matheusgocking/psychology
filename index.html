@@ -753,7 +753,7 @@ document.addEventListener("pointerup", () => {
   }
   DRAG = null;
 });
-window.addEventListener("resize", () => { if (UI.v === "inicio") mountTree(); });
+window.addEventListener("resize", () => { if (UI.v === "inicio" && $("#treeBox")) mountTree(); });
 
 /* ===== PROJETO (tela cheia). Desenho do Matheus (21/10/2026): à esquerda os itens fixos e as pastas e notas, como no Obsidian;
    à direita o resumo, ou a nota aberta. Qualquer um cria e edita nota; apaga quem foi o único a editar, e os ADM apagam qualquer uma. ===== */
