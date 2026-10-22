@@ -143,7 +143,7 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .empty { color: var(--faint); font-size: 14px; margin: 6px 0; }
 .task { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
 .task .t small { display: block; color: var(--faint); font-size: 12.5px; }
-.task.done .t > span { text-decoration: line-through; color: var(--faint); }
+.task.done .tt { text-decoration: line-through; color: var(--faint); }
 .st { border: 1px solid var(--line); background: var(--raised); border-radius: 99px; font-size: 12.5px; padding: 2px 10px; min-height: 30px; white-space: nowrap; }
 .st.fazendo { color: var(--warn); border-color: color-mix(in oklch, var(--warn) 50%, transparent); }
 .st.feito { color: var(--ok); border-color: color-mix(in oklch, var(--ok) 50%, transparent); }
@@ -179,7 +179,7 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .badge.off { background: var(--line); color: var(--muted); }
 .badge.ok { background: color-mix(in oklch, var(--ok) 14%, transparent); color: var(--ok); }
 .opts { display: grid; gap: 8px; margin: 16px 0; max-width: 640px; }
-.opt { position: relative; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: var(--r-m); padding: 10px 12px; background: var(--raised); cursor: pointer; overflow: hidden; }
+.opt { position: relative; text-align: left; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: var(--r-m); padding: 10px 12px; background: var(--raised); cursor: pointer; overflow: hidden; }
 .opt input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; position: relative; }
 .opt .bar { position: absolute; inset: 0 auto 0 0; background: var(--accent-soft); pointer-events: none; }
 .opt .tx { position: relative; flex: 1; }
@@ -345,7 +345,8 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .nmeta { font-size: 12.5px; color: var(--faint); margin-top: 14px; }
 .md li.ck { list-style: none; margin-left: -18px; }
 .task button.t { background: none; border: 0; padding: 0; text-align: left; color: inherit; font: inherit; cursor: pointer; min-width: 0; }
-.task button.t:hover > span { text-decoration: underline; text-decoration-color: var(--line-strong); }
+.task button.t:hover .tt { text-decoration: underline; text-decoration-color: var(--line-strong); }
+.li button.tx { background: none; border: 0; padding: 0; text-align: left; color: inherit; font: inherit; cursor: pointer; }
 .task .late { color: var(--bad); font-weight: 600; }
 .prio { font-size: 13px; }
 /* online, sala agora, início e conversa (21/10/2026) */
@@ -374,8 +375,91 @@ a.btn.primary { color: var(--on-accent); }
 .msg .bub small { display: block; font-size: 12px; color: var(--faint); margin-bottom: 2px; }
 .msg .bub p { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .msg .x { background: none; border: 0; padding: 0 0 0 6px; color: var(--faint); font-size: 12px; text-decoration: underline; }
+/* versão de 22/10/2026: tarefas com responsável e observações, chat agrupado, notas com botão direito e arrastar, rede das notas, minha área */
+.task { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; padding: 10px 8px; border-radius: var(--r-m); border-bottom: 0; }
+.task + .task { box-shadow: 0 -1px 0 var(--line); }
+.task:hover { background: color-mix(in oklch, var(--fg) 4%, transparent); }
+.tck { width: 22px; height: 22px; border-radius: 50%; border: 0; padding: 0; background: none; display: grid; place-items: center; color: var(--line-strong); flex: none; }
+.tck svg { width: 22px; height: 22px; display: block; }
+.tck:hover { color: var(--accent); }
+.tck.fazendo { color: var(--warn); } .tck.feito { color: var(--ok); }
+.task .tt { font-size: 15px; line-height: 1.35; }
+.task .t small { margin-top: 2px; }
+.task .tobs { display: block; color: var(--muted); font-size: 13px; margin-top: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60ch; }
+.task.done .tt { text-decoration: line-through; color: var(--faint); }
+.tresp { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); max-width: 210px; min-width: 0; }
+.tresp .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpriv { font-size: 12px; color: var(--faint); }
+.thead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+.thead h1 { margin: 0; }
+.thead .esp { flex: 1; }
+.tsec { display: flex; align-items: baseline; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); margin: 22px 0 4px; padding: 0 8px; }
+.tsec .n { font-weight: 400; color: var(--faint); }
+.tsec.late { color: var(--bad); }
+.tlist { border: 1px solid var(--line); border-radius: var(--r-l); background: var(--raised); padding: 4px; }
+details.feitas { margin-top: 18px; }
+details.feitas summary, details.ideias-old summary { cursor: pointer; color: var(--muted); font-size: 13.5px; padding: 6px 8px; }
+.dialog textarea.field.obs { min-height: 96px; }
+.dialog .tipo-eu { font-size: 13px; color: var(--muted); margin: -6px 0 0; }
+.card .ch { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.card .ch h2 { margin: 0; flex: 1; }
+.li .tck { width: 20px; height: 20px; } .li .tck svg { width: 20px; height: 20px; }
+.li .tx.tdone { text-decoration: line-through; color: var(--faint); }
+/* chat */
+.chatbox { display: flex; flex-direction: column; height: calc(100vh - 210px); min-height: 360px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--bg); overflow: hidden; }
+.chatbox .chat { flex: 1; max-height: none; margin: 0; padding: 14px 16px 8px; gap: 2px; align-content: start; }
+.dia { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--faint); margin: 14px 0 8px; }
+.dia::before, .dia::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+.msg { margin-top: 10px; }
+.msg.cont { margin-top: 2px; }
+.msg.cont > .av { visibility: hidden; height: 0; }
+.msg.meu { flex-direction: row-reverse; }
+.msg.meu .bub { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.msg.meu .bub small, .msg.meu .x { color: color-mix(in oklch, var(--on-accent) 75%, transparent); }
+.msg .bub { max-width: min(560px, 78%); border-radius: 16px; }
+.msg:not(.meu) .bub { border-top-left-radius: 6px; } .msg.meu .bub { border-top-right-radius: 6px; }
+.msg.cont:not(.meu) .bub { border-top-left-radius: 16px; } .msg.cont.meu .bub { border-top-right-radius: 16px; }
+.msg .bub small b { font-weight: 600; color: var(--fg); }
+.msg.meu .bub small b { color: inherit; }
+.msg .x { opacity: 0; } .msg:hover .x, .msg .x:focus-visible { opacity: 1; }
+.composer { display: flex; gap: 8px; align-items: flex-end; border-top: 1px solid var(--line); padding: 10px 12px; background: var(--panel); }
+.composer textarea { flex: 1; min-height: 42px; max-height: 160px; resize: none; border-radius: 21px; padding: 9px 16px; line-height: 1.4; font-size: 15px; }
+.send { width: 42px; height: 42px; border-radius: 50%; border: 0; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; flex: none; }
+.send svg { width: 19px; height: 19px; }
+/* notas: menu do botão direito (medidas do .menu do Obsidian 1.14.4) e arrastar */
+.ctx { position: fixed; z-index: 50; min-width: 200px; max-width: 280px; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--r-m); padding: 4px; box-shadow: var(--shadow); box-sizing: border-box; }
+.ctx button { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: none; text-align: left; padding: 4px 8px; min-height: 30px; border-radius: var(--r-s); font-size: 13.5px; color: var(--fg); white-space: nowrap; }
+.ctx button:hover, .ctx button:focus-visible { background: color-mix(in oklch, var(--fg) 8%, transparent); outline: none; }
+.ctx button .ic { width: 16px; color: var(--muted); text-align: center; flex: none; }
+.ctx .sep { border-top: 1px solid var(--line); margin: 4px -4px; }
+.ctx .warn, .ctx .warn .ic { color: var(--bad); }
+.ctx .tit { font-size: 12px; color: var(--faint); padding: 4px 8px 2px; }
+.ti { position: relative; }
+.ti .mais { margin-left: auto; opacity: 0; border: 0; background: none; color: var(--muted); padding: 0 4px; border-radius: var(--r-s); font-size: 15px; line-height: 1; flex: none; }
+.ti:hover .mais, .ti.sel .mais, .ti .mais:focus-visible { opacity: 1; }
+@media (hover: none) { .ti .mais { opacity: 1; } }
+.ti.arrastando { opacity: .45; }
+.ti.drop { background: var(--accent-soft); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--accent) 60%, transparent); }
+.ptree { min-height: 90px; border-radius: var(--r-m); padding-bottom: 30px; }
+.ptree.drop { background: color-mix(in oklch, var(--accent) 6%, transparent); }
+.ti input.ren { flex: 1; min-width: 0; font: inherit; font-size: 14px; border: 1px solid var(--accent); border-radius: var(--r-s); padding: 1px 4px; background: var(--raised); }
+.phead .ib { display: inline-grid; place-items: center; width: 26px; height: 26px; padding: 0; }
+.phead .ib svg { width: 16px; height: 16px; }
+.dica { font-size: 12px; color: var(--faint); margin: 4px 6px 0; }
+/* rede das notas (forças e desenho medidos no Obsidian 1.14.4: sim.js e app.js) */
+.grafo { position: relative; height: calc(100vh - 230px); min-height: 380px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--bg); overflow: hidden; touch-action: none; }
+.grafo canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+.grafo canvas.pega { cursor: pointer; }
+.grafo .gctl { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; }
+.grafo .gleg { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: var(--faint); pointer-events: none; }
+/* minha área e projetos excluídos */
+.priv { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-m); padding: 7px 12px; margin-bottom: 16px; }
+.node .edf { position: absolute; top: -11px; left: -11px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--raised); color: var(--muted); border: 1px solid var(--line-strong); font-size: 12px; line-height: 1; box-shadow: var(--shadow); cursor: pointer; }
+.node .edf:hover { color: var(--fg); border-color: var(--fc); }
+.lixo-li { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
+.lixo-li .tx { flex: 1; min-width: 0; } .lixo-li small { display: block; color: var(--faint); font-size: 12.5px; }
 @media (max-width: 760px) {
-  .nav button { padding: 0 10px; font-size: 14px; } .nav button:first-child svg { display: none; } .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
+  .nav { overflow-x: auto; scrollbar-width: none; min-width: 0; } .nav button { padding: 0 10px; font-size: 14px; white-space: nowrap; } .nav button:first-child svg { display: none; } .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
   .grid2 { grid-template-columns: 1fr; }
   .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
   .facts li { grid-template-columns: 1fr; gap: 0; }
@@ -388,6 +472,9 @@ a.btn.primary { color: var(--on-accent); }
   .month { gap: 4px; } .day { min-height: 64px; padding: 5px 4px; gap: 3px; overflow: hidden; } .day .num { font-size: 13px; } .dpill { padding: 2px 7px; } .dpill b { font-size: 14px; } .dpill .pw, .dpill.vazio { display: none; } .day .linha { font-size: 10px; }
   .cbar .stats { order: 3; }
   .modal { padding: 0; } .dialog { max-height: 100vh; height: 100%; border-radius: 0; width: 100%; }
+  .tresp .nm { display: none; } .task { padding: 9px 4px; }
+  .chatbox { height: calc(100vh - 170px); } .msg .bub { max-width: 86%; }
+  .grafo { height: 64vh; }
 }
 @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
 </style>
@@ -397,6 +484,7 @@ a.btn.primary { color: var(--on-accent); }
     <button data-act="go" data-v="inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18M5 4c0 5 3 8 7 8s7-3 7-8M5 4v3M19 4v3M12 3l-2 2M12 3l2 2"/></svg>Início</button>
     <button data-act="go" data-v="integrantes">Integrantes</button>
     <button data-act="go" data-v="tarefas">Tarefas</button>
+    <button data-act="area" data-v="area">Minha área</button>
     <button data-act="go" data-v="votacoes">Votações</button>
   </nav>
   <div class="right">
@@ -411,7 +499,7 @@ a.btn.primary { color: var(--on-accent); }
 
 <script>
 /* ===== DADOS (lidos nos grupos do WhatsApp em 21/10/2026; fotos do WhatsApp, com o aceite de todos) ===== */
-const SEED = { versao: 8, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
+const SEED = { versao: 9, membros: [], frentes: [], projetos: [], votacoes: [], eventos: [] };
 
 /* ===== NUVEM (Firebase). Só liga fora do claude.ai, quando existe firebase-config.js ao lado da página.
    Os dados e as fotos ficam só no banco, atrás do login Google e do código do grupo; o código do site não guarda dado de ninguém. ===== */
@@ -470,18 +558,31 @@ async function entrarNuvem() {
   });
 }
 function assinar() {
-  S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [], mensagens: [], notas: [] }; NV.prontos = 0;
-  NV.db.collection("notas").onSnapshot(snap => { S.notas = snap.docs.map(d => volta(d.data())); NV.notasOk = true; tentarMigrar(); agendarRender(); }, () => {});
+  S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [], mensagens: [], notas: [], pessoal: { tarefas: [] }, lixo: [] }; NV.prontos = 0;
+  NV.db.collection("notas").onSnapshot(snap => { S.notas = snap.docs.map(d => volta(d.data())).concat(S.notas.filter(n => n.dono)); NV.notasOk = true; tentarMigrar(); agendarRender(); }, () => {});
   /* a conversa e o online ficam fora do salvamento geral: cada mensagem e cada sinal é um documento próprio */
   NV.db.collection("mensagens").orderBy("em", "desc").limit(300).onSnapshot(snap => { S.mensagens = snap.docs.map(d => d.data()); if (UI.v === "projeto" && UI.tab === "conversa") renderChat(); else if (UI.v === "inicio") agendarRender(); }, () => {});
   NV.db.collection("online").onSnapshot(snap => { snap.docs.forEach(d => ON[d.id] = d.data().t || 0); marcarOnline(); }, () => {});
   for (const c of COLS) NV.db.collection(c).onSnapshot(snap => {
     S[c] = snap.docs.map(d => volta(d.data())).sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+    /* projeto excluído vai para a lixeira (campo excluido) e sai das telas; o ADM restaura */
+    if (c === "projetos") { S.lixo = S.projetos.filter(p => p.excluido); S.projetos = S.projetos.filter(p => !p.excluido); }
     for (const k of Object.keys(NV.last)) if (k.startsWith(c + "/")) delete NV.last[k];
     S[c].forEach(x => NV.last[c + "/" + x.id] = JSON.stringify(x));
     if (NV.prontos < COLS.length) { NV.prontos++; if (NV.prontos === COLS.length) pronto(); return; }
     agendarRender();
   }, () => telaCodigo("Sem acesso ao banco. Confira o código."));
+}
+/* minha área: tarefas e notas que só a própria pessoa vê. Ficam na coleção "pessoal", e o banco só entrega a cada um o que é dele (firestore.rules) */
+function assinarPessoal(me) {
+  if (NV.pessoal === me) return; NV.pessoal = me;
+  NV.db.collection("pessoal").where("dono", "==", me).onSnapshot(snap => {
+    const ds = snap.docs.map(d => volta(d.data())), tk = ds.find(d => d.tipo === "tarefas");
+    S.pessoal.tarefas.splice(0, S.pessoal.tarefas.length, ...((tk && tk.lista) || []));
+    NV.lastEu = JSON.stringify(S.pessoal.tarefas);
+    S.notas = S.notas.filter(n => !n.dono).concat(ds.filter(d => d.tipo === "nota" || d.tipo === "pasta"));
+    agendarRender();
+  }, () => { NV.semPessoal = true; });
 }
 function tentarMigrar() { if (!NV.migrou && NV.notasOk && NV.prontos >= COLS.length) { NV.migrou = true; migrarNotas(); } }
 function pronto() {
@@ -491,13 +592,14 @@ function pronto() {
   if (!NV.acesso.membro || !M(NV.acesso.membro)) return telaQuem();
   UI.me = NV.acesso.membro;
   /* cada perfil guarda a conta Google que é dele: assim ninguém entra como outra pessoa */
+  assinarPessoal(UI.me);
   if (!M(UI.me).uid) { M(UI.me).uid = NV.user.uid; save(); } document.querySelector("header.top").hidden = false; go("inicio");
   if (!NV.pulso) { NV.pulso = setInterval(pulsar, 120e3); pulsar(); }
   tentarMigrar();
 }
-const editando = () => !!$("#overlay").innerHTML || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && document.activeElement.closest("#screen")) || UI.edit;
+const editando = () => !!$("#overlay").innerHTML || (document.activeElement && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName) && document.activeElement.closest("#screen")) || UI.edit || !!UI.ren || !!ARR || !!(REDE && (REDE.drag || REDE.pan));
 function agendarRender() { if (document.querySelector("header.top").hidden) return; if (editando()) { NV.pend = true; return; } NV.pend = false; render(); }
-document.addEventListener("focusout", () => setTimeout(() => { if (NV.pend && !editando()) agendarRender(); }, 50));
+document.addEventListener("focusout", e => { if (e.target.id === "renIn" && UI.ren) setTimeout(() => { if (UI.ren && document.activeElement !== $("#renIn")) fimRenomear(true); }, 0); setTimeout(() => { if (NV.pend && !editando()) agendarRender(); }, 50); });
 function gravarNuvem() {
   const batch = NV.db.batch(); let n = 0;
   for (const c of COLS) {
@@ -521,6 +623,8 @@ function gravarNuvem() {
     for (const k of Object.keys(NV.last)) if (k.startsWith(c + "/") && !ids.has(k)) { batch.delete(NV.db.collection(c).doc(k.slice(c.length + 1))); delete NV.last[k]; n++; }
   }
   if (n) batch.commit().catch(e => toast("Não consegui salvar: " + e.message));
+  const eu = JSON.stringify(S.pessoal.tarefas);
+  if (NV.pessoal && eu !== NV.lastEu) { NV.lastEu = eu; NV.db.collection("pessoal").doc("t-" + NV.pessoal).set(ida({ id: "t-" + NV.pessoal, dono: NV.pessoal, tipo: "tarefas", lista: JSON.parse(eu) })).catch(e => toast("Não consegui salvar na sua área: " + e.message)); }
 }
 
 /* ===== ESTADO (versão de teste: fica no navegador de quem usa) ===== */
@@ -528,7 +632,7 @@ const KEY = "psychology-site-v2";
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { S = null; }
 if (!S || S.versao !== SEED.versao) S = JSON.parse(JSON.stringify(SEED));
-S.mensagens = S.mensagens || []; S.notas = S.notas || [];
+S.mensagens = S.mensagens || []; S.notas = S.notas || []; S.pessoal = S.pessoal || { tarefas: [] }; S.lixo = S.lixo || [];
 const UI = { v: "inicio", proj: null, tab: "sobre", person: null, filtro: "todos", cal: "semana", ref: null, me: "matheus", edit: false, pastas: {}, pastaSel: "", tf: null };
 try { const u = JSON.parse(localStorage.getItem(KEY + "-ui") || "{}"); if (u.me) UI.me = u.me; if (u.cal) UI.cal = u.cal; } catch (e) {}
 if (!S.membros.some(m => m.id === UI.me)) UI.me = S.membros[0] ? S.membros[0].id : UI.me;
@@ -571,16 +675,20 @@ function renderAgora() {
 }
 const quando = ms => { const d = new Date(ms), k = ymd(d); return (k === hojeISO() ? "hoje" : k === ymd(addD(new Date(), -1)) ? "ontem" : dm(k)) + ", " + hm(d); };
 const msgsDe = pid => (S.mensagens || []).filter(m => m.proj === pid).sort((a, b) => a.em - b.em);
+/* conversa no jeito do WhatsApp e do Slack: separador por dia, mensagens seguidas da mesma pessoa (até 5 min) juntas, as minhas à direita */
+const diaTx = k => k === hojeISO() ? "Hoje" : k === ymd(addD(new Date(), -1)) ? "Ontem" : `${+k.slice(8, 10)} de ${MESES[+k.slice(5, 7) - 1]}${k.slice(0, 4) !== hojeISO().slice(0, 4) ? " de " + k.slice(0, 4) : ""}`;
 function chatHTML(pid) {
-  return msgsDe(pid).map(m => `<div class="msg${m.por === UI.me ? " meu" : ""}">${av(m.por, 30)}<div class="bub"><small>${esc((M(m.por) || {}).curto || "alguém")} · ${quando(m.em)}${m.por === UI.me || souAdm() ? `<button class="x" data-act="delmsg" data-id="${m.id}">apagar</button>` : ""}</small><p>${esc(m.t)}</p></div></div>`).join("")
-    || '<p class="empty">Ninguém escreveu ainda. Comece a conversa do projeto.</p>';
+  let dia = "", ant = null;
+  return msgsDe(pid).map(m => { const k = ymd(new Date(m.em)), sep = k !== dia, cont = !sep && ant && ant.por === m.por && m.em - ant.em < 5 * 60e3; dia = k; ant = m;
+    return `${sep ? `<div class="dia">${diaTx(k)}</div>` : ""}<div class="msg${m.por === UI.me ? " meu" : ""}${cont ? " cont" : ""}">${av(m.por, 30)}<div class="bub">${cont ? "" : `<small><b>${esc(nm(m.por))}</b> · ${hm(new Date(m.em))}</small>`}<p>${esc(m.t)}</p>${m.por === UI.me || souAdm() ? `<small style="text-align:right;margin:2px 0 0"><button class="x" data-act="delmsg" data-id="${m.id}">apagar</button></small>` : ""}</div></div>`; }).join("")
+    || '<p class="empty" style="text-align:center;margin-top:30px">Ninguém escreveu ainda. Comece a conversa do projeto.</p>';
 }
 function renderChat() { const el = $("#chatList"); if (!el) return; const fim = el.scrollHeight - el.scrollTop - el.clientHeight < 60; el.innerHTML = chatHTML(UI.proj); if (fim) el.scrollTop = el.scrollHeight; }
 /* últimas atividades: só o que tem hora registrada (o que foi feito a partir de 21/10/2026), dos últimos 14 dias */
 function atividades(pid) {
   const it = [], curto = x => esc(x.length > 70 ? x.slice(0, 70) + "…" : x), pj = (p, tab) => `data-act="proj" data-id="${p.id}" data-tab="${tab}"`;
   (S.mensagens || []).forEach(m => { const p = P(m.proj); if (p) it.push({ pid: p.id, em: m.em, quem: m.por, tx: `escreveu na conversa de <b>${esc(p.nome)}</b>: “${curto(m.t)}”`, act: pj(p, "conversa") }); });
-  (S.notas || []).forEach(n => { const p = P(n.proj); if (p && n.tipo === "nota" && n.altPor) it.push({ pid: p.id, em: n.alt, quem: n.altPor, tx: `${n.alt - n.em < 120e3 ? "criou" : "editou"} a nota <b>${esc(n.titulo)}</b> em <b>${esc(p.nome)}</b>`, act: `data-act="abrenota" data-id="${n.id}"` }); });
+  (S.notas || []).forEach(n => { const p = P(n.proj); if (p && !p.eu && n.tipo === "nota" && n.altPor) it.push({ pid: p.id, em: n.alt, quem: n.altPor, tx: `${n.alt - n.em < 120e3 ? "criou" : "editou"} a nota <b>${esc(n.titulo)}</b> em <b>${esc(p.nome)}</b>`, act: `data-act="abrenota" data-id="${n.id}"` }); });
   S.membros.forEach(m => { if (m.entrou) it.push({ em: m.entrou, quem: m.id, tx: "entrou no clube", act: `data-act="person" data-id="${m.id}"` }); });
   S.projetos.forEach(p => {
     if (p.em) it.push({ pid: p.id, em: p.em, quem: p.criador, tx: `criou o projeto <b>${esc(p.nome)}</b>`, act: pj(p, "sobre") });
@@ -599,7 +707,14 @@ function gcal(e) {
     + "&ctz=America/Sao_Paulo&details=" + encodeURIComponent((e.desc || "") + (ehLink(e.local) ? "\n" + e.local.trim() : "")) + "&location=" + encodeURIComponent(e.local || "") + (e.semanal ? "&recur=" + encodeURIComponent("RRULE:FREQ=WEEKLY") : "");
 }
 const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM">👑</span>' : "";
-const M = id => S.membros.find(m => m.id === id), P = id => S.projetos.find(p => p.id === id), F = id => S.frentes.find(f => f.id === id);
+/* minha área funciona como um projeto só da pessoa (id __eu): mesma tela, tarefas e notas, sem escopo nem chat */
+const EU_ID = "__eu";
+const EU = () => ({ id: EU_ID, eu: true, nome: "Minha área", frente: "", status: "ativo", resumo: "", detalhes: [], proximo: "", papeis: [[UI.me, "Responsável"]], tarefas: S.pessoal.tarefas, ideias: [], docs: [] });
+const M = id => S.membros.find(m => m.id === id), P = id => id === EU_ID ? EU() : S.projetos.find(p => p.id === id), F = id => S.frentes.find(f => f.id === id);
+/* nome inteiro em tudo o que mostra pessoa (pedido de 22/10/2026: nada de apelido) */
+const nm = id => (M(id) || {}).nome || "alguém";
+const porNome = () => [...S.membros].sort((a, b) => a.nome.localeCompare(b.nome, "pt"));
+const opcoesPessoas = sel => `<option value="">Ninguém</option>${porNome().map(m => `<option value="${m.id}"${m.id === sel ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}`;
 const fc = f => `var(--c-${f ? f.cor : "gray"})`;
 const hue = id => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
 const ini = m => m.nome.split(/\s+/).filter(w => w.length > 2).slice(0, 2).map(w => w[0]).join("").toUpperCase() || m.nome[0];
@@ -628,15 +743,16 @@ const STATUS = { ativo: "Em andamento", ideia: "Ideia", pausado: "Pausado", feit
 function go(v, extra) {
   salvarNotaAberta();
   Object.assign(UI, { v, edit: false }, extra || {});
-  const marca = v === "projeto" ? "inicio" : v === "pessoa" ? "integrantes" : v === "votacao" ? "votacoes" : v;
-  document.querySelectorAll("header [data-act=go]").forEach(b => b.setAttribute("aria-current", b.dataset.v === marca ? "page" : "false"));
+  const marca = v === "projeto" ? (UI.proj === EU_ID ? "area" : "inicio") : v === "pessoa" ? "integrantes" : v === "votacao" ? "votacoes" : v;
+  document.querySelectorAll("header [data-v]").forEach(b => b.setAttribute("aria-current", b.dataset.v === marca ? "page" : "false"));
   $("#meBtn").innerHTML = av(UI.me, 34);
   render(); scrollTo(0, 0);
 }
 function render() {
   const el = $("#screen");
   if (UI.v === "inicio") { el.innerHTML = homeHTML(); mountTree(); }
-  if (UI.v === "projeto") el.innerHTML = projHTML(P(UI.proj));
+  pararRede(); fecharMenu();
+  if (UI.v === "projeto") { el.innerHTML = projHTML(P(UI.proj)); if (UI.tab === "rede") montarRede(P(UI.proj)); }
   if (UI.v === "integrantes") el.innerHTML = membersHTML();
   if (UI.v === "pessoa" || UI.v === "perfil") el.innerHTML = personHTML(M(UI.v === "perfil" ? UI.me : UI.person));
   if (UI.v === "calendario") el.innerHTML = calHTML();
@@ -656,20 +772,20 @@ function homeHTML() {
   <div class="tree-box" id="treeBox"><div class="tree" id="tree"><svg id="treeLines" width="1" height="1"></svg>
   ${S.projetos.map(p => { const f = F(p.frente), r = respProj(p), outros = pessoasProj(p).filter(x => x !== r);
     return `<button class="node proj" data-node="p:${p.id}" style="--fc:${fc(f)}"><span class="nm">${esc(p.nome)}</span>
-      <span class="who">${stack(outros, 2, 30)}</span>${r ? `<span class="resp">${av(r, 22)} ${esc(M(r).curto)}, responsável</span>` : `<span class="resp">Sem responsável</span>`}</button>`; }).join("")}
+      <span class="who">${stack(outros, 2, 30)}</span>${r ? `<span class="resp">${av(r, 22)} ${esc(nm(r))}, responsável</span>` : `<span class="resp">Sem responsável</span>`}</button>`; }).join("")}
   ${S.frentes.map(f => { const ppl = pessoasFrente(f);
-    return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}">${podeCriarEm(f) ? `<span class="add" data-add="${f.id}" title="Novo projeto em ${esc(f.nome)}" aria-label="Novo projeto em ${esc(f.nome)}">+</span>` : ""}<span class="nm">${esc(f.nome)}</span>
+    return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}">${souAdm() ? `<span class="edf" data-edf="${f.id}" title="Editar a frente: nome e cor" aria-label="Editar a frente ${esc(f.nome)}">✎</span>` : ""}${podeCriarEm(f) ? `<span class="add" data-add="${f.id}" title="Novo projeto em ${esc(f.nome)}" aria-label="Novo projeto em ${esc(f.nome)}">+</span>` : ""}<span class="nm">${esc(f.nome)}</span>
       <span class="who">${stack(ppl, 4, 28)}</span><span class="resp" style="justify-content:center">${plural(ppl.length, "pessoa", "pessoas")}</span></button>`; }).join("")}
   </div></div>
-  <p class="foot-note">${plural(S.membros.length, "integrante", "integrantes")}. ${sp ? `${plural(sp, "ainda não está", "ainda não estão")} em nenhum projeto: <button class="link" data-act="go" data-v="integrantes" data-filtro="sem">ver quem</button>.` : ""}</p></div>`;
+  <p class="foot-note">${plural(S.membros.length, "integrante", "integrantes")}. ${sp ? `${plural(sp, "ainda não está", "ainda não estão")} em nenhum projeto: <button class="link" data-act="go" data-v="integrantes" data-filtro="sem">ver quem</button>.` : ""}${souAdm() && S.lixo.length ? ` <button class="link" data-act="lixo">Projetos excluídos (${S.lixo.length})</button>` : ""}</p></div>`;
 }
 function inicioCards() {
   const hoje = hojeISO();
-  const minhas = S.projetos.flatMap(p => p.tarefas.map(t => ({ ...t, p }))).filter(t => t.quem === UI.me && t.st !== "feito").sort(ordTarefa);
+  const minhas = S.projetos.concat([EU()]).flatMap(p => p.tarefas.map((t, i) => ({ t, i, p }))).filter(x => (x.p.eu || x.t.quem === UI.me) && x.t.st !== "feito").sort((a, b) => ordTarefa(a.t, b.t));
   const ats = atividades();
-  return `<div class="home-row"><div class="card"><h2>Minhas tarefas${minhas.length ? ` · ${minhas.length}` : ""}</h2>${minhas.slice(0, 5).map(t => `<button class="li" data-act="proj" data-id="${t.p.id}" data-tab="tarefas"><span class="tx">${t.prio ? PRIO[t.prio][1] + " " : ""}${esc(t.t)}<small>${esc(t.p.nome)}</small></span><span style="font-size:13px;white-space:nowrap"${t.prazo && t.prazo < hoje ? ' class="late"' : ""}>${t.prazo ? (t.prazo < hoje ? "atrasada, " : "até ") + dm(t.prazo) : "sem prazo"}</span></button>`).join("")
-      || '<p class="empty" style="margin:0">Nenhuma tarefa com você. Pegue uma dentro de um projeto.</p>'}${minhas.length > 5 ? `<p style="margin:6px 0 0"><button class="link" data-act="go" data-v="tarefas">e mais ${minhas.length - 5} na tela Tarefas</button></p>` : ""}</div>
-    <div class="card"><h2>Últimas atividades</h2>${ats.map(x => `<button class="li" ${x.act}>${av(x.quem, 28)}<span class="tx"><b>${esc(M(x.quem).curto)}</b> ${x.tx}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:0">Nada nos últimos 14 dias.</p>'}</div></div>`;
+  return `<div class="home-row"><div class="card"><div class="ch"><h2>Minhas tarefas${minhas.length ? ` · ${minhas.length}` : ""}</h2><button class="btn small" data-act="novatarefa" data-quem="eu">+ Nova</button></div>${minhas.slice(0, 6).map(x => `<div class="li">${tck(x.t, x.p, x.i)}<button class="tx" data-act="edtarefa" data-p="${x.p.id}" data-i="${x.i}">${x.t.prio ? PRIO[x.t.prio][1] + " " : ""}${esc(x.t.t)}<small>${x.p.eu ? "🔒 Minha área" : esc(x.p.nome)}${x.t.prazo ? " · " + prazoTx(x.t) : ""}</small></button></div>`).join("")
+      || '<p class="empty" style="margin:0">Nenhuma tarefa com você. Crie uma ou pegue uma dentro de um projeto.</p>'}${minhas.length > 6 ? `<p style="margin:6px 0 0"><button class="link" data-act="go" data-v="tarefas">e mais ${minhas.length - 6} na tela Tarefas</button></p>` : ""}</div>
+    <div class="card"><h2>Últimas atividades</h2>${ats.map(x => `<button class="li" ${x.act}>${av(x.quem, 28)}<span class="tx"><b>${esc(nm(x.quem))}</b> ${x.tx}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:0">Nada nos últimos 14 dias.</p>'}</div></div>`;
 }
 const T = { nodes: {}, links: [], scale: 1, raf: 0 };
 /* onde cada um deixou os blocos (só no navegador de quem mexeu); o desenho da árvore continua o mesmo */
@@ -757,21 +873,102 @@ window.addEventListener("resize", () => { if (UI.v === "inicio" && $("#treeBox")
 
 /* ===== PROJETO (tela cheia). Desenho do Matheus (21/10/2026): à esquerda os itens fixos e as pastas e notas, como no Obsidian;
    à direita o resumo, ou a nota aberta. Qualquer um cria e edita nota; apaga quem foi o único a editar, e os ADM apagam qualquer uma. ===== */
-const notasDe = pid => (S.notas || []).filter(n => n.proj === pid);
+const notasDe = pid => (S.notas || []).filter(n => n.proj === pid && (pid !== EU_ID || n.dono === UI.me));
 const NT = id => (S.notas || []).find(n => n.id === id);
 const filhos = (pid, pai) => notasDe(pid).filter(n => (n.pai || "") === pai).sort((a, b) => (a.tipo === b.tipo ? 0 : a.tipo === "pasta" ? -1 : 1) || a.titulo.localeCompare(b.titulo, "pt"));
-const podeApagarNota = n => souAdm() || ((n.editores || []).length > 0 && n.editores.every(x => x === UI.me));
+const podeApagarNota = n => n.dono === UI.me || souAdm() || ((n.editores || []).length > 0 && n.editores.every(x => x === UI.me));
 const caminho = n => { const c = []; let x = n && NT(n.pai); while (x) { c.unshift(x.titulo); x = NT(x.pai); } return c; };
 const notaDaPasta = d => filhos(d.proj, d.id).find(n => n.tipo === "nota" && n.titulo.trim().toLowerCase() === d.titulo.trim().toLowerCase());
 function abrirAte(n) { let x = n && NT(n.pai); while (x) { UI.pastas[x.id] = true; x = NT(x.pai); } }
 function arvoreHTML(p, pai) {
-  return filhos(p.id, pai).map(n => n.tipo === "pasta"
-    ? `<button class="ti pasta${UI.pastas[n.id] ? " aberta" : ""}${UI.tab === "pasta:" + n.id ? " sel" : ""}" data-act="pasta" data-id="${n.id}"><span class="car">›</span><span class="nm">${esc(n.titulo)}</span></button>${UI.pastas[n.id] && filhos(p.id, n.id).length ? `<div class="tch">${arvoreHTML(p, n.id)}</div>` : ""}`
-    : `<button class="ti nota${UI.tab === "nota:" + n.id ? " sel" : ""}" data-act="abrenota" data-id="${n.id}"><span class="nm">${esc(n.titulo)}</span></button>`).join("");
+  return filhos(p.id, pai).map(n => {
+    const nome = UI.ren === n.id ? `<input class="ren" id="renIn" value="${esc(n.titulo)}" data-id="${n.id}" aria-label="Novo nome" autocomplete="off">` : `<span class="nm">${esc(n.titulo)}</span>`;
+    const mais = `<span class="mais" data-ctx="${n.id}" role="button" tabindex="0" aria-label="Mais opções de ${esc(n.titulo)}" title="Mais opções">⋯</span>`;
+    return n.tipo === "pasta"
+      ? `<div class="ti pasta${UI.pastas[n.id] ? " aberta" : ""}${UI.tab === "pasta:" + n.id ? " sel" : ""}" data-act="pasta" data-id="${n.id}" draggable="true" role="button" tabindex="0"><span class="car">›</span>${nome}${mais}</div>${UI.pastas[n.id] && filhos(p.id, n.id).length ? `<div class="tch">${arvoreHTML(p, n.id)}</div>` : ""}`
+      : `<div class="ti nota${UI.tab === "nota:" + n.id ? " sel" : ""}" data-act="abrenota" data-id="${n.id}" draggable="true" role="button" tabindex="0">${nome}${mais}</div>`; }).join("");
 }
-function gravarNota(n) { if (NV.on) NV.db.collection("notas").doc(n.id).set(ida(JSON.parse(JSON.stringify(n)))).catch(e => toast("Não consegui salvar: " + e.message)); else save(); }
+/* menu do botão direito, no jeito do explorador de arquivos do Obsidian (medidas do .menu do app.css 1.14.4: 4px de margem, itens de 4px por 8px, raio 4px, separador de 1px) */
+let MENU = null;
+const fecharMenu = () => { if (MENU) { MENU.remove(); MENU = null; } };
+function menu(x, y, itens) {
+  fecharMenu(); const el = document.createElement("div"); el.className = "ctx"; el.setAttribute("role", "menu");
+  itens.filter(Boolean).forEach(it => {
+    if (it === "-") return el.insertAdjacentHTML("beforeend", '<div class="sep"></div>');
+    if (typeof it === "string") return el.insertAdjacentHTML("beforeend", `<div class="tit">${esc(it)}</div>`);
+    const b = document.createElement("button"); b.type = "button"; b.setAttribute("role", "menuitem"); if (it[3]) b.className = it[3];
+    b.innerHTML = `<span class="ic">${it[0]}</span>${esc(it[1])}`; b.addEventListener("click", ev => { ev.stopPropagation(); fecharMenu(); it[2](); }); el.appendChild(b);
+  });
+  document.body.appendChild(el); const r = el.getBoundingClientRect();
+  el.style.left = Math.max(4, Math.min(x, innerWidth - r.width - 4)) + "px"; el.style.top = Math.max(4, Math.min(y, innerHeight - r.height - 4)) + "px";
+  MENU = el; const b0 = el.querySelector("button"); if (b0) b0.focus({ preventScroll: true });
+}
+document.addEventListener("pointerdown", e => { if (MENU && !MENU.contains(e.target)) fecharMenu(); }, true);
+addEventListener("resize", fecharMenu); addEventListener("scroll", e => { if (MENU && !MENU.contains(e.target)) fecharMenu(); }, true);
+const dentroDe = (n, d) => { let x = d; while (x) { if (x.id === n.id) return true; x = NT(x.pai); } return false; };
+function criarNota(pai, tipo) {
+  salvarNotaAberta(); const pasta = tipo === "pasta"; if (pai) UI.pastas[pai] = true;
+  const n = novaNota(UI.proj, pai, tipo); if (pasta) { UI.pastas[n.id] = true; UI.ren = n.id; } else { UI.tab = "nota:" + n.id; UI.edit = n.id; }
+  UI.pastaSel = pasta ? n.id : pai; render();
+  const el = $(pasta ? "#renIn" : "#ntTit"); if (el) { el.focus(); el.select(); }
+}
+function renomear(n) { salvarNotaAberta(); UI.edit = false; UI.ren = n.id; abrirAte(n); render(); const el = $("#renIn"); if (el) { el.focus(); el.select(); } }
+function fimRenomear(ok) { const el = $("#renIn"), id = UI.ren; if (!id) return; UI.ren = null; const n = NT(id); if (ok && n && el && el.value.trim() && el.value.trim() !== n.titulo) { salvarNota(n, el.value, null, null); toast("Nome trocado."); } render(); }
+function moverNota(n, pai) {
+  pai = pai || ""; if ((n.pai || "") === pai) return;
+  if (pai && dentroDe(n, NT(pai))) return toast("Não dá para pôr uma pasta dentro dela mesma.");
+  salvarNota(n, n.titulo, null, pai); if (pai) UI.pastas[pai] = true; toast(pai ? "Movida para " + NT(pai).titulo + "." : "Movida para fora das pastas."); render();
+}
+function moverPara(n) {
+  const ps = notasDe(n.proj).filter(d => d.tipo === "pasta" && !dentroDe(n, d)).map(d => [d, [...caminho(d), d.titulo].join(" / ")]).sort((a, b) => a[1].localeCompare(b[1], "pt"));
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Mover"><h2>Mover “${esc(n.titulo)}” para...</h2><div class="opts" style="margin:0">
+    <button class="opt" data-act="moverpara" data-id="${n.id}" data-pai=""${!n.pai ? " disabled" : ""}><span class="tx">Fora das pastas (raiz)</span></button>
+    ${ps.map(([d, nome]) => `<button class="opt" data-act="moverpara" data-id="${n.id}" data-pai="${d.id}"${d.id === n.pai ? " disabled" : ""}><span class="tx">📁 ${esc(nome)}</span></button>`).join("")}</div>
+    <div class="row-form"><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div></div></div>`;
+}
+function apagarNota(n) {
+  if (!podeApagarNota(n)) return toast("Só os ADM apagam o que outras pessoas editaram.");
+  if (n.tipo === "pasta" && filhos(n.proj, n.id).length) return toast("Esvazie a pasta antes.");
+  if (!confirm(`Apagar ${n.tipo === "pasta" ? "a pasta" : "a nota"} “${n.titulo}”? Não dá para desfazer.`)) return;
+  S.notas = S.notas.filter(x => x.id !== n.id);
+  if (NV.on) NV.db.collection(n.dono ? "pessoal" : "notas").doc(n.id).delete().catch(x => toast("Não deu para apagar: " + x.message)); else save();
+  if (UI.tab === "nota:" + n.id || UI.tab === "pasta:" + n.id) { UI.edit = false; UI.tab = n.pai ? "pasta:" + n.pai : (P(UI.proj) || {}).eu ? "tarefas" : "sobre"; }
+  toast("Apagado."); render();
+}
+function menuNota(n, x, y) {
+  const pasta = n.tipo === "pasta", aqui = pasta ? n.id : (n.pai || "");
+  menu(x, y, [
+    pasta ? null : ["📄", "Abrir", () => { const b = document.createElement("i"); b.dataset.act = "abrenota"; b.dataset.id = n.id; acao(b); }],
+    ["＋", pasta ? "Nova nota nesta pasta" : "Nova nota ao lado", () => criarNota(aqui, "nota")],
+    ["📁", pasta ? "Nova pasta dentro desta" : "Nova pasta ao lado", () => criarNota(aqui, "pasta")],
+    "-",
+    ["✎", "Renomear", () => renomear(n)],
+    ["↪", "Mover para...", () => moverPara(n)],
+    pasta ? null : ["🕸", "Ver na rede", () => { UI.redeSel = n.id; UI.tab = "rede"; render(); }],
+    podeApagarNota(n) ? "-" : null,
+    podeApagarNota(n) ? ["🗑", pasta ? "Apagar pasta" : "Apagar nota", () => apagarNota(n), "warn"] : null
+  ]);
+}
+function menuRaiz(x, y) {
+  menu(x, y, [["＋", "Nova nota", () => criarNota("", "nota")], ["📁", "Nova pasta", () => criarNota("", "pasta")], "-", ["🕸", "Ver a rede das notas", () => { UI.tab = "rede"; render(); }]]);
+}
+document.addEventListener("contextmenu", e => {
+  if (UI.v !== "projeto") return;
+  const ti = e.target.closest(".ti[data-id]"); if (ti) { e.preventDefault(); const n = NT(ti.dataset.id); if (n) menuNota(n, e.clientX, e.clientY); return; }
+  if (e.target.closest(".ptree, .phead")) { e.preventDefault(); menuRaiz(e.clientX, e.clientY); }
+});
+/* arrastar como no Obsidian: soltar numa pasta põe dentro dela, numa nota põe na pasta dela, no espaço vazio ou no título põe fora das pastas */
+let ARR = null;
+const alvoDrop = el => { const ti = el.closest(".ti[data-id]"); if (ti) { const n = NT(ti.dataset.id); return n ? { el: ti, pai: n.tipo === "pasta" ? n.id : (n.pai || "") } : null; } const r = el.closest(".ptree, .phead"); return r ? { el: $(".ptree"), pai: "" } : null; };
+const limpaDrop = () => document.querySelectorAll(".drop").forEach(x => x.classList.remove("drop"));
+document.addEventListener("dragstart", e => { const ti = e.target.closest && e.target.closest(".ti[data-id]"); if (!ti) return; ARR = NT(ti.dataset.id); if (!ARR) return; e.dataTransfer.effectAllowed = "move"; try { e.dataTransfer.setData("text/plain", ARR.titulo); } catch (x) {} setTimeout(() => ti.classList.add("arrastando"), 0); });
+document.addEventListener("dragover", e => { if (!ARR) return; const a = alvoDrop(e.target); limpaDrop(); if (!a) return; e.preventDefault(); e.dataTransfer.dropEffect = "move"; if (a.pai !== (ARR.pai || "")) (a.pai ? document.querySelector(`.ti[data-id="${a.pai}"]`) || a.el : a.el).classList.add("drop"); });
+document.addEventListener("drop", e => { if (!ARR) return; const a = alvoDrop(e.target), n = ARR; ARR = null; limpaDrop(); if (!a) return; e.preventDefault(); moverNota(n, a.pai); });
+document.addEventListener("dragend", () => { ARR = null; limpaDrop(); document.querySelectorAll(".arrastando").forEach(x => x.classList.remove("arrastando")); });
+function gravarNota(n) { if (NV.on) NV.db.collection(n.dono ? "pessoal" : "notas").doc(n.id).set(ida(JSON.parse(JSON.stringify(n)))).catch(e => toast("Não consegui salvar: " + e.message)); else save(); }
 function novaNota(pid, pai, tipo) {
   const n = { id: (tipo === "pasta" ? "d" : "n") + Date.now() + Math.random().toString(36).slice(2, 5), proj: pid, tipo, pai: pai || "", titulo: tipo === "pasta" ? "Nova pasta" : "Sem título", texto: "", editores: [UI.me], por: UI.me, em: Date.now(), alt: Date.now(), altPor: UI.me };
+  if (pid === EU_ID) n.dono = UI.me;
   S.notas.push(n); gravarNota(n); return n;
 }
 function salvarNota(n, titulo, texto, pai) {
@@ -801,42 +998,67 @@ const ordPrio = t => ({ alta: 0, media: 1, baixa: 3 }[t.prio] ?? 2);
 const ordTarefa = (a, b) => ordPrio(a) - ordPrio(b) || (a.prazo || "9").localeCompare(b.prazo || "9");
 const REPETE = { semana: "toda semana", mes: "todo mês" };
 const somaData = (s, rep) => { if (!s) return ""; const d = new Date(s + "T12:00"); if (rep === "mes") d.setMonth(d.getMonth() + 1); else d.setDate(d.getDate() + 7); return ymd(d); };
+/* situação como no Linear: círculo vazio (a fazer), meio cheio (fazendo), cheio com visto (feita); clicar passa para a próxima */
+const ST_NOME = { afazer: "A fazer", fazendo: "Fazendo", feito: "Feita" }, ST_PROX = { afazer: "fazendo", fazendo: "feita", feito: "a fazer" };
+const ICO = { afazer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>',
+  fazendo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none"/></svg>',
+  feito: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' };
+const tck = (t, p, i) => `<button class="tck ${t.st}" data-act="cyc" data-p="${p.id}" data-i="${i}" title="${ST_NOME[t.st]}. Clique para marcar como ${ST_PROX[t.st]}." aria-label="${ST_NOME[t.st]}; marcar como ${ST_PROX[t.st]}">${ICO[t.st]}</button>`;
+const prazoTx = t => { const late = t.st !== "feito" && t.prazo && t.prazo < hojeISO(); return t.prazo ? `<span${late ? ' class="late"' : ""}>${late ? "atrasada, " : t.prazo === hojeISO() ? "hoje, " : "até "}${dm(t.prazo)}</span>` : ""; };
 function tarefaHTML(t, p, i, comProj) {
-  const ST = { afazer: "A fazer", fazendo: "Fazendo", feito: "Feito" }, hoje = hojeISO(), late = t.st !== "feito" && t.prazo && t.prazo < hoje;
-  const info = [comProj ? esc(p.nome) : "", t.inicio ? "começa " + dm(t.inicio) : "", t.prazo ? `<span${late ? ' class="late"' : ""}>${late ? "atrasada, " : "até "}${dm(t.prazo)}</span>` : "sem prazo", t.repete ? "🔁 " + REPETE[t.repete] : ""].filter(Boolean).join(" · ");
-  return `<div class="task${t.st === "feito" ? " done" : ""}"><button class="st ${t.st}" data-act="cyc" data-p="${p.id}" data-i="${i}" aria-label="Mudar a situação">${ST[t.st]}</button>
-    <button class="t" data-act="edtarefa" data-p="${p.id}" data-i="${i}"><span>${t.prio ? `<span class="prio" title="Prioridade ${PRIO[t.prio][0].toLowerCase()}">${PRIO[t.prio][1]}</span> ` : ""}${esc(t.t)}</span><small>${info}</small></button>${t.quem ? av(t.quem, 30) : `<button class="btn small" data-act="take" data-p="${p.id}" data-i="${i}">Pegar</button>`}</div>`;
+  const info = [comProj ? (p.eu ? "🔒 Minha área" : esc(p.nome)) : "", t.st === "fazendo" ? "fazendo" : "", t.inicio ? "começa " + dm(t.inicio) : "", prazoTx(t), t.repete ? "🔁 " + REPETE[t.repete] : ""].filter(Boolean).join(" · ");
+  const resp = p.eu ? "" : t.quem && M(t.quem) ? `<span class="tresp" title="Responsável: ${esc(nm(t.quem))}">${av(t.quem, 26)}<span class="nm">${esc(nm(t.quem))}</span></span>`
+    : `<button class="btn small" data-act="take" data-p="${p.id}" data-i="${i}" title="Sem responsável. Clique para ficar com ela.">Pegar</button>`;
+  return `<div class="task${t.st === "feito" ? " done" : ""}">${tck(t, p, i)}
+    <button class="t" data-act="edtarefa" data-p="${p.id}" data-i="${i}"><span class="tt">${t.prio ? `<span class="prio" title="Prioridade ${PRIO[t.prio][0].toLowerCase()}">${PRIO[t.prio][1]}</span> ` : ""}${esc(t.t)}</span>${info ? `<small>${info}</small>` : ""}${t.obs ? `<span class="tobs">${esc(t.obs.split("\n")[0])}</span>` : ""}</button>${resp}</div>`;
 }
 const opcoesPrio = sel => `<option value="">Prioridade normal</option>${Object.entries(PRIO).map(([k, [l, i]]) => `<option value="${k}"${k === sel ? " selected" : ""}>${i} ${l}</option>`).join("")}`;
 const opcoesRepete = sel => `<option value="">Não repete</option>${Object.entries(REPETE).map(([k, l]) => `<option value="${k}"${k === sel ? " selected" : ""}>Repete ${l}</option>`).join("")}`;
-function abrirTarefaEd(pid, i) {
-  const p = P(pid), t = p.tarefas[i];
-  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Tarefa"><h2>Tarefa</h2>
-  <form class="form" data-form="tarefa-ed" data-p="${pid}" data-i="${i}"><label>O que fazer<input class="field" name="t" id="te-t" required value="${esc(t.t)}"></label>
-  <div class="two"><label>Com quem<select class="field" name="quem" id="te-q"><option value="">Ninguém ainda</option>${S.membros.map(m => `<option value="${m.id}"${m.id === t.quem ? " selected" : ""}>${esc(m.curto)}</option>`).join("")}</select></label>
-  <label>Situação<select class="field" name="st" id="te-st">${[["afazer", "A fazer"], ["fazendo", "Fazendo"], ["feito", "Feito"]].map(([v, l]) => `<option value="${v}"${v === t.st ? " selected" : ""}>${l}</option>`).join("")}</select></label></div>
-  <div class="two"><label>Começa em<input class="field" type="date" name="inicio" id="te-i" value="${t.inicio || ""}"></label><label>Prazo<input class="field" type="date" name="prazo" id="te-d" value="${t.prazo || ""}"></label></div>
-  <div class="two"><label>Prioridade<select class="field" name="prio" id="te-pr">${opcoesPrio(t.prio)}</select></label><label>Repetição<select class="field" name="repete" id="te-r">${opcoesRepete(t.repete)}</select></label></div>
-  <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button><button type="button" class="btn ghost" data-act="deltarefa" data-p="${pid}" data-i="${i}" style="margin-left:auto;color:var(--bad)">Apagar</button></div></form></div></div>`;
+/* janela única de tarefa, para criar e para editar, no jeito do "Criar ou editar tarefa" do plugin Tasks do Obsidian
+   (descrição, prioridade, repetição, datas e situação) mais Responsável e Observações, como no Asana e no Todoist em português */
+function abrirTarefaForm(o) {
+  o = o || {}; const novo = o.i == null, pid = o.pid || (novo ? (P(UI.ultProj) ? UI.ultProj : (S.projetos[0] || {}).id || EU_ID) : null), p = P(pid);
+  const t = novo ? { t: "", st: "afazer", quem: o.quem || "", prazo: o.data || "", inicio: "", prio: "", repete: "", obs: "" } : p.tarefas[o.i];
+  const escolhe = novo && !o.fixo, eu = !!(p && p.eu);
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="${novo ? "Nova tarefa" : "Tarefa"}"><h2>${novo ? "Nova tarefa" : "Tarefa"}</h2>
+  <form class="form" data-form="tarefa" data-p="${p ? p.id : ""}" data-i="${novo ? "" : o.i}">
+    <label>Tarefa<input class="field" name="t" id="tf-t" required value="${esc(t.t)}" placeholder="O que precisa ser feito"></label>
+    ${escolhe ? `<label>Onde fica<select class="field" name="proj" id="tf-p"><option value="${EU_ID}"${eu ? " selected" : ""}>🔒 Minha área (só eu vejo)</option>${S.projetos.map(x => `<option value="${x.id}"${x.id === pid ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select></label>` : `<p class="tipo-eu">${eu ? "🔒 Minha área: só você vê esta tarefa." : "Projeto: " + esc(p.nome)}</p>`}
+    <label id="tf-resp-l"${eu ? " hidden" : ""}>Responsável<select class="field" name="quem" id="tf-q">${opcoesPessoas(t.quem)}</select></label>
+    <div class="two"><label>Prazo<input class="field" type="date" name="prazo" id="tf-d" value="${t.prazo || ""}"></label><label>Começa em<input class="field" type="date" name="inicio" id="tf-i" value="${t.inicio || ""}"></label></div>
+    <div class="two"><label>Prioridade<select class="field" name="prio" id="tf-pr">${opcoesPrio(t.prio)}</select></label><label>Repetição<select class="field" name="repete" id="tf-r">${opcoesRepete(t.repete)}</select></label></div>
+    ${novo ? "" : `<label>Situação<select class="field" name="st" id="tf-st">${Object.entries(ST_NOME).map(([v, l]) => `<option value="${v}"${v === t.st ? " selected" : ""}>${l}</option>`).join("")}</select></label>`}
+    <label>Observações<textarea class="field obs" name="obs" id="tf-o" placeholder="Detalhes, links, o que foi combinado">${esc(t.obs || "")}</textarea></label>
+    <div class="row-form"><button class="btn primary">${novo ? "Criar tarefa" : "Salvar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${novo ? "" : `<button type="button" class="btn ghost" data-act="deltarefa" data-p="${p.id}" data-i="${o.i}" style="margin-left:auto;color:var(--bad)">Apagar</button>`}</div>
+    ${!novo && t.feitoEm ? `<p class="empty">Feita por ${esc(nm(t.feitoPor))} em ${quando(t.feitoEm)}.</p>` : ""}</form></div></div>`;
+  $("#tf-t").focus();
 }
 function concluir(p, x) {
   x.feitoEm = Date.now(); x.feitoPor = UI.me;
   if (x.repete && !x.gerou) { x.gerou = true; p.tarefas.push({ t: x.t, st: "afazer", quem: x.quem, prazo: somaData(x.prazo || hojeISO(), x.repete), inicio: somaData(x.inicio, x.repete), prio: x.prio || "", repete: x.repete, em: Date.now() }); toast("Feito. A próxima já foi criada (" + REPETE[x.repete] + ")."); }
 }
 
-/* tela Tarefas: as do clube todo ou só as minhas, por período, agrupadas por projeto */
+/* tela Tarefas: as minhas (com as da minha área), as sem responsável ou as do clube todo; agrupadas por prazo, como no Todoist, ou por projeto */
 function tarefasHTML() {
-  const hoje = hojeISO(), sem = ymd(addD(new Date(), 7)), tf = UI.tf || (UI.tf = { quem: "eu", q: "abertas" });
-  const todas = S.projetos.flatMap(p => p.tarefas.map((t, i) => ({ t, i, p }))).filter(x => tf.quem === "todos" || x.t.quem === UI.me);
+  const hoje = hojeISO(), sem = ymd(addD(new Date(), 7)), tf = UI.tf || (UI.tf = { quem: "eu", q: "abertas", por: "prazo" });
+  const base = tf.quem === "eu" ? S.projetos.concat([EU()]) : S.projetos;
+  const todas = base.flatMap(p => p.tarefas.map((t, i) => ({ t, i, p }))).filter(x => tf.quem === "todos" || (tf.quem === "sem" ? !x.t.quem : x.p.eu || x.t.quem === UI.me));
   const F_ = { abertas: x => x.t.st !== "feito", atrasadas: x => x.t.st !== "feito" && x.t.prazo && x.t.prazo < hoje, hoje: x => x.t.st !== "feito" && x.t.prazo === hoje,
     semana: x => x.t.st !== "feito" && x.t.prazo && x.t.prazo >= hoje && x.t.prazo <= sem, semprazo: x => x.t.st !== "feito" && !x.t.prazo, feitas: x => x.t.st === "feito" };
   const NOMES = [["abertas", "Abertas"], ["atrasadas", "Atrasadas"], ["hoje", "Hoje"], ["semana", "Próximos 7 dias"], ["semprazo", "Sem prazo"], ["feitas", "Feitas"]];
   const lista = todas.filter(F_[tf.q]).sort((a, b) => tf.q === "feitas" ? (b.t.feitoEm || 0) - (a.t.feitoEm || 0) : ordTarefa(a.t, b.t));
-  const grupos = S.projetos.map(p => [p, lista.filter(x => x.p === p)]).filter(([, l]) => l.length);
-  return `<div class="wrap"><h1>Tarefas</h1><p class="lede">As tarefas de todos os projetos, como no plugin Tasks do Obsidian. Clique numa tarefa para mudar prazo, prioridade ou repetição.</p>
-  <div class="seg" role="group" aria-label="De quem"><button data-act="tfq" data-v="eu" aria-pressed="${tf.quem === "eu"}">Minhas</button><button data-act="tfq" data-v="todos" aria-pressed="${tf.quem === "todos"}">Do clube todo</button></div>
+  const sec = (tit, l, cls, comProj) => l.length ? `<div class="tsec${cls ? " " + cls : ""}">${tit}<span class="n">${l.length}</span></div><div class="tlist">${l.map(x => tarefaHTML(x.t, x.p, x.i, comProj)).join("")}</div>` : "";
+  let corpo;
+  if (tf.q === "feitas") corpo = sec("Feitas, das mais recentes", lista, "", true);
+  else if (tf.por === "prazo") corpo = [["Atrasadas", x => x.t.prazo && x.t.prazo < hoje, "late"], ["Hoje", x => x.t.prazo === hoje], ["Próximos 7 dias", x => x.t.prazo > hoje && x.t.prazo <= sem], ["Mais para frente", x => x.t.prazo > sem], ["Sem prazo", x => !x.t.prazo]]
+    .map(([tit, f, cls]) => sec(tit, lista.filter(f), cls, true)).join("");
+  else corpo = base.map(p => sec(p.eu ? "🔒 Minha área" : `<button class="wl" data-act="proj" data-id="${p.id}" data-tab="tarefas" style="color:inherit"><span class="chipf" style="--fc:${fc(F(p.frente))}">${esc(p.nome)}</span></button>`, lista.filter(x => x.p === p), "", false)).join("");
+  return `<div class="wrap"><div class="thead"><h1>Tarefas</h1><span class="esp"></span><button class="btn primary" data-act="novatarefa"${tf.quem === "eu" ? ' data-quem="eu"' : ""}>+ Nova tarefa</button></div>
+  <p class="lede">As tarefas dos projetos e as da sua área (🔒, só você vê). Clique numa tarefa para ver as observações ou mudar responsável, prazo e prioridade.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><div class="seg" role="group" aria-label="De quem"><button data-act="tfq" data-v="eu" aria-pressed="${tf.quem === "eu"}">Minhas</button><button data-act="tfq" data-v="sem" aria-pressed="${tf.quem === "sem"}">Sem responsável</button><button data-act="tfq" data-v="todos" aria-pressed="${tf.quem === "todos"}">Do clube todo</button></div>
+  <div class="seg" role="group" aria-label="Agrupar"><button data-act="tfpor" data-v="prazo" aria-pressed="${tf.por !== "projeto"}">Por prazo</button><button data-act="tfpor" data-v="projeto" aria-pressed="${tf.por === "projeto"}">Por projeto</button></div></div>
   <div class="filters" style="margin-top:12px">${NOMES.map(([k, l]) => `<button class="chip" data-act="tff" data-v="${k}" aria-pressed="${tf.q === k}">${l} · ${todas.filter(F_[k]).length}</button>`).join("")}</div>
-  ${grupos.map(([p, l]) => `<h2 class="sec" style="margin-top:20px"><button class="wl" data-act="proj" data-id="${p.id}" data-tab="tarefas" style="color:inherit"><span class="chipf" style="--fc:${fc(F(p.frente))}">${esc(p.nome)}</span></button></h2>${l.map(x => tarefaHTML(x.t, x.p, x.i, false)).join("")}`).join("") || '<p class="empty" style="margin-top:18px">Nenhuma tarefa aqui.</p>'}</div>`;
+  ${corpo || '<p class="empty" style="margin-top:18px">Nenhuma tarefa aqui.</p>'}</div>`;
 }
 
 function projHTML(p) {
@@ -845,13 +1067,18 @@ function projHTML(p) {
   const abertas = p.tarefas.filter(t => t.st !== "feito").length;
   /* três botões fixos, como no desenho; as ideias ficaram dentro de Tarefas (ideia é tarefa que ainda não nasceu), nada delas se perdeu */
   if (UI.tab === "ideias") { UI.tab = "tarefas"; setTimeout(() => { const x = $("#ideias"); if (x) x.scrollIntoView({ block: "start" }); }, 0); }
-  const fixos = [["sobre", "Escopo do Projeto"], ["tarefas", "Tarefas", abertas], ["conversa", "Chat", msgsDe(p.id).length]];
-  const tab = UI.tab || "sobre", nAb = tab.startsWith("nota:") ? NT(tab.slice(5)) : null, dAb = tab.startsWith("pasta:") ? NT(tab.slice(6)) : null;
-  const pastaAtual = dAb ? dAb.id : nAb ? (nAb.pai || "") : (UI.pastaSel || "");
+  const fixos = p.eu ? [["tarefas", "Minhas tarefas", abertas]] : [["sobre", "Escopo do Projeto"], ["tarefas", "Tarefas", abertas], ["conversa", "Chat", msgsDe(p.id).length]];
+  if (p.eu && (!UI.tab || UI.tab === "sobre" || UI.tab === "conversa")) UI.tab = "tarefas";
+  const tab = UI.tab || "sobre";
+  const nAb = tab.startsWith("nota:") ? NT(tab.slice(5)) : null, dAb = tab.startsWith("pasta:") ? NT(tab.slice(6)) : null;
+  const IC = { nota: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 12v6M9 15h6"/></svg>',
+    pasta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg>',
+    rede: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8.3 8.2l2.6 7.4M15.9 7.4l-2.8 8.3M8.5 6.8l7-.6"/></svg>' };
   let h = `<div class="wrap" style="max-width:1280px">
-  <div class="pwrap"><aside class="pside" aria-label="Itens do projeto"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button><nav class="pfix">${fixos.map(([k, l, c]) => `<button data-act="tab" data-tab="${k}" aria-current="${tab === k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</nav>
-    <div class="phead"><span>Notas do Projeto</span><span><button data-act="novanota" data-pai="${pastaAtual}" title="Nova nota${pastaAtual ? " nesta pasta" : ""}">+ nota</button><button data-act="novapasta" data-pai="${pastaAtual}" title="Nova pasta${pastaAtual ? " dentro desta" : ""}">+ pasta</button></span></div>
-    <div class="ptree">${arvoreHTML(p, "") || '<p class="empty" style="padding:0 8px">Nenhuma nota ainda. Use + nota ou + pasta.</p>'}</div></aside><section class="pmain">`;
+  <div class="pwrap"><aside class="pside" aria-label="Itens do projeto"><button class="back" data-act="go" data-v="inicio">‹ ${p.eu ? "Início" : "Projetos"}</button>${p.eu ? `<div style="font-weight:600;margin:0 0 8px 6px">🔒 Minha área</div>` : ""}<nav class="pfix">${fixos.map(([k, l, c]) => `<button data-act="tab" data-tab="${k}" aria-current="${tab === k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</nav>
+    <div class="phead"><span>${p.eu ? "Minhas notas" : "Notas do Projeto"}</span><span><button class="ib" data-act="novanota" data-pai="" title="Nova nota" aria-label="Nova nota">${IC.nota}</button><button class="ib" data-act="novapasta" data-pai="" title="Nova pasta" aria-label="Nova pasta">${IC.pasta}</button><button class="ib" data-act="tab" data-tab="rede" title="Rede das notas" aria-label="Rede das notas"${tab === "rede" ? ' style="color:var(--accent)"' : ""}>${IC.rede}</button></span></div>
+    <div class="ptree">${arvoreHTML(p, "") || '<p class="empty" style="padding:0 8px">Nenhuma nota ainda.</p>'}</div>
+    <p class="dica">Botão direito (ou ⋯) para criar, renomear, mover ou apagar. Arraste para mudar de pasta.</p></aside><section class="pmain">`;
   if (tab === "sobre") {
     if (UI.edit === true) return h + `<div class="ler"><h2 class="sec">Editar o escopo</h2><form class="form" data-form="sobre">
       <label>Nome do projeto<input class="field" name="nome" id="sb-nome" value="${esc(p.nome)}"></label>
@@ -867,26 +1094,29 @@ function projHTML(p) {
     h += escopoHTML(p, f, dentro, podeEd);
   }
   if (tab === "tarefas") {
-    const tks = p.tarefas.map((t, i) => ({ t, i })).sort((a, b) => (a.t.st === "feito") - (b.t.st === "feito") || ordTarefa(a.t, b.t));
-    h += `<div class="nbar"><span class="nnome">Tarefas</span><span class="esp"></span><button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>`;
-    h += tks.map(x => tarefaHTML(x.t, p, x.i, false)).join("") || '<p class="empty">Nenhuma tarefa ainda.</p>';
-    h += `<form class="row-form" data-form="tarefa"><input class="field" name="t" id="nt" placeholder="Nova tarefa" aria-label="Nova tarefa">
-      <select class="field" name="quem" id="ntq" aria-label="Com quem"><option value="">Com quem?</option>${S.membros.map(m => `<option value="${m.id}">${esc(m.curto)}</option>`).join("")}</select>
-      <input class="field" type="date" name="prazo" id="ntp" aria-label="Prazo"><select class="field" name="prio" id="ntpr" aria-label="Prioridade">${opcoesPrio("")}</select><button class="btn">Adicionar</button></form>
-      <p class="empty">Começo, repetição e o resto: clique na tarefa depois de criar.</p>`;
-    h += `<h2 class="sec" id="ideias" style="margin-top:28px">Ideias${p.ideias.length ? ` (${p.ideias.length})` : ""}</h2><p class="empty" style="margin-top:-4px">O que ainda não virou tarefa. Vote nas que valem a pena.</p>`;
-    h += [...p.ideias.map((x, i) => ({ ...x, i }))].sort((a, b) => b.votos.length - a.votos.length).map(x => `<div class="idea"><button class="vote" data-act="vote" data-i="${x.i}" aria-pressed="${x.votos.includes(me)}" aria-label="Votar">▲<br>${x.votos.length}</button><span class="tx">${esc(x.t)}<small>Sugerida por ${esc(M(x.por)?.curto || "")}</small></span></div>`).join("");
-    h += `<form class="row-form" data-form="ideia"><input class="field" name="t" id="ni" placeholder="Escreva uma ideia" aria-label="Nova ideia"><button class="btn">Adicionar ideia</button></form>`;
+    const tks = p.tarefas.map((t, i) => ({ t, i })), ab = tks.filter(x => x.t.st !== "feito").sort((a, b) => ordTarefa(a.t, b.t)), fe = tks.filter(x => x.t.st === "feito").sort((a, b) => (b.t.feitoEm || 0) - (a.t.feitoEm || 0));
+    h += `<div class="nbar"><span class="nnome">${p.eu ? "Minhas tarefas" : "Tarefas"}</span><span class="ncam">${ab.length ? "· " + plural(ab.length, "aberta", "abertas") : ""}</span><span class="esp"></span><button class="btn small primary" data-act="novatarefa" data-p="${p.id}">+ Nova tarefa</button>${p.eu ? "" : `<button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button>`}</div>`;
+    if (p.eu) h += `<p class="priv">🔒 Só você vê as tarefas e as notas da sua área.</p>`;
+    h += ab.length ? `<div class="tlist">${ab.map(x => tarefaHTML(x.t, p, x.i, false)).join("")}</div>` : `<p class="empty">Nenhuma tarefa aberta. Clique em + Nova tarefa.</p>`;
+    if (fe.length) h += `<details class="feitas"><summary>Feitas (${fe.length})</summary><div class="tlist">${fe.map(x => tarefaHTML(x.t, p, x.i, false)).join("")}</div></details>`;
+    if (p.eu) { const nos = S.projetos.flatMap(pp => pp.tarefas.map((t, i) => ({ t, i, p: pp }))).filter(x => x.t.quem === UI.me && x.t.st !== "feito").sort((a, b) => ordTarefa(a.t, b.t));
+      if (nos.length) h += `<div class="tsec">Nos projetos, com você<span class="n">${nos.length}</span></div><div class="tlist">${nos.map(x => tarefaHTML(x.t, x.p, x.i, true)).join("")}</div>`; }
+    /* as ideias saíram da tela (pedido de 22/10/2026); as que já existiam ficam guardadas aqui, fechadas, e podem virar tarefa */
+    if (p.ideias.length) h += `<details class="ideias-old feitas"><summary>Ideias guardadas (${p.ideias.length})</summary>${p.ideias.map((x, i) => `<div class="lixo-li"><span class="tx">${esc(x.t)}<small>Sugerida por ${esc(nm(x.por))}</small></span><button class="btn small" data-act="ideiatarefa" data-i="${i}">Virar tarefa</button></div>`).join("")}</details>`;
   }
   if (tab === "conversa") {
-    h += `<div class="nbar"><span class="nnome">Chat</span><span class="esp"></span><button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>`;
-    h += `<div class="chat" id="chatList">${chatHTML(p.id)}</div>
-      <form class="row-form" data-form="msg"><textarea class="field" name="t" id="msgT" rows="2" maxlength="2000" placeholder="Escreva para o projeto (Enter envia, Shift+Enter pula linha)" aria-label="Mensagem" style="flex:1 1 240px;min-height:46px;resize:vertical"></textarea><button class="btn primary">Enviar</button></form>`;
-    if (p.frente === "intervisao") h += `<p class="notice" style="margin-top:12px">Sigilo: não escreva nada que identifique paciente.</p>`;
+    h += `<div class="nbar"><span class="nnome">Chat</span><span class="ncam">· ${plural(pessoasProj(p).length, "pessoa", "pessoas")} no projeto</span><span class="esp"></span>${stack(pessoasProj(p), 5, 24)}<button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>`;
+    h += `<div class="chatbox"><div class="chat" id="chatList">${chatHTML(p.id)}</div>
+      <form class="composer" data-form="msg"><textarea class="field" name="t" id="msgT" rows="1" maxlength="2000" placeholder="Escreva para o projeto" aria-label="Mensagem (Enter envia, Shift+Enter pula linha)"></textarea><button class="send" aria-label="Enviar" title="Enviar (Enter)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form></div>`;
   }
   if (tab.startsWith("nota:")) h += notaHTML(p, nAb);
   if (tab.startsWith("pasta:")) h += pastaHTML(p, dAb);
   if (tab.startsWith("doc:")) h += docHTML(p, (p.docs || []).find(d => d.id === tab.slice(4)));
+  if (tab === "rede") { const { ns, L } = linksDe(p.id);
+    h += `<div class="nbar"><span class="nnome">Rede das notas</span><span class="ncam">· ${plural(ns.length, "nota", "notas")}, ${plural(L.length, "ligação", "ligações")}</span><span class="esp"></span><button class="btn small ghost" data-act="tab" data-tab="${p.eu ? "tarefas" : "sobre"}">Voltar</button></div>
+      <div class="grafo" id="grafo"><canvas aria-label="Rede das notas: cada bolinha é uma nota, e as linhas são os links [[ ]] entre elas"></canvas>
+      <div class="gctl"><button class="btn small" data-act="redezoom" data-z="1.4" aria-label="Aproximar">+</button><button class="btn small" data-act="redezoom" data-z="0.7" aria-label="Afastar">−</button><button class="btn small" data-act="redefit">Centralizar</button></div>
+      <div class="gleg">${ns.length ? "Arraste as bolinhas, use a roda do mouse (ou dois dedos) para o zoom e clique para abrir a nota. [[Nome da nota]] dentro de uma nota cria a linha." : "Ainda não há notas neste projeto."}</div></div>`; }
   return h + "</section></div></div>";
 }
 /* escopo: o que é o projeto, quem cuida e os documentos. Tarefas, chat e notas ficam cada um no seu botão. */
@@ -894,13 +1124,13 @@ const dmy = s => s ? s.slice(0, 10).split("-").reverse().join("/") : "";
 const dataDe = ms => ms ? new Date(ms).toLocaleDateString("pt-BR") : "";
 function escopoHTML(p, f, dentro, podeEd) {
   const resp = p.papeis.filter(r => r[1] === "Responsável" && M(r[0])), outros = p.papeis.filter(r => r[1] !== "Responsável" && M(r[0]));
-  const chips = l => l.length ? `<div class="pchips">${l.map(([id, papel]) => `<button class="pchip" data-act="person" data-id="${id}">${av(id, 24)}<span>${esc(M(id).curto)}${papel && papel !== "Participa" && papel !== "Responsável" ? ` <small>${esc(papel)}</small>` : ""}</span></button>`).join("")}</div>` : '<span class="vazio">Ninguém ainda</span>';
+  const chips = l => l.length ? `<div class="pchips">${l.map(([id, papel]) => `<button class="pchip" data-act="person" data-id="${id}">${av(id, 24)}<span>${esc(nm(id))}${papel && papel !== "Participa" && papel !== "Responsável" ? ` <small>${esc(papel)}</small>` : ""}</span></button>`).join("")}</div>` : '<span class="vazio">Ninguém ainda</span>';
   const ev = S.eventos.filter(e => e.proj === p.id && !e.sala).map(e => ({ e, d: e.semanal ? proxSemanal(e.data) : e.data })).filter(x => x.d >= hojeISO()).sort((a, b) => (a.d + a.e.ini).localeCompare(b.d + b.e.ini))[0];
   const inicio = p.inicio ? dmy(p.inicio) : p.em ? dataDe(p.em) : "";
   const campo = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
   const docs = p.docs || [];
   return `<div class="ler"><div class="esc-top"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span><span class="esp"></span>
-    ${dentro ? `<button class="btn small ghost" data-act="leave">Sair do projeto</button>` : `<button class="btn small primary" data-act="join">Quero participar</button>`}${resp.length ? "" : `<button class="btn small" data-act="assumir">Assumir este projeto</button>`}${podeEd ? `<button class="btn small" data-act="editnote" data-on="1">Editar</button>` : ""}</div>
+    ${dentro ? `<button class="btn small ghost" data-act="leave">Sair do projeto</button>` : `<button class="btn small primary" data-act="join">Quero participar</button>`}${resp.length ? "" : `<button class="btn small" data-act="assumir">Assumir este projeto</button>`}${podeEd ? `<button class="btn small" data-act="editnote" data-on="1">Editar</button>` : ""}${souAdm() ? `<button class="btn small ghost" data-act="excluirproj" style="color:var(--bad)">Excluir projeto</button>` : ""}</div>
   <h1 class="esc-nome">${esc(p.nome)}</h1>
   <dl class="campos">${campo("Resumo", esc(p.resumo))}${campo("Missão", p.missao ? esc(p.missao) : '<span class="vazio">A definir</span>')}
     ${campo("Responsáveis", chips(resp))}${campo("Participantes", chips(outros))}${campo("Início do projeto", inicio || '<span class="vazio">A definir</span>')}
@@ -920,7 +1150,7 @@ const linkPreview = u => { const m = String(u || "").match(/drive\.google\.com\/
 function docHTML(p, d) {
   if (!d) return '<p class="empty">Esse documento saiu da trilha.</p>';
   const docs = p.docs, i = docs.indexOf(d), n = docNota(d), ant = docs[i - 1], prox = docs[i + 1];
-  const quem = n ? (n.editores || []).map(id => (M(id) || {}).curto).filter(Boolean).join(", ") : (M(d.por) || {}).curto;
+  const quem = n ? (n.editores || []).map(id => (M(id) || {}).nome).filter(Boolean).join(", ") : (M(d.por) || {}).nome;
   let h = `<div class="nbar"><span class="ncam">Documento ${i + 1} de ${docs.length} ·</span><span class="nnome">${esc(docTitulo(d))}</span><span class="esp"></span>
     ${ant ? `<button class="btn small ghost" data-act="tab" data-tab="doc:${ant.id}" title="${esc(docTitulo(ant))}">‹ ${i}</button>` : ""}${prox ? `<button class="btn small ghost" data-act="tab" data-tab="doc:${prox.id}" title="${esc(docTitulo(prox))}">${i + 2} ›</button>` : ""}
     ${n ? `<button class="btn small" data-act="abrenota" data-id="${n.id}">Editar o texto</button><button class="btn small" data-act="imprimir">Salvar em PDF</button>` : `<a class="btn small" href="${esc(d.link)}" target="_blank" rel="noopener">Abrir em outra aba</a>`}
@@ -946,7 +1176,7 @@ function abrirDoc(p, id) {
 }
 function notaHTML(p, n) {
   if (!n) return '<p class="empty">Essa nota não existe mais.</p>';
-  const ed = UI.edit === n.id, cam = caminho(n), quem = (n.editores || []).map(id => (M(id) || {}).curto).filter(Boolean);
+  const ed = UI.edit === n.id, cam = caminho(n), quem = (n.editores || []).map(id => (M(id) || {}).nome).filter(Boolean);
   const pastas = notasDe(p.id).filter(x => x.tipo === "pasta"), nomeP = d => [...caminho(d), d.titulo].join(" / ");
   const naTrilha = (p.docs || []).find(d => d.nota === n.id);
   let h = `<div class="nbar"><span class="ncam">${cam.length ? esc(cam.join(" / ")) + " /" : ""}</span><span class="nnome">${esc(n.titulo)}</span><span class="esp"></span>
@@ -989,6 +1219,113 @@ function md(src, pid) {
   return out + (list ? "</ul>" : "");
 }
 
+/* ===== REDE DAS NOTAS. Refeita a partir do Obsidian 1.14.4 (sim.js e app.js, lidos em 22/10/2026), sem copiar código:
+   forças do d3 com os valores padrão dele (centro 0,1 puxando para o meio; repulsão 1000, que é o controle 10 ao cubo, com distância mínima de 30;
+   ligação de 250 px com força 1 dividida pelo menor número de ligações das duas pontas; colisão de raio 60 com força 0,5; velocidade x0,6 a cada passo;
+   o "calor" começa em 1 e esfria até 0,001 em uns 300 passos, e reaquece para 0,3 quando alguém arrasta).
+   Bolinha com raio max(8, min(3 x raiz(ligações + 1), 30)), que na tela cresce com a raiz do zoom; o nome aparece a partir do zoom 0,5;
+   passar o mouse acende a nota e as vizinhas e apaga as outras para 0,2; zoom entre 1/128 e 8, suavizado. ===== */
+function linksDe(pid) {
+  const ns = notasDe(pid).filter(n => n.tipo === "nota"), por = new Map(ns.map(n => [n.titulo.trim().toLowerCase(), n])), L = [], vis = new Set();
+  ns.forEach(n => { for (const m of String(n.texto || "").matchAll(/\[\[([^\]|#]+)/g)) { const alvo = por.get(m[1].trim().toLowerCase());
+    if (alvo && alvo !== n) { const k = [n.id, alvo.id].sort().join(">"); if (!vis.has(k)) { vis.add(k); L.push([n.id, alvo.id]); } } } });
+  return { ns, L };
+}
+let REDE = null;
+const REDE_POS = {};
+function pararRede() { if (REDE) { cancelAnimationFrame(REDE.raf); REDE.ro && REDE.ro.disconnect(); REDE = null; } }
+function montarRede(p) {
+  pararRede(); const box = $("#grafo"); if (!box || !p) return;
+  const cv = box.querySelector("canvas"), ctx = cv.getContext("2d"), { ns, L } = linksDe(p.id), css = getComputedStyle(document.documentElement);
+  const cor = k => css.getPropertyValue(k).trim();
+  let tinha = 0;
+  const N = ns.map((n, i) => { const o = REDE_POS[n.id]; if (o) tinha++; const a = i * 2.39996, r = 30 * Math.sqrt(i + .5);
+    return { id: n.id, n, x: o ? o[0] : r * Math.cos(a), y: o ? o[1] : r * Math.sin(a), vx: 0, vy: 0, fx: null, fy: null, grau: 0, viz: new Set(), fade: 1 }; });
+  const byId = new Map(N.map(x => [x.id, x])), E = L.map(([a, b]) => ({ s: byId.get(a), t: byId.get(b) }));
+  E.forEach(e => { e.s.grau++; e.t.grau++; e.s.viz.add(e.t.id); e.t.viz.add(e.s.id); });
+  E.forEach(e => { e.forca = 1 / Math.min(e.s.grau, e.t.grau); e.bias = e.s.grau / (e.s.grau + e.t.grau); });
+  N.forEach(x => x.r = Math.max(8, Math.min(3 * Math.sqrt(x.grau + 1), 30)));
+  const R = REDE = { cv, ctx, N, E, alpha: tinha === N.length && N.length ? .3 : 1, alvoAlpha: 0, scale: .6, alvoScale: .6, panX: 0, panY: 0, zx: null, zy: null,
+    hover: null, drag: null, pan: null, toques: new Map(), mexeu: false, w: 0, h: 0, raf: 0, frames: 0, ajustou: tinha === N.length && !!UI.redeZoom,
+    cores: { no: cor("--muted"), acento: cor("--accent"), linha: cor("--line-strong"), texto: cor("--fg"), fundo: cor("--bg") } };
+  if (R.ajustou) Object.assign(R, UI.redeZoom);
+  const medir = () => { const d = devicePixelRatio || 1, b = cv.getBoundingClientRect(); R.w = b.width; R.h = b.height; cv.width = Math.round(b.width * d); cv.height = Math.round(b.height * d); ctx.setTransform(d, 0, 0, d, 0, 0); };
+  medir(); R.ro = new ResizeObserver(medir); R.ro.observe(cv);
+  const tela = x => [x.x * R.scale + R.panX + R.w / 2, x.y * R.scale + R.panY + R.h / 2];
+  const mundo = (sx, sy) => [(sx - R.panX - R.w / 2) / R.scale, (sy - R.panY - R.h / 2) / R.scale];
+  const raioTela = x => x.r * Math.sqrt(R.scale);
+  const achar = (sx, sy) => { let m = null, md = 1e9; for (const x of N) { const [a, b] = tela(x), d = Math.hypot(a - sx, b - sy); if (d < raioTela(x) + 6 && d < md) { m = x; md = d; } } return m; };
+  function passo() {
+    const a = R.alpha;
+    for (const x of N) { x.vx += -x.x * .1 * a; x.vy += -x.y * .1 * a; }
+    for (const e of E) { let dx = e.t.x + e.t.vx - e.s.x - e.s.vx || 1e-6, dy = e.t.y + e.t.vy - e.s.y - e.s.vy || 1e-6; let l = Math.sqrt(dx * dx + dy * dy); l = (l - 250) / l * a * e.forca; dx *= l; dy *= l;
+      e.t.vx -= dx * e.bias; e.t.vy -= dy * e.bias; e.s.vx += dx * (1 - e.bias); e.s.vy += dy * (1 - e.bias); }
+    for (const i of N) for (const j of N) { if (i === j) continue; let dx = j.x - i.x || 1e-6, dy = j.y - i.y || 1e-6, l = dx * dx + dy * dy; if (l < 900) l = Math.sqrt(900 * l); const w = -1000 * a / l; i.vx += dx * w; i.vy += dy * w; }
+    for (let k = 0; k < N.length; k++) for (let m = k + 1; m < N.length; m++) { const i = N[k], j = N[m]; let dx = i.x + i.vx - j.x - j.vx || 1e-6, dy = i.y + i.vy - j.y - j.vy || 1e-6, l = dx * dx + dy * dy;
+      if (l < 120 * 120) { l = Math.sqrt(l); const f = (120 - l) / l * .5 * .5; dx *= f; dy *= f; i.vx += dx; i.vy += dy; j.vx -= dx; j.vy -= dy; } }
+    for (const x of N) { if (x.fx == null) x.x += x.vx *= .6; else { x.x = x.fx; x.vx = 0; } if (x.fy == null) x.y += x.vy *= .6; else { x.y = x.fy; x.vy = 0; } REDE_POS[x.id] = [x.x, x.y]; }
+    R.alpha += (R.alvoAlpha - R.alpha) * (1 - Math.pow(.001, 1 / 300));
+  }
+  function ajustar(forcar) {
+    if (!N.length) return; let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const x of N) { x0 = Math.min(x0, x.x - x.r); y0 = Math.min(y0, x.y - x.r); x1 = Math.max(x1, x.x + x.r); y1 = Math.max(y1, x.y + x.r); }
+    const s = Math.max(1 / 128, Math.min(1.6, Math.min((R.w - 80) / Math.max(1, x1 - x0), (R.h - 80) / Math.max(1, y1 - y0))));
+    R.alvoScale = s; if (forcar) R.scale = s; R.panX = -((x0 + x1) / 2) * R.scale; R.panY = -((y0 + y1) / 2) * R.scale; R.zx = R.zy = null; R.ajustou = true;
+  }
+  R.ajustar = ajustar;
+  function desenhar() {
+    const { ctx: c, w, h } = R; c.clearRect(0, 0, w, h);
+    const foco = R.drag ? R.drag.no : R.hover;
+    for (const x of N) { const alvo = !foco || foco === x || foco.viz.has(x.id) ? 1 : .2; x.fade = x.fade * .9 + alvo * .1; }
+    c.lineWidth = 1;
+    for (const e of E) { const [a, b] = tela(e.s), [d, f] = tela(e.t), aceso = foco && (e.s === foco || e.t === foco);
+      c.globalAlpha = aceso ? 1 : Math.min(e.s.fade, e.t.fade) * .9; c.strokeStyle = aceso ? R.cores.acento : R.cores.linha; c.lineWidth = aceso ? 1.6 : 1; c.beginPath(); c.moveTo(a, b); c.lineTo(d, f); c.stroke(); }
+    const textoA = Math.max(0, Math.min(1, Math.log2(R.scale) + 1));
+    c.font = `12px ${css.getPropertyValue("--font")}`; c.textAlign = "center"; c.textBaseline = "top";
+    for (const x of N) { const [a, b] = tela(x), r = raioTela(x), sel = UI.redeSel === x.id || UI.tab === "nota:" + x.id;
+      c.globalAlpha = x.fade; c.fillStyle = foco === x || sel ? R.cores.acento : R.cores.no; c.beginPath(); c.arc(a, b, r, 0, 7); c.fill();
+      const ta = foco === x ? 1 : textoA * x.fade; if (ta > .01) { c.globalAlpha = ta; c.fillStyle = R.cores.texto; const t = x.n.titulo.length > 40 ? x.n.titulo.slice(0, 39) + "…" : x.n.titulo; c.fillText(t, a, b + r + 4 + (foco === x ? 4 : 0)); } }
+    c.globalAlpha = 1;
+  }
+  function quadro() {
+    if (!REDE || REDE !== R) return;
+    /* a simulação anda pelo relógio (60 passos por segundo, como o Obsidian), mesmo se o navegador desenhar menos quadros */
+    const agora = performance.now(), n = Math.min(6, Math.max(1, Math.round((agora - (R.t0 || agora - 16.7)) / 16.7))); R.t0 = agora;
+    for (let k = 0; k < n && R.alpha > .001 && N.length; k++) { passo(); R.frames++; }
+    if (!R.ajustou && (R.alpha < .25 || R.frames > 160)) ajustar(false);
+    if (Math.abs(R.scale - R.alvoScale) / R.alvoScale > .002) { const zx = R.zx == null ? R.w / 2 : R.zx, zy = R.zy == null ? R.h / 2 : R.zy, [wx, wy] = mundo(zx, zy);
+      R.scale = R.scale * .85 + R.alvoScale * .15; R.panX = zx - R.w / 2 - wx * R.scale; R.panY = zy - R.h / 2 - wy * R.scale; }
+    UI.redeZoom = { scale: R.scale, alvoScale: R.alvoScale, panX: R.panX, panY: R.panY };
+    desenhar(); R.raf = requestAnimationFrame(quadro);
+  }
+  const pos = e => { const b = cv.getBoundingClientRect(); return [e.clientX - b.left, e.clientY - b.top]; };
+  cv.addEventListener("pointerdown", e => {
+    cv.setPointerCapture(e.pointerId); const [sx, sy] = pos(e); R.toques.set(e.pointerId, [sx, sy]);
+    if (R.toques.size === 2) { R.drag = null; R.pan = null; const [p1, p2] = [...R.toques.values()]; R.pinca = { d: Math.hypot(p1[0] - p2[0], p1[1] - p2[1]), s: R.alvoScale }; return; }
+    const no = achar(sx, sy);
+    if (no) { R.drag = { no, x: sx, y: sy, moveu: false }; const [wx, wy] = mundo(sx, sy); no.fx = wx; no.fy = wy; R.alvoAlpha = .3; R.alpha = Math.max(R.alpha, .3); }
+    else R.pan = { x: sx, y: sy, px: R.panX, py: R.panY };
+  });
+  cv.addEventListener("pointermove", e => {
+    const [sx, sy] = pos(e); if (R.toques.has(e.pointerId)) R.toques.set(e.pointerId, [sx, sy]);
+    if (R.pinca && R.toques.size === 2) { const [p1, p2] = [...R.toques.values()]; R.zx = (p1[0] + p2[0]) / 2; R.zy = (p1[1] + p2[1]) / 2; R.alvoScale = Math.max(1 / 128, Math.min(8, R.pinca.s * Math.hypot(p1[0] - p2[0], p1[1] - p2[1]) / R.pinca.d)); R.ajustou = true; return; }
+    if (R.drag) { if (Math.hypot(sx - R.drag.x, sy - R.drag.y) > 4) R.drag.moveu = true; const [wx, wy] = mundo(sx, sy); R.drag.no.fx = wx; R.drag.no.fy = wy; return; }
+    if (R.pan) { R.panX = R.pan.px + sx - R.pan.x; R.panY = R.pan.py + sy - R.pan.y; R.ajustou = true; return; }
+    const h = achar(sx, sy); if (h !== R.hover) { R.hover = h; cv.classList.toggle("pega", !!h); cv.title = h ? h.n.titulo : ""; }
+  });
+  const soltar = e => {
+    R.toques.delete(e.pointerId); if (R.toques.size < 2) R.pinca = null;
+    if (R.drag) { const d = R.drag; R.drag = null; d.no.fx = d.no.fy = null; R.alvoAlpha = 0;
+      if (!d.moveu && e.type === "pointerup") { const b = document.createElement("i"); b.dataset.act = "abrenota"; b.dataset.id = d.no.id; acao(b); } }
+    R.pan = null;
+  };
+  cv.addEventListener("pointerup", soltar); cv.addEventListener("pointercancel", soltar);
+  cv.addEventListener("pointerleave", () => { if (!R.drag) R.hover = null; });
+  cv.addEventListener("wheel", e => { e.preventDefault(); const [sx, sy] = pos(e); R.zx = sx; R.zy = sy; R.alvoScale = Math.max(1 / 128, Math.min(8, R.alvoScale * Math.exp(-e.deltaY * .0015))); R.ajustou = true; }, { passive: false });
+  R.raf = requestAnimationFrame(quadro);
+}
+function zoomRede(f) { if (!REDE) return; REDE.zx = REDE.zy = null; REDE.alvoScale = Math.max(1 / 128, Math.min(8, REDE.alvoScale * f)); REDE.ajustou = true; }
+function ajustarRede() { if (REDE) REDE.ajustar(false); }
+
 /* ===== INTEGRANTES ===== */
 function membersHTML() {
   const sp = new Set(semProjeto().map(m => m.id));
@@ -1028,7 +1365,7 @@ function votacaoHTML(v) {
       <input type="${v.multipla ? "checkbox" : "radio"}" name="op" value="${o.id}" id="op-${o.id}"${mine ? " checked" : ""}${fx ? " disabled" : ""}><span class="tx">${esc(o.t)}</span>
       ${verRes ? `<span class="n">${c.length ? stack(c, 3, 22) : ""}${plural(c.length, "voto", "votos")}</span>` : ""}</label>`; }).join("")}</div>
   ${fx ? "" : `<div class="row-form"><button class="btn primary">${meus.length ? "Mudar meu voto" : "Votar"}</button>${meus.length ? `<button type="button" class="btn ghost" data-act="tirarvoto">Tirar meu voto</button>` : ""}</div>`}</form>
-  <p style="font-size:13.5px;color:var(--muted);margin-top:16px">${verRes ? `${plural(vs.length, "pessoa votou", "pessoas votaram")}.` : "O resultado aparece depois que você vota."} Aberta por ${esc(M(v.criador)?.curto || "alguém")}.</p>
+  <p style="font-size:13.5px;color:var(--muted);margin-top:16px">${verRes ? `${plural(vs.length, "pessoa votou", "pessoas votaram")}.` : "O resultado aparece depois que você vota."} Aberta por ${esc(nm(v.criador))}.</p>
   ${(v.criador === UI.me || souAdm()) && !fx ? `<button class="btn small" data-act="encerrar">Encerrar agora</button>` : ""}</div>`;
 }
 function abrirVotacao() {
@@ -1086,7 +1423,7 @@ function ocorrencias(de, ate) {
   }
   return out;
 }
-const tarefasEm = d => S.projetos.flatMap(p => p.tarefas.map((t, i) => ({ ...t, i, p }))).filter(t => t.prazo === d);
+const tarefasEm = d => S.projetos.concat([EU()]).flatMap(p => p.tarefas.map((t, i) => ({ ...t, i, p }))).filter(t => t.prazo === d);
 const mins = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
 function calHTML() {
   const ref = UI.ref ? new Date(UI.ref + "T12:00") : new Date(); const hoje = ymd(new Date());
@@ -1096,7 +1433,7 @@ function calHTML() {
     range = `${s.getDate()} de ${MESES[s.getMonth()]} a ${e.getDate()} de ${MESES[e.getMonth()]}`; sub = dias.some(d => ymd(d) === hoje) ? "semana atual" : "semana de " + e.getFullYear();
     const occ = ocorrencias(ymd(s), ymd(e)); const agora = new Date();
     body = `<div class="gwrap"><div class="wk"><div class="gh"></div>${dias.map(d => `<div class="gh${ymd(d) === hoje ? " today" : ""}"><div class="d">${DIAS[d.getDay()]}</div><div class="n">${d.getDate()}</div></div>`).join("")}
-      <div class="trow-lab">Tarefas</div>${dias.map(d => `<div class="tcell">${tarefasEm(ymd(d)).map(t => `<button class="tchip${t.st === "feito" ? " done" : ""}" style="--fc:${fc(F(t.p.frente))}" data-act="proj" data-id="${t.p.id}" data-tab="tarefas" title="${esc(t.t)} (${esc(t.p.nome)})">${esc(t.t)}</button>`).join("")}</div>`).join("")}
+      <div class="trow-lab">Tarefas</div>${dias.map(d => `<div class="tcell">${tarefasEm(ymd(d)).map(t => `<button class="tchip${t.st === "feito" ? " done" : ""}" style="--fc:${fc(F(t.p.frente))}" data-act="edtarefa" data-p="${t.p.id}" data-i="${t.i}" title="${esc(t.t)} (${esc(t.p.nome)})">${esc(t.t)}</button>`).join("")}</div>`).join("")}
       <div class="hcol">${[...Array(H1 - H0)].map((_, i) => `<div class="hlab">${pad(H0 + i)}h</div>`).join("")}</div>
       ${dias.map(d => { const k = ymd(d); return `<div class="dcol${k === hoje ? " today" : ""}${d.getDay() % 6 === 0 ? " fds" : ""}" data-act="newat" data-date="${k}" style="height:${(H1 - H0) * HH}px">
         ${occ.filter(o => o.d === k).map(o => { const top = (mins(o.e.ini) - H0 * 60) / 60 * HH, hgt = Math.max(26, (mins(o.e.fim || o.e.ini) - mins(o.e.ini)) / 60 * HH - 2);
@@ -1141,22 +1478,31 @@ function desenharEvento() {
     <div class="two"><label>Começa<input class="field" type="time" name="ini" id="ev-i" value="${e.ini}"></label><label>Termina<input class="field" type="time" name="fim" id="ev-f" value="${e.fim}"></label></div>
     <label>Projeto<select class="field" name="proj" id="ev-p"><option value="">Nenhum</option>${S.projetos.map(p => `<option value="${p.id}"${p.id === e.proj ? " selected" : ""}>${esc(p.nome)}</option>`).join("")}</select></label>
     <label style="display:flex;gap:8px;align-items:center;color:var(--fg)"><input type="checkbox" name="semanal" id="ev-s"${e.semanal ? " checked" : ""}> Repete toda semana</label>
-    <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:4px">Quem vai (${e.quem.length})</div><div class="pick">${S.membros.map(m => `<button type="button" class="chip" data-act="who" data-id="${m.id}" aria-pressed="${e.quem.includes(m.id)}">${av(m.id, 24)}${esc(m.curto)}</button>`).join("")}</div></div>
+    <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:4px">Quem vai (${e.quem.length})</div><div class="pick">${S.membros.map(m => `<button type="button" class="chip" data-act="who" data-id="${m.id}" aria-pressed="${e.quem.includes(m.id)}">${av(m.id, 24)}${esc(m.nome)}</button>`).join("")}</div></div>
     <label>Observações<textarea class="field" name="desc" id="ev-o" style="min-height:80px">${esc(e.desc)}</textarea></label>
     <div class="row-form"><button class="btn primary">${novo ? "Criar compromisso" : "Salvar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${novo || !(souAdm() || e.criador === UI.me) ? "" : `<button type="button" class="btn ghost" data-act="delev" style="margin-left:auto;color:var(--bad)">${UI.confirmDel ? "Clique de novo para apagar" : "Apagar"}</button>`}</div>
   </form>${novo ? "" : `<p style="margin:14px 0 0;font-size:14px"><a class="link" href="${esc(gcal(e))}" target="_blank" rel="noopener">Pôr na minha agenda do Google</a>${ehLink(e.local) ? ` · <a class="link" href="${esc(e.local.trim())}" target="_blank" rel="noopener">Entrar na reunião</a>` : ""}</p>`}</div></div>`;
 }
 function lerEvento() { const f = document.querySelector('[data-form="evento"]'); if (!f) return; const fd = new FormData(f), e = UI.draft; ["titulo", "data", "local", "ini", "fim", "proj", "desc"].forEach(k => e[k] = fd.get(k) || ""); e.semanal = !!fd.get("semanal"); }
-function abrirTarefa(data) {
-  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Nova tarefa"><h2>Nova tarefa</h2>
-  <form class="form" data-form="tarefa-cal"><label>O que fazer<input class="field" name="t" id="tk-t" required></label>
-  <label>Projeto<select class="field" name="proj" id="tk-p" required>${S.projetos.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join("")}</select></label>
-  <div class="two"><label>Com quem<select class="field" name="quem" id="tk-q"><option value="">Ninguém ainda</option>${S.membros.map(m => `<option value="${m.id}"${m.id === UI.me ? " selected" : ""}>${esc(m.curto)}</option>`).join("")}</select></label><label>Prazo<input class="field" type="date" name="prazo" id="tk-d" value="${data || ""}"></label></div>
-  <div class="two"><label>Começa em<input class="field" type="date" name="inicio" id="tk-i"></label><label>Prioridade<select class="field" name="prio" id="tk-pr">${opcoesPrio("")}</select></label></div>
-  <label>Repetição<select class="field" name="repete" id="tk-r">${opcoesRepete("")}</select></label>
-  <div class="row-form"><button class="btn primary">Criar tarefa</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div></form></div></div>`;
+/* excluir projeto: sai da árvore e vai para "Projetos excluídos" (campo excluido), de onde um ADM restaura; só o dono apaga de vez */
+function excluirProjeto(p) {
+  S.projetos = S.projetos.filter(x => x !== p); p.excluido = Date.now(); p.excluidoPor = UI.me; S.lixo.push(p);
+  if (NV.on) { delete NV.last["projetos/" + p.id]; NV.db.collection("projetos").doc(p.id).update({ excluido: p.excluido, excluidoPor: UI.me }).catch(e => toast("Não consegui excluir: " + e.message)); } else save();
+  toast("Projeto excluído. Para trazer de volta: Projetos excluídos, no fim do Início.");
 }
-
+function abrirLixo() {
+  if (!S.lixo.length) { $("#overlay").innerHTML = ""; return render(); }
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Projetos excluídos"><h2>Projetos excluídos</h2>
+  ${S.lixo.map(p => `<div class="lixo-li"><span class="chipf" style="--fc:${fc(F(p.frente))}"></span><span class="tx">${esc(p.nome)}<small>Excluído em ${dataDe(p.excluido)}${p.excluidoPor ? " por " + esc(nm(p.excluidoPor)) : ""}</small></span><button class="btn small" data-act="restaurar" data-id="${p.id}">Restaurar</button>${souDono() ? `<button class="btn small ghost" data-act="apagardevez" data-id="${p.id}" style="color:var(--bad)">Apagar de vez</button>` : ""}</div>`).join("")}
+  <div class="row-form"><button type="button" class="btn ghost" data-act="closemodal">Fechar</button></div></div></div>`;
+}
+/* botão direito na árvore do Início: projeto (abrir, excluir) e frente (editar nome e cor, novo projeto) */
+document.addEventListener("contextmenu", e => {
+  const nd = UI.v === "inicio" && e.target.closest(".node"); if (!nd) return; e.preventDefault();
+  const [k, id] = nd.dataset.node.split(":");
+  if (k === "p") { const p = P(id); if (!p) return; menu(e.clientX, e.clientY, [p.nome, ["📂", "Abrir o projeto", () => go("projeto", { proj: id, tab: "sobre" })], ["✓", "Tarefas", () => go("projeto", { proj: id, tab: "tarefas" })], souAdm() ? "-" : null, souAdm() ? ["🗑", "Excluir projeto", () => { if (confirm(`Excluir o projeto “${p.nome}”? Ele sai da árvore e fica em Projetos excluídos, de onde um ADM pode restaurar.`)) { excluirProjeto(p); render(); } }, "warn"] : null]); }
+  else { const f = F(id); if (!f) return; menu(e.clientX, e.clientY, [f.nome, podeCriarEm(f) ? ["＋", "Novo projeto nesta frente", () => abrirProjeto(id)] : null, souAdm() ? ["✎", "Editar a frente (nome e cor)", () => abrirFrente(id)] : null, ["👥", "Ver quem está nela", () => go("integrantes", { filtro: id })]]); }
+});
 /* janela de projeto novo */
 function abrirProjeto(fid) {
   const ok = S.frentes.filter(podeCriarEm); if (!ok.length && !souAdm()) return toast("Só os ADM criam projetos fora da frente de ideias.");
@@ -1186,8 +1532,14 @@ function abrirFrente(id) {
 /* ===== AÇÕES ===== */
 document.addEventListener("click", e => {
   const node = e.target.closest(".node");
-  if (node) { if (DRAG && DRAG.done) return; const add = e.target.closest("[data-add]"); if (add) return abrirProjeto(add.dataset.add); const [k, id] = node.dataset.node.split(":"); return k === "p" ? go("projeto", { proj: id, tab: "sobre" }) : go("integrantes", { filtro: id }); }
+  if (node) { if (DRAG && DRAG.done) return; const add = e.target.closest("[data-add]"); if (add) return abrirProjeto(add.dataset.add); const edf = e.target.closest("[data-edf]"); if (edf) return abrirFrente(edf.dataset.edf); const [k, id] = node.dataset.node.split(":"); return k === "p" ? go("projeto", { proj: id, tab: "sobre" }) : go("integrantes", { filtro: id }); }
+  const mx = e.target.closest("[data-ctx]"); if (mx) { e.stopPropagation(); const n = NT(mx.dataset.ctx), r = mx.getBoundingClientRect(); if (n) menuNota(n, r.left, r.bottom + 2); return; }
+  if (e.target.matches && e.target.matches("input.ren")) return;
   const t = e.target.closest("[data-act]"); if (!t) return;
+  acao(t, e);
+});
+function acao(t, e) {
+  e = e || { target: t, stopPropagation() {} };
   const a = t.dataset.act, p = UI.v === "projeto" ? P(UI.proj) : null;
   if (a === "closemodal") { if (e.target === t || t.tagName === "BUTTON") $("#overlay").innerHTML = ""; return; }
   if (a === "go") return go(t.dataset.v, t.dataset.filtro ? { filtro: t.dataset.filtro } : t.dataset.v === "integrantes" ? { filtro: "todos" } : {});
@@ -1198,7 +1550,10 @@ document.addEventListener("click", e => {
   if (a === "join") { p.papeis.push([UI.me, "Participa"]); save(); toast("Você entrou no projeto."); return render(); }
   if (a === "leave") { p.papeis = p.papeis.filter(r => r[0] !== UI.me); save(); toast("Você saiu do projeto."); return render(); }
   if (a === "cyc") { const pp = P(t.dataset.p) || p, x = pp.tarefas[+t.dataset.i]; x.st = { afazer: "fazendo", fazendo: "feito", feito: "afazer" }[x.st]; if (x.st === "feito") concluir(pp, x); else { delete x.feitoEm; delete x.feitoPor; } save(); return render(); }
-  if (a === "edtarefa") return abrirTarefaEd(t.dataset.p, +t.dataset.i);
+  if (a === "edtarefa") return abrirTarefaForm({ pid: t.dataset.p, i: +t.dataset.i });
+  if (a === "novatarefa") return abrirTarefaForm(t.dataset.p ? { pid: t.dataset.p, fixo: true } : { quem: t.dataset.quem === "eu" ? UI.me : "" });
+  if (a === "tfpor") { UI.tf.por = t.dataset.v; return render(); }
+  if (a === "ideiatarefa") { const x = p.ideias[+t.dataset.i]; if (!x) return; p.tarefas.push({ t: x.t, st: "afazer", quem: null, prazo: "", obs: "Ideia de " + nm(x.por) + ".", em: Date.now(), por: UI.me }); p.ideias.splice(+t.dataset.i, 1); save(); toast("A ideia virou tarefa."); return render(); }
   if (a === "deltarefa") { if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para apagar"; return; } P(t.dataset.p).tarefas.splice(+t.dataset.i, 1); save(); $("#overlay").innerHTML = ""; toast("Tarefa apagada."); return render(); }
   if (a === "tfq") { UI.tf.quem = t.dataset.v; return render(); }
   if (a === "tff") { UI.tf.q = t.dataset.v; return render(); }
@@ -1206,18 +1561,13 @@ document.addEventListener("click", e => {
     if (vendo && UI.pastas[d.id]) { UI.pastas[d.id] = false; return render(); } abrirAte(d); UI.pastas[d.id] = true; UI.pastaSel = d.id; UI.tab = nd ? "nota:" + nd.id : "pasta:" + d.id; UI.edit = false; return render(); }
   if (a === "abrenota") { salvarNotaAberta(); const n = NT(t.dataset.id); if (!n) return; abrirAte(n); UI.pastaSel = n.pai || ""; $("#overlay").innerHTML = "";
     if (UI.v !== "projeto" || UI.proj !== n.proj) return go("projeto", { proj: n.proj, tab: "nota:" + n.id }); UI.tab = "nota:" + n.id; UI.edit = false; render(); return scrollTo(0, 0); }
-  if (a === "novanota" || a === "novapasta") { salvarNotaAberta(); const pai = t.dataset.pai || "", pasta = a === "novapasta"; if (pai) UI.pastas[pai] = true;
-    const n = novaNota(UI.proj, pai, pasta ? "pasta" : "nota"); if (pasta) UI.pastas[n.id] = true; UI.pastaSel = pasta ? n.id : pai; UI.tab = (pasta ? "pasta:" : "nota:") + n.id; UI.edit = pasta ? false : n.id; render();
-    const el = $(pasta ? "#pstTit" : "#ntTit"); if (el) { el.focus(); el.select(); } return; }
+  if (a === "novanota" || a === "novapasta") return criarNota(t.dataset.pai || "", a === "novapasta" ? "pasta" : "nota");
   if (a === "editanota") { UI.edit = UI.tab.slice(5); render(); const tx = $("#ntTxt"); if (tx) tx.focus(); return; }
   if (a === "salvanota") { const n = NT(UI.edit); if (n && salvarNota(n, $("#ntTit").value, $("#ntTxt").value, $("#ntPai").value)) toast("Nota salva."); UI.edit = false; return render(); }
   if (a === "desfaznota") { const n = NT(UI.edit); if (n) { $("#ntTit").value = n.titulo; $("#ntTxt").value = n.texto; $("#ntPai").value = n.pai || ""; } return toast("Voltou ao último texto salvo."); }
   if (a === "versaoanterior") { if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para trocar"; return; } salvarNotaAberta(); const n = NT(UI.tab.slice(5)); if (n && n.anterior != null) salvarNota(n, n.titulo, n.anterior, null); UI.edit = false; toast("Voltou para a versão anterior. A que estava ficou guardada."); return render(); }
-  if (a === "apaganota") { const id = UI.tab.split(":")[1], n = NT(id); if (!n) return; if (!podeApagarNota(n)) return toast("Só os ADM apagam o que outras pessoas editaram."); if (n.tipo === "pasta" && filhos(n.proj, n.id).length) return toast("Esvazie a pasta antes.");
-    if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para apagar"; return; } S.notas = S.notas.filter(x => x.id !== id);
-    if (NV.on) NV.db.collection("notas").doc(id).delete().catch(x => toast("Não deu para apagar: " + x.message)); else save(); UI.edit = false; UI.tab = n.pai ? "pasta:" + n.pai : "sobre"; toast("Apagado."); return render(); }
+  if (a === "apaganota") { const n = NT(UI.tab.split(":")[1]); if (n) apagarNota(n); return; }
   if (a === "take") { (P(t.dataset.p) || p).tarefas[+t.dataset.i].quem = UI.me; save(); return render(); }
-  if (a === "vote") { const x = p.ideias[+t.dataset.i]; x.votos = x.votos.includes(UI.me) ? x.votos.filter(v => v !== UI.me) : x.votos.concat(UI.me); save(); return render(); }
   if (a === "editnote") { UI.edit = t.dataset.on === "1"; return render(); }
   if (a === "novodoc") return abrirDoc(p, null);
   if (a === "editdoc") return abrirDoc(p, t.dataset.id);
@@ -1239,13 +1589,13 @@ document.addEventListener("click", e => {
   if (a === "assumir") { const x = p.papeis.find(y => y[0] === UI.me); if (x) x[1] = "Responsável"; else p.papeis.unshift([UI.me, "Responsável"]); save(); toast("Agora você é responsável por este projeto."); return render(); }
   if (a === "sala") {
     const url = "https://meet.jit.si/Psychology-" + Math.random().toString(36).slice(2, 10), d = new Date(), f = new Date(d.getTime() + 60 * 60e3);
-    S.eventos.push({ id: "e" + Date.now(), titulo: "Sala aberta por " + M(UI.me).curto, data: hojeISO(), ini: hm(d), fim: f.getDate() === d.getDate() ? hm(f) : "23:59", local: url, proj: "", quem: [UI.me], semanal: false, desc: "Sala aberta na hora pelo botão do site.", criador: UI.me, sala: true, em: Date.now() });
+    S.eventos.push({ id: "e" + Date.now(), titulo: "Sala aberta por " + nm(UI.me), data: hojeISO(), ini: hm(d), fim: f.getDate() === d.getDate() ? hm(f) : "23:59", local: url, proj: "", quem: [UI.me], semanal: false, desc: "Sala aberta na hora pelo botão do site.", criador: UI.me, sala: true, em: Date.now() });
     save(); window.open(url, "_blank", "noopener"); toast("Sala aberta. Quem estiver no site vê o aviso para entrar."); return render();
   }
   if (a === "fechasala") { const x = S.eventos.find(y => y.id === t.dataset.id); if (x) { x.fim = hm(new Date()); if (x.fim < x.ini) x.fim = x.ini; save(); } toast("Sala encerrada."); return render(); }
   if (a === "delmsg") { const id = t.dataset.id; S.mensagens = S.mensagens.filter(m => m.id !== id); if (NV.on) NV.db.collection("mensagens").doc(id).delete().catch(x => toast("Não deu para apagar: " + x.message)); else save(); return renderChat(); }
   if (a === "voltaquem") return telaQuem();
-  if (a === "togadm") { const m = M(UI.person); m.adm = !m.adm; save(); toast(m.adm ? m.curto + " agora é ADM." : m.curto + " não é mais ADM."); return render(); }
+  if (a === "togadm") { const m = M(UI.person); m.adm = !m.adm; save(); toast(m.adm ? m.nome + " agora é ADM." : m.nome + " não é mais ADM."); return render(); }
   if (a === "newproj") return abrirProjeto();
   if (a === "newvot") return abrirVotacao();
   if (a === "vot") return go("votacao", { vot: t.dataset.id });
@@ -1257,18 +1607,35 @@ document.addEventListener("click", e => {
   if (a === "calnav") { const d = +t.dataset.d; if (!d) UI.ref = null; else { const r = UI.ref ? new Date(UI.ref + "T12:00") : new Date(); if (UI.cal === "semana") r.setDate(r.getDate() + 7 * d); else r.setMonth(r.getMonth() + d, 1); UI.ref = ymd(r); } return render(); }
   if (a === "ev") { e.stopPropagation(); return abrirEvento(t.dataset.id); }
   if (a === "newev") return abrirEvento(null);
-  if (a === "newtask") return abrirTarefa("");
+  if (a === "newtask") return abrirTarefaForm({ quem: UI.me });
   if (a === "newat") return abrirEvento(null, t.dataset.date);
   if (a === "who") { lerEvento(); const q = UI.draft.quem, id = t.dataset.id; UI.draft.quem = q.includes(id) ? q.filter(x => x !== id) : q.concat(id); return desenharEvento(); }
   if (a === "delev") { if (!UI.confirmDel) { lerEvento(); UI.confirmDel = true; return desenharEvento(); } S.eventos = S.eventos.filter(x => x.id !== UI.draft.id); save(); $("#overlay").innerHTML = ""; toast("Compromisso apagado."); return render(); }
-});
+  if (a === "excluirproj") { if (!confirm(`Excluir o projeto “${p.nome}”? Ele sai da árvore e fica em Projetos excluídos, de onde um ADM pode restaurar.`)) return; excluirProjeto(p); return go("inicio"); }
+  if (a === "lixo") return abrirLixo();
+  if (a === "restaurar") { const x = S.lixo.find(y => y.id === t.dataset.id); if (!x) return; S.lixo = S.lixo.filter(y => y !== x); delete x.excluido; delete x.excluidoPor; S.projetos.push(x); save(); toast("Projeto restaurado."); return abrirLixo(); }
+  if (a === "apagardevez") { const x = S.lixo.find(y => y.id === t.dataset.id); if (!x || !confirm(`Apagar de vez o projeto “${x.nome}”, com tarefas e escopo? Não dá para desfazer.`)) return; S.lixo = S.lixo.filter(y => y !== x);
+    if (NV.on) NV.db.collection("projetos").doc(x.id).delete().catch(e2 => toast("Não deu para apagar: " + e2.message)); else save(); toast("Apagado de vez."); return abrirLixo(); }
+  if (a === "moverpara") { $("#overlay").innerHTML = ""; const n = NT(t.dataset.id); if (n) moverNota(n, t.dataset.pai); return; }
+  if (a === "redezoom") return zoomRede(+t.dataset.z);
+  if (a === "redefit") return ajustarRede(true);
+  if (a === "area") return go("projeto", { proj: EU_ID, tab: "tarefas" });
+}
+document.addEventListener("input", e => { if (e.target.id === "msgT") { e.target.style.height = "auto"; e.target.style.height = Math.min(160, e.target.scrollHeight + 2) + "px"; } });
 document.addEventListener("change", e => { if (e.target.id === "np-frente") { $("#np-nova-l").hidden = e.target.value !== "__nova"; $("#np-nova-l").style.display = e.target.value === "__nova" ? "grid" : "none"; if (e.target.value === "__nova") $("#np-nova").focus(); return; }
+  if (e.target.id === "tf-p") { $("#tf-resp-l").hidden = e.target.value === EU_ID; return; }
   if (e.target.id === "dc-tipo") { const nota = e.target.value === "nota"; $("#dc-nota-l").style.display = nota ? "" : "none"; $("#dc-link-l").style.display = nota ? "none" : ""; return; }
-  if (e.target.id === "meSel") { UI.me = e.target.value; saveUI(); toast("Agora você vê o site como " + M(UI.me).curto + "."); go("perfil"); } });
+  if (e.target.id === "meSel") { UI.me = e.target.value; saveUI(); toast("Agora você vê o site como " + nm(UI.me) + "."); go("perfil"); } });
 document.addEventListener("submit", e => {
   e.preventDefault(); const f = e.target, fd = new FormData(f), k = f.dataset.form, p = UI.v === "projeto" ? P(UI.proj) : null;
-  if (k === "tarefa") { const t = (fd.get("t") || "").trim(); if (!t) return; p.tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "", prio: fd.get("prio") || "", em: Date.now() }); save(); toast("Tarefa criada."); return render(); }
-  if (k === "ideia") { const t = (fd.get("t") || "").trim(); if (!t) return; p.ideias.push({ t, por: UI.me, votos: [], em: Date.now() }); save(); toast("Ideia adicionada."); return render(); }
+  if (k === "tarefa") {
+    const tx = String(fd.get("t") || "").trim(); if (!tx) return toast("Escreva a tarefa.");
+    const novo = f.dataset.i === "", pid = fd.get("proj") || f.dataset.p, pp = P(pid); if (!pp) return toast("Escolha onde fica a tarefa.");
+    const dados = { t: tx, quem: pp.eu ? UI.me : (fd.get("quem") || null), inicio: fd.get("inicio") || "", prazo: fd.get("prazo") || "", prio: fd.get("prio") || "", repete: fd.get("repete") || "", obs: String(fd.get("obs") || "").trim() };
+    if (novo) { pp.tarefas.push({ ...dados, st: "afazer", em: Date.now(), por: UI.me }); UI.ultProj = pid; }
+    else { const x = pp.tarefas[+f.dataset.i], era = x.st; Object.assign(x, dados, { st: fd.get("st") || x.st }); if (x.st === "feito" && era !== "feito") concluir(pp, x); if (x.st !== "feito") { delete x.feitoEm; delete x.feitoPor; } }
+    save(); $("#overlay").innerHTML = ""; toast(novo ? "Tarefa criada." : "Tarefa salva."); return render();
+  }
   if (k === "doc") {
     const tipo = fd.get("tipo"), titulo = String(fd.get("titulo") || "").trim(), link = String(fd.get("link") || "").trim();
     if (tipo === "link" && !/^https:\/\//.test(link)) return toast("Cole o link do PDF (começa com https://).");
@@ -1295,9 +1662,6 @@ document.addEventListener("submit", e => {
     f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), ida({ ...x, ordem: i }))); return b.commit(); })
       .then(() => { toast("Dados carregados."); setTimeout(pronto, 800); }).catch(e => telaImportar("Não deu certo: " + e.message)); return;
   }
-  if (k === "tarefa-ed") { const pp = P(f.dataset.p), x = pp.tarefas[+f.dataset.i], tx = String(fd.get("t") || "").trim(); if (!tx) return toast("Escreva a tarefa."); const era = x.st;
-    Object.assign(x, { t: tx, quem: fd.get("quem") || null, st: fd.get("st"), inicio: fd.get("inicio") || "", prazo: fd.get("prazo") || "", prio: fd.get("prio") || "", repete: fd.get("repete") || "" });
-    if (x.st === "feito" && era !== "feito") concluir(pp, x); if (x.st !== "feito") { delete x.feitoEm; delete x.feitoPor; } save(); $("#overlay").innerHTML = ""; toast("Tarefa salva."); return render(); }
   if (k === "pasta") { const d = NT(UI.tab.slice(6)); if (d && salvarNota(d, fd.get("titulo"), null, null)) toast("Pasta renomeada."); return render(); }
   if (k === "frente") {
     const nome = String(fd.get("nome") || "").trim(); if (!nome) return toast("Dê um nome à frente.");
@@ -1308,7 +1672,7 @@ document.addEventListener("submit", e => {
   if (k === "msg") {
     const t = String(fd.get("t") || "").trim(); if (!t) return;
     const m = { id: "c" + Date.now() + Math.random().toString(36).slice(2, 6), proj: p.id, por: UI.me, t: t.slice(0, 2000), em: Date.now() };
-    S.mensagens.push(m); f.reset(); const ch = $("#chatList"); if (ch) { ch.innerHTML = chatHTML(p.id); ch.scrollTop = ch.scrollHeight; }
+    S.mensagens.push(m); f.reset(); $("#msgT").style.height = ""; const ch = $("#chatList"); if (ch) { ch.innerHTML = chatHTML(p.id); ch.scrollTop = ch.scrollHeight; }
     if (NV.on) NV.db.collection("mensagens").doc(m.id).set(m).catch(x => toast("Não consegui enviar: " + x.message)); else save();
     return;
   }
@@ -1343,13 +1707,17 @@ document.addEventListener("submit", e => {
     S.projetos.push({ id, frente, nome, status: "ideia", resumo: (fd.get("resumo") || "").trim() || "Ainda sem descrição.", detalhes: [], proximo: "", papeis: resp ? [[resp, "Responsável"]] : [], tarefas: [], ideias: [], nota: "", em: Date.now(), criador: UI.me });
     save(); $("#overlay").innerHTML = ""; toast("Projeto criado."); return go("projeto", { proj: id, tab: "sobre" });
   }
-  if (k === "tarefa-cal") { const t = (fd.get("t") || "").trim(); if (!t) return; P(fd.get("proj")).tarefas.push({ t, st: "afazer", quem: fd.get("quem") || null, prazo: fd.get("prazo") || "", inicio: fd.get("inicio") || "", prio: fd.get("prio") || "", repete: fd.get("repete") || "", em: Date.now() }); save(); $("#overlay").innerHTML = ""; toast("Tarefa criada."); return render(); }
   if (k === "evento") { lerEvento(); const d = UI.draft; if (!d.titulo.trim()) return toast("Dê um título ao compromisso."); const i = S.eventos.findIndex(x => x.id === d.id); if (i >= 0) S.eventos[i] = d; else S.eventos.push(d); save(); $("#overlay").innerHTML = ""; toast(i >= 0 ? "Compromisso salvo." : "Compromisso criado."); return render(); }
   if (k === "perfil") { const m = M(UI.v === "perfil" ? UI.me : UI.person), arq = fd.get("foto");
     if (arq && arq.size) return fotoPequena(arq).then(ft => { m.foto = ft; fd.delete("foto"); f.querySelector("#pf-foto").value = ""; f.requestSubmit(); }).catch(x => toast("Não deu: " + x.message));
     m.nome = fd.get("nome") || m.nome; m.curto = fd.get("curto") || m.curto; m.bio = fd.get("bio") || ""; m.afin = String(fd.get("afin") || "").split(",").map(s => s.trim()).filter(Boolean); m.perfil = Object.fromEntries(CAMPOS.map(([c]) => [c, fd.get(c) || ""])); UI.edit = false; save(); toast("Perfil salvo."); return render(); }
 });
 document.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey && e.target.id === "msgT") { e.preventDefault(); e.target.form.requestSubmit(); return; }
+  if (e.target.id === "renIn") { if (e.key === "Enter") { e.preventDefault(); fimRenomear(true); } else if (e.key === "Escape") { e.preventDefault(); fimRenomear(false); } return; }
+  if (MENU) { const bs = [...MENU.querySelectorAll("button")], i = bs.indexOf(document.activeElement);
+    if (e.key === "Escape") { e.preventDefault(); return fecharMenu(); } if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); bs[(i + (e.key === "ArrowDown" ? 1 : -1) + bs.length) % bs.length].focus(); return; } }
+  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".ti[data-act], .mais")) { e.preventDefault(); e.target.click(); return; }
+  if (e.key === "F2" && e.target.matches && e.target.matches(".ti[data-id]")) { const n = NT(e.target.dataset.id); if (n) renomear(n); return; }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s" && typeof UI.edit === "string") { e.preventDefault(); const b = $("[data-act=salvanota]"); if (b) b.click(); return; }
   if (e.key === "Escape") $("#overlay").innerHTML = ""; if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".day[data-act]")) { e.preventDefault(); e.target.click(); } });
 
