@@ -169,23 +169,38 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .gate .who-pick button:hover { border-color: var(--accent); }
 
 /* votações */
-.polls { display: grid; gap: 10px; }
-.poll { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; align-items: center; text-align: left; background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; width: 100%; }
+.polls { display: grid; gap: 8px; max-width: 720px; }
+.poll { display: flex; align-items: center; gap: 12px; text-align: left; background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; width: 100%; }
 .poll:hover { border-color: var(--accent); }
-.poll b { font-weight: 600; font-size: 15.5px; }
-.poll .meta { font-size: 13px; color: var(--muted); }
-.poll .side { grid-row: span 2; text-align: right; font-size: 13px; color: var(--muted); }
-.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.poll .tx { flex: 1; min-width: 0; }
+.poll b { display: block; font-weight: 600; font-size: 15.5px; }
+.poll .meta { display: block; font-size: 13px; color: var(--muted); margin-top: 2px; }
+.poll.off { opacity: .7; }
+.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 9px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); white-space: nowrap; }
 .badge.off { background: var(--line); color: var(--muted); }
 .badge.ok { background: color-mix(in oklch, var(--ok) 14%, transparent); color: var(--ok); }
-.opts { display: grid; gap: 8px; margin: 16px 0; max-width: 640px; }
-.opt { position: relative; text-align: left; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: var(--r-m); padding: 10px 12px; background: var(--raised); cursor: pointer; overflow: hidden; }
-.opt input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; position: relative; }
-.opt .bar { position: absolute; inset: 0 auto 0 0; background: var(--accent-soft); pointer-events: none; }
-.opt .tx { position: relative; flex: 1; }
-.opt .n { position: relative; font-size: 13px; color: var(--muted); white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+.vhead { display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.vhead h1 { flex: 1; min-width: 220px; margin-bottom: 4px; }
+.vmeta { font-size: 13.5px; color: var(--muted); margin: 0 0 14px; }
+.vsum { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 14px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); max-width: 640px; }
+.vsum span { color: var(--muted); } .vsum b { color: var(--fg); font-weight: 600; }
+.opts { display: grid; gap: 6px; margin: 14px 0; max-width: 640px; }
+.opt { position: relative; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: var(--r-m); padding: 10px 12px 12px; background: var(--raised); cursor: pointer; overflow: hidden; }
+.opt input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; flex: none; }
+.opt .bar { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--accent); opacity: .55; pointer-events: none; }
+.opt .tx { flex: 1; min-width: 0; }
+.opt .n { font-size: 13px; color: var(--muted); white-space: nowrap; display: flex; align-items: center; gap: 8px; }
 .opt.mine { border-color: var(--accent); }
-.opt.win .tx { font-weight: 600; }
+.opt.win .tx, .opt.win .n { font-weight: 600; color: var(--fg); }
+.addop { display: flex; gap: 8px; max-width: 640px; margin-top: 4px; }
+.addop .field { flex: 1; min-width: 0; }
+.vdet { max-width: 640px; margin-top: 10px; }
+.vdet summary { cursor: pointer; color: var(--muted); font-size: 13.5px; padding: 6px 0; }
+.vdet .li { display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.vdet .li b { font-weight: 600; min-width: 120px; }
+.vdet .li span { color: var(--muted); }
+.oprow { display: flex; gap: 6px; margin-bottom: 6px; }
+.oprow .field { flex: 1; min-width: 0; }
 
 /* integrantes */
 .filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
@@ -1341,44 +1356,57 @@ function membersHTML() {
 /* ===== VOTAÇÕES ===== */
 const hojeISO = () => ymd(new Date());
 const fechada = v => v.encerrada || (v.prazo && v.prazo < hojeISO());
-const votantes = v => Object.keys(v.votos || {}).filter(k => (v.votos[k] || []).length);
+const votantes = v => Object.keys(v.votos || {}).filter(k => (v.votos[k] || []).length && M(k));
+const podeEditarVot = v => v.criador === UI.me || souAdm();
+const nomes = ids => ids.map(nm).join(", ");
+// contagem por opção, quem lidera (ou empate) e quem falta votar; serve para a lista e para a página
+function apurar(v) {
+  const vs = votantes(v), cont = {}; v.opcoes.forEach(o => cont[o.id] = vs.filter(k => v.votos[k].includes(o.id)));
+  const max = Math.max(0, ...v.opcoes.map(o => cont[o.id].length));
+  const lider = max ? v.opcoes.filter(o => cont[o.id].length === max) : [];
+  return { vs, cont, max, lider, faltam: S.membros.filter(m => !vs.includes(m.id)).map(m => m.id) };
+}
+const liderTx = (r, fx) => !r.lider.length ? "ninguém votou ainda" : r.lider.length > 1 ? `empate entre ${r.lider.map(o => esc(o.t)).join(" e ")}` : `${fx ? "venceu" : "na frente"}: <b>${esc(r.lider[0].t)}</b>`;
 function votacoesHTML() {
   const ord = [...S.votacoes].sort((a, b) => (fechada(a) - fechada(b)) || String(b.criada).localeCompare(String(a.criada)));
-  return `<div class="wrap"><div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><h1>Votações</h1><p class="lede">Decisões do clube no voto. Qualquer integrante pode abrir uma votação.</p></div><button class="btn primary" data-act="newvot">+ Nova votação</button></div>
-  <div class="polls">${ord.map(v => { const fx = fechada(v), eu = (v.votos[UI.me] || []).length > 0, p = P(v.proj);
-    return `<button class="poll" data-act="vot" data-id="${v.id}"><b>${esc(v.titulo)}</b>
-      <span class="side">${stack(votantes(v), 4, 26)}<br>${plural(votantes(v).length, "voto", "votos")}</span>
-      <span class="meta">${fx ? '<span class="badge off">Encerrada</span>' : eu ? '<span class="badge ok">Você já votou</span>' : '<span class="badge">Aberta</span>'} ${v.multipla ? "Pode marcar várias" : "Escolha uma"}${v.prazo && !fx ? ` · até ${dm(v.prazo)}` : ""}${p ? ` · ${esc(p.nome)}` : ""}</span></button>`; }).join("") || '<p class="empty">Nenhuma votação ainda.</p>'}</div></div>`;
+  return `<div class="wrap"><div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><h1>Votações</h1><p class="lede">Decisões do clube no voto. Qualquer integrante abre uma votação e sugere opções.</p></div><button class="btn primary" data-act="newvot">+ Nova votação</button></div>
+  <div class="polls">${ord.map(v => { const fx = fechada(v), r = apurar(v), eu = r.vs.includes(UI.me);
+    return `<button class="poll${fx ? " off" : ""}" data-act="vot" data-id="${v.id}"><span class="tx"><b>${esc(v.titulo)}</b>
+      <span class="meta">${fx ? "Encerrada" : v.prazo ? `Até ${dm(v.prazo)}` : "Aberta"} · ${r.vs.length} de ${S.membros.length} votaram · ${liderTx(r, fx)}</span></span>
+      ${fx ? "" : eu ? '<span class="badge ok">Votou</span>' : '<span class="badge">Falta você</span>'}</button>`; }).join("") || '<p class="empty">Nenhuma votação ainda.</p>'}</div></div>`;
 }
 function votacaoHTML(v) {
   if (!v) return `<div class="wrap"><button class="back" data-act="go" data-v="votacoes">‹ Votações</button><p class="empty">Essa votação não existe mais.</p></div>`;
-  const fx = fechada(v), meus = v.votos[UI.me] || [], vs = votantes(v), p = P(v.proj);
-  const cont = o => vs.filter(k => v.votos[k].includes(o.id));
-  const max = Math.max(1, ...v.opcoes.map(o => cont(o).length));
-  const verRes = fx || meus.length > 0;
+  const fx = fechada(v), meus = v.votos[UI.me] || [], r = apurar(v), p = P(v.proj), ed = podeEditarVot(v);
   return `<div class="wrap"><button class="back" data-act="go" data-v="votacoes">‹ Votações</button>
-  <div class="proj-head">${fx ? '<span class="badge off">Encerrada</span>' : '<span class="badge">Aberta</span>'}<span style="font-size:13px;color:var(--muted)">${v.multipla ? "Pode marcar várias" : "Escolha uma"}${v.prazo ? ` · ${fx ? "terminou em" : "até"} ${dm(v.prazo)}` : " · sem prazo"}</span></div>
-  <h1>${esc(v.titulo)}</h1>${v.desc ? `<p class="lede">${esc(v.desc)}</p>` : ""}
-  ${p ? `<p style="margin:-8px 0 12px;font-size:14px;color:var(--muted)">Projeto: <button class="wl" data-act="proj" data-id="${p.id}">${esc(p.nome)}</button></p>` : ""}
-  <form data-form="votar"><div class="opts">${v.opcoes.map(o => { const c = cont(o), mine = meus.includes(o.id);
-    return `<label class="opt${mine ? " mine" : ""}${verRes && c.length === max ? " win" : ""}">${verRes ? `<span class="bar" style="width:${vs.length ? c.length / vs.length * 100 : 0}%"></span>` : ""}
-      <input type="${v.multipla ? "checkbox" : "radio"}" name="op" value="${o.id}" id="op-${o.id}"${mine ? " checked" : ""}${fx ? " disabled" : ""}><span class="tx">${esc(o.t)}</span>
-      ${verRes ? `<span class="n">${c.length ? stack(c, 3, 22) : ""}${plural(c.length, "voto", "votos")}</span>` : ""}</label>`; }).join("")}</div>
-  ${fx ? "" : `<div class="row-form"><button class="btn primary">${meus.length ? "Mudar meu voto" : "Votar"}</button>${meus.length ? `<button type="button" class="btn ghost" data-act="tirarvoto">Tirar meu voto</button>` : ""}</div>`}</form>
-  <p style="font-size:13.5px;color:var(--muted);margin-top:16px">${verRes ? `${plural(vs.length, "pessoa votou", "pessoas votaram")}.` : "O resultado aparece depois que você vota."} Aberta por ${esc(nm(v.criador))}.</p>
-  ${(v.criador === UI.me || souAdm()) && !fx ? `<button class="btn small" data-act="encerrar">Encerrar agora</button>` : ""}</div>`;
+  <div class="vhead"><h1>${esc(v.titulo)}</h1>${ed ? `<span style="display:flex;gap:6px"><button class="btn small" data-act="editvot">Editar</button>${fx ? "" : `<button class="btn small ghost" data-act="encerrar">Encerrar</button>`}</span>` : ""}</div>
+  <p class="vmeta">${fx ? "Encerrada" : "Aberta"} · ${v.multipla ? "pode marcar várias" : "escolha uma"}${v.prazo ? ` · ${fx ? "terminou em" : "até"} ${dm(v.prazo)}` : ""} · aberta por ${esc(nm(v.criador))}${p ? ` · <button class="wl" data-act="proj" data-id="${p.id}">${esc(p.nome)}</button>` : ""}</p>
+  ${v.desc ? `<p class="lede">${esc(v.desc)}</p>` : ""}
+  <div class="vsum"><span><b>${r.vs.length}</b> de ${S.membros.length} votaram</span><span>faltam <b>${r.faltam.length}</b></span><span>${liderTx(r, fx)}</span></div>
+  <form data-form="votar"><div class="opts">${v.opcoes.map(o => { const c = r.cont[o.id], mine = meus.includes(o.id);
+    return `<label class="opt${mine ? " mine" : ""}${r.max && c.length === r.max ? " win" : ""}"><span class="bar" style="width:${r.vs.length ? c.length / r.vs.length * 100 : 0}%"></span>
+      <input type="${v.multipla ? "checkbox" : "radio"}" name="op" value="${o.id}"${mine ? " checked" : ""}${fx ? " disabled" : ""}><span class="tx">${esc(o.t)}</span>
+      <span class="n">${c.length ? stack(c, 3, 22) : ""}${c.length}</span></label>`; }).join("")}</div>
+  ${fx ? "" : `<div class="row-form" style="margin-top:0"><button class="btn primary">${meus.length ? "Mudar meu voto" : "Votar"}</button>${meus.length ? `<button type="button" class="btn ghost" data-act="tirarvoto">Tirar meu voto</button>` : ""}${UI.addop ? "" : `<button type="button" class="btn ghost" data-act="addop">+ Sugerir opção</button>`}</div>`}</form>
+  ${!fx && UI.addop ? `<form class="addop" data-form="addop"><input class="field" name="t" id="addop-t" placeholder="Nova opção" maxlength="120"><button class="btn">Adicionar</button><button type="button" class="btn ghost" data-act="addop">Cancelar</button></form>` : ""}
+  ${r.vs.length ? `<details class="vdet"><summary>Quem votou em quê</summary>${v.opcoes.filter(o => r.cont[o.id].length).map(o => `<div class="li"><b>${esc(o.t)}</b><span>${esc(nomes(r.cont[o.id]))}</span></div>`).join("")}</details>` : ""}
+  ${r.faltam.length ? `<details class="vdet"><summary>Faltam votar (${r.faltam.length})</summary><p style="font-size:14px;color:var(--muted);margin:4px 0">${esc(nomes(r.faltam))}</p></details>` : ""}</div>`;
 }
-function abrirVotacao() {
-  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Nova votação"><h2>Nova votação</h2>
+const opRow = (o = {}) => `<div class="oprow"><input class="field" name="op_${o.id || "novo"}" value="${esc(o.t || "")}" placeholder="Opção" maxlength="120"><button type="button" class="btn ghost small" data-act="nvdelop" aria-label="Tirar a opção">✕</button></div>`;
+function abrirVotacao(v) {
+  const ops = v ? v.opcoes : [{}, {}];
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="${v ? "Editar votação" : "Nova votação"}"><h2>${v ? "Editar votação" : "Nova votação"}</h2>
   <form class="form" data-form="novavot">
-    <label>Pergunta<input class="field" name="titulo" id="nv-t" required placeholder="Ex.: Qual livro lemos primeiro?"></label>
-    <label>Explicação, se precisar<input class="field" name="desc" id="nv-d"></label>
-    <label>Opções, uma por linha<textarea class="field" name="opcoes" id="nv-o" style="min-height:120px" placeholder="Opção 1&#10;Opção 2"></textarea></label>
-    <div class="two"><label>Como votar<select class="field" name="multipla" id="nv-m"><option value="0">Escolha uma</option><option value="1">Pode marcar várias</option></select></label>
-    <label>Prazo<input class="field" type="date" name="prazo" id="nv-p"></label></div>
-    <label>Projeto<select class="field" name="proj" id="nv-proj"><option value="">Nenhum</option>${S.projetos.map(p => `<option value="${p.id}">${esc(p.nome)}</option>`).join("")}</select></label>
-    <div class="row-form"><button class="btn primary">Abrir votação</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div>
+    <label>Pergunta<input class="field" name="titulo" id="nv-t" required placeholder="Ex.: Qual livro lemos primeiro?" value="${esc(v ? v.titulo : "")}"></label>
+    <label>Explicação, se precisar<input class="field" name="desc" id="nv-d" value="${esc(v ? v.desc || "" : "")}"></label>
+    <div><div style="font-size:14px;margin-bottom:6px">Opções${v ? ' <span style="color:var(--muted);font-size:13px">(tirar uma opção apaga os votos dela)</span>' : ""}</div><div id="nv-ops">${ops.map(opRow).join("")}</div><button type="button" class="btn small" data-act="nvaddop">+ Mais uma opção</button></div>
+    <div class="two"><label>Como votar<select class="field" name="multipla" id="nv-m"><option value="0">Escolha uma</option><option value="1"${v && v.multipla ? " selected" : ""}>Pode marcar várias</option></select></label>
+    <label>Prazo<input class="field" type="date" name="prazo" id="nv-p" value="${esc(v ? v.prazo || "" : "")}"></label></div>
+    <label>Projeto<select class="field" name="proj" id="nv-proj"><option value="">Nenhum</option>${S.projetos.map(p => `<option value="${p.id}"${v && v.proj === p.id ? " selected" : ""}>${esc(p.nome)}</option>`).join("")}</select></label>
+    ${v && v.encerrada ? `<label style="display:flex;gap:8px;align-items:center"><input type="checkbox" name="reabrir"> Reabrir a votação</label>` : ""}
+    <div class="row-form"><button class="btn primary">${v ? "Salvar" : "Abrir votação"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${v && souAdm() ? `<button type="button" class="btn ghost" data-act="delvot" style="margin-left:auto;color:var(--bad)">Apagar</button>` : ""}</div>
   </form></div></div>`;
+  $("#overlay form").dataset.id = v ? v.id : "";
   $("#nv-t").focus();
 }
 
@@ -1598,7 +1626,12 @@ function acao(t, e) {
   if (a === "togadm") { const m = M(UI.person); m.adm = !m.adm; save(); toast(m.adm ? m.nome + " agora é ADM." : m.nome + " não é mais ADM."); return render(); }
   if (a === "newproj") return abrirProjeto();
   if (a === "newvot") return abrirVotacao();
-  if (a === "vot") return go("votacao", { vot: t.dataset.id });
+  if (a === "editvot") return abrirVotacao(S.votacoes.find(x => x.id === UI.vot));
+  if (a === "nvaddop") { $("#nv-ops").insertAdjacentHTML("beforeend", opRow()); const i = $("#nv-ops").lastElementChild.querySelector("input"); i.focus(); return; }
+  if (a === "nvdelop") { t.closest(".oprow").remove(); return; }
+  if (a === "addop") { UI.addop = !UI.addop; render(); if (UI.addop) $("#addop-t").focus(); return; }
+  if (a === "delvot") { const v = S.votacoes.find(x => x.id === UI.vot); if (!v || !confirm(`Apagar a votação “${v.titulo}” e todos os votos dela?`)) return; S.votacoes = S.votacoes.filter(x => x !== v); save(); $("#overlay").innerHTML = ""; toast("Votação apagada."); return go("votacoes"); }
+  if (a === "vot") { UI.addop = false; return go("votacao", { vot: t.dataset.id }); }
   if (a === "tirarvoto") { const v = S.votacoes.find(x => x.id === UI.vot); delete v.votos[UI.me]; save(); toast("Seu voto foi retirado."); return render(); }
   if (a === "encerrar") { const v = S.votacoes.find(x => x.id === UI.vot); v.encerrada = true; save(); toast("Votação encerrada."); return render(); }
   if (a === "arrumar") { POS = {}; savePOS(); toast("Árvore de volta ao desenho original."); return render(); }
@@ -1691,10 +1724,24 @@ document.addEventListener("submit", e => {
     return;
   }
   if (k === "votar") { const v = S.votacoes.find(x => x.id === UI.vot); const ops = fd.getAll("op"); if (!ops.length) return toast("Marque uma opção."); v.votos[UI.me] = ops; save(); toast("Voto registrado."); return render(); }
+  if (k === "addop") {
+    const v = S.votacoes.find(x => x.id === UI.vot), tx = String(fd.get("t") || "").trim(); if (!tx) return toast("Escreva a opção.");
+    if (v.opcoes.some(o => o.t.toLowerCase() === tx.toLowerCase())) return toast("Essa opção já existe.");
+    v.opcoes.push({ id: "o" + Date.now(), t: tx, por: UI.me }); UI.addop = false; save(); toast("Opção adicionada."); return render();
+  }
   if (k === "novavot") {
-    const titulo = (fd.get("titulo") || "").trim(), ops = String(fd.get("opcoes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    if (!titulo) return toast("Escreva a pergunta."); if (ops.length < 2) return toast("Coloque pelo menos duas opções, uma por linha.");
-    const v = { id: "v" + Date.now(), titulo, desc: (fd.get("desc") || "").trim(), proj: fd.get("proj") || "", multipla: fd.get("multipla") === "1", prazo: fd.get("prazo") || "", criador: UI.me, criada: hojeISO(), em: Date.now(), opcoes: ops.map((t, i) => ({ id: "o" + i, t })), votos: {}, encerrada: false };
+    const titulo = (fd.get("titulo") || "").trim(), old = S.votacoes.find(x => x.id === f.dataset.id);
+    const ops = [...fd.entries()].filter(([n, x]) => n.startsWith("op_") && String(x).trim()).map(([n, x], i) => ({ id: n === "op_novo" ? "o" + Date.now() + "_" + i : n.slice(3), t: String(x).trim() }));
+    if (!titulo) return toast("Escreva a pergunta."); if (ops.length < 2) return toast("Coloque pelo menos duas opções.");
+    const base = { titulo, desc: (fd.get("desc") || "").trim(), proj: fd.get("proj") || "", multipla: fd.get("multipla") === "1", prazo: fd.get("prazo") || "" };
+    if (old) {
+      // opção que saiu leva junto os votos dela; quem ficou sem nenhum voto sai da lista
+      const ids = ops.map(o => o.id); ops.forEach(o => { const a0 = old.opcoes.find(x => x.id === o.id); if (a0 && a0.por) o.por = a0.por; });
+      for (const m of Object.keys(old.votos)) { let vs = old.votos[m].filter(x => ids.includes(x)); if (!base.multipla) vs = vs.slice(0, 1); if (vs.length) old.votos[m] = vs; else delete old.votos[m]; }
+      Object.assign(old, base, { opcoes: ops }); if (fd.get("reabrir")) old.encerrada = false;
+      save(); $("#overlay").innerHTML = ""; toast("Votação salva."); return render();
+    }
+    const v = { id: "v" + Date.now(), ...base, criador: UI.me, criada: hojeISO(), em: Date.now(), opcoes: ops.map((o, i) => ({ id: "o" + i, t: o.t })), votos: {}, encerrada: false };
     S.votacoes.push(v); save(); $("#overlay").innerHTML = ""; toast("Votação aberta."); return go("votacao", { vot: v.id });
   }
   if (k === "projeto") {
