@@ -378,6 +378,18 @@ a.btn.primary { color: var(--on-accent); }
 .home-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px auto 0; max-width: 1100px; }
 .card { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; min-width: 0; }
 .card h2 { font-size: 15px; margin: 0 0 6px; }
+.li.novo .tx > b:first-child::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: 1px; }
+.li .mais { color: var(--muted); }
+.li .ic { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 14px; }
+.li .tx small.urg { color: var(--bad); }
+.radar { max-width: 1100px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--muted); }
+.radar b { color: var(--fg); font-weight: 600; margin-right: 4px; }
+.node .flag { display: inline-block; font-size: 11px; font-weight: 600; padding: 0 7px; border-radius: 99px; margin-top: 6px; }
+.flag.gente { background: color-mix(in oklch, var(--ok) 16%, transparent); color: var(--ok); }
+.flag.parado { background: var(--line); color: var(--muted); }
+.decisao { max-width: 640px; border-left: 3px solid var(--ok); background: color-mix(in oklch, var(--ok) 8%, transparent); border-radius: 0 var(--r-m) var(--r-m) 0; padding: 8px 12px; margin: 0 0 14px; font-size: 14.5px; }
+.decisao small { display: block; color: var(--muted); font-size: 12.5px; }
+.polls h2 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin: 14px 0 0; }
 .li { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid var(--line); padding: 7px 0; font-size: 14px; color: var(--fg); }
 .card h2 + .li { border-top: 0; }
 .li .tx { flex: 1; min-width: 0; }
@@ -710,10 +722,16 @@ function atividades(pid) {
     p.tarefas.forEach(t => { if (t.st === "feito" && t.feitoEm) it.push({ pid: p.id, em: t.feitoEm, quem: t.feitoPor, tx: `concluiu “${curto(t.t)}” em <b>${esc(p.nome)}</b>`, act: pj(p, "tarefas") }); });
     p.ideias.forEach(x => { if (x.em) it.push({ pid: p.id, em: x.em, quem: x.por, tx: `deu uma ideia em <b>${esc(p.nome)}</b>: “${curto(x.t)}”`, act: pj(p, "ideias") }); });
   });
-  S.votacoes.forEach(v => { if (v.em) it.push({ pid: v.proj, em: v.em, quem: v.criador, tx: `abriu a votação <b>${esc(v.titulo)}</b>`, act: `data-act="vot" data-id="${v.id}"` }); });
+  S.votacoes.forEach(v => { if (v.em) it.push({ pid: v.proj, em: v.em, quem: v.criador, tx: `abriu a votação <b>${esc(v.titulo)}</b>`, act: `data-act="vot" data-id="${v.id}"` });
+    if (v.decididaEm && v.decisao) it.push({ pid: v.proj, em: v.decididaEm, quem: v.decididaPor, tx: `registrou a decisão de <b>${esc(v.titulo)}</b>: “${curto(v.decisao)}”`, act: `data-act="vot" data-id="${v.id}"` }); });
   S.eventos.forEach(e => { if (e.em) it.push({ pid: e.proj, em: e.em, quem: e.criador, tx: e.sala ? "abriu uma sala de conversa" : `marcou <b>${esc(e.titulo)}</b> para ${dm(e.data)}`, act: `data-act="ev" data-id="${e.id}"` }); });
   const lim = Date.now() - 14 * 864e5;
-  return it.filter(x => (!pid || x.pid === pid) && x.em > lim && M(x.quem)).sort((a, b) => b.em - a.em).slice(0, pid ? 8 : 6);
+  /* a mesma pessoa fazendo a mesma coisa no mesmo projeto em seguida vira uma linha só ("e mais 5"), para a lista não repetir */
+  const ord = it.filter(x => (!pid || x.pid === pid) && x.em > lim && M(x.quem)).sort((a, b) => b.em - a.em), out = [];
+  for (const x of ord) { const y = out[out.length - 1], tipo = x.tx.split(" ")[0];
+    if (y && y.quem === x.quem && y.pid === x.pid && y.tipo === tipo && y.em - x.em < 6 * 3600e3) { y.n++; continue; }
+    out.push({ ...x, tipo, n: 1 }); }
+  return out.slice(0, pid ? 8 : 6);
 }
 /* botão "Pôr na minha agenda do Google": abre o Google Agenda com o compromisso preenchido */
 function gcal(e) {
@@ -752,6 +770,18 @@ const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())
 const dm = s => s ? s.slice(8, 10) + "/" + s.slice(5, 7) : "";
 const addD = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
 const toast = t => { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("on"), 2200); };
+/* última mexida no projeto (tarefa criada ou mexida, nota, conversa). Projeto em andamento sem nada há 14 dias aparece como parado,
+   como o cinza do Linear; é calculado, ninguém preenche. Sem nenhuma data registrada, não se sabe, e não marca. */
+const PARADO_DIAS = 14;
+function ultimaMexida(p) {
+  let t = p.em || 0;
+  p.tarefas.forEach(x => t = Math.max(t, x.em || 0, x.alt || 0, x.feitoEm || 0));
+  (S.notas || []).forEach(n => { if (n.proj === p.id) t = Math.max(t, n.alt || n.em || 0); });
+  (S.mensagens || []).forEach(m => { if (m.proj === p.id) t = Math.max(t, m.em || 0); });
+  return t;
+}
+const diasParado = p => { if (p.eu || p.status !== "ativo") return 0; const t = ultimaMexida(p); return t ? Math.floor((Date.now() - t) / 864e5) : 0; };
+const parado = p => diasParado(p) >= PARADO_DIAS;
 const STATUS = { ativo: "Em andamento", ideia: "Ideia", pausado: "Pausado", feito: "Concluído" };
 
 /* ===== NAVEGAÇÃO ===== */
@@ -787,20 +817,36 @@ function homeHTML() {
   <div class="tree-box" id="treeBox"><div class="tree" id="tree"><svg id="treeLines" width="1" height="1"></svg>
   ${S.projetos.map(p => { const f = F(p.frente), r = respProj(p), outros = pessoasProj(p).filter(x => x !== r);
     return `<button class="node proj" data-node="p:${p.id}" style="--fc:${fc(f)}"><span class="nm">${esc(p.nome)}</span>
-      <span class="who">${stack(outros, 2, 30)}</span>${r ? `<span class="resp">${av(r, 22)} ${esc(nm(r))}, responsável</span>` : `<span class="resp">Sem responsável</span>`}</button>`; }).join("")}
+      <span class="who">${stack(outros, 2, 30)}</span>${r ? `<span class="resp">${av(r, 22)} ${esc(nm(r))}, responsável</span>` : `<span class="resp">Sem responsável</span>`}${p.vagas ? `<span class="flag gente" title="${esc(p.vagas)}">Procura gente</span>` : parado(p) ? `<span class="flag parado">Parado há ${diasParado(p)} dias</span>` : ""}</button>`; }).join("")}
   ${S.frentes.map(f => { const ppl = pessoasFrente(f);
     return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}">${souAdm() ? `<span class="edf" data-edf="${f.id}" title="Editar a frente: nome e cor" aria-label="Editar a frente ${esc(f.nome)}">✎</span>` : ""}${podeCriarEm(f) ? `<span class="add" data-add="${f.id}" title="Novo projeto em ${esc(f.nome)}" aria-label="Novo projeto em ${esc(f.nome)}">+</span>` : ""}<span class="nm">${esc(f.nome)}</span>
       <span class="who">${stack(ppl, 4, 28)}</span><span class="resp" style="justify-content:center">${plural(ppl.length, "pessoa", "pessoas")}</span></button>`; }).join("")}
   </div></div>
   <p class="foot-note">${plural(S.membros.length, "integrante", "integrantes")}. ${sp ? `${plural(sp, "ainda não está", "ainda não estão")} em nenhum projeto: <button class="link" data-act="go" data-v="integrantes" data-filtro="sem">ver quem</button>.` : ""}${souAdm() && S.lixo.length ? ` <button class="link" data-act="lixo">Projetos excluídos (${S.lixo.length})</button>` : ""}</p></div>`;
 }
+/* última visita: guardada neste navegador; o que entrou depois aparece com bolinha até a pessoa sair do site */
+let VISTO = null;
+function marcarVisita() {
+  if (VISTO !== null) return; const k = KEY + "-visto-" + UI.me;
+  try { VISTO = +(localStorage.getItem(k) || 0); localStorage.setItem(k, String(Date.now())); } catch (e) { VISTO = 0; }
+}
 function inicioCards() {
-  const hoje = hojeISO();
+  marcarVisita();
+  const hoje = hojeISO(), amanha = ymd(addD(new Date(), 1));
   const minhas = S.projetos.concat([EU()]).flatMap(p => p.tarefas.map((t, i) => ({ t, i, p }))).filter(x => (x.p.eu || x.t.quem === UI.me) && x.t.st !== "feito").sort((a, b) => ordTarefa(a.t, b.t));
-  const ats = atividades();
-  return `<div class="home-row"><div class="card"><div class="ch"><h2>Minhas tarefas${minhas.length ? ` · ${minhas.length}` : ""}</h2><button class="btn small" data-act="novatarefa" data-quem="eu">+ Nova</button></div>${minhas.slice(0, 6).map(x => `<div class="li">${tck(x.t, x.p, x.i)}<button class="tx" data-act="edtarefa" data-p="${x.p.id}" data-i="${x.i}">${x.t.prio ? PRIO[x.t.prio][1] + " " : ""}${esc(x.t.t)}<small>${x.p.eu ? "🔒 Minha área" : esc(x.p.nome)}${x.t.prazo ? " · " + prazoTx(x.t) : ""}</small></button></div>`).join("")
-      || '<p class="empty" style="margin:0">Nenhuma tarefa com você. Crie uma ou pegue uma dentro de um projeto.</p>'}${minhas.length > 6 ? `<p style="margin:6px 0 0"><button class="link" data-act="go" data-v="tarefas">e mais ${minhas.length - 6} na tela Tarefas</button></p>` : ""}</div>
-    <div class="card"><h2>Últimas atividades</h2>${ats.map(x => `<button class="li" ${x.act}>${av(x.quem, 28)}<span class="tx"><b>${esc(nm(x.quem))}</b> ${x.tx}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:0">Nada nos últimos 14 dias.</p>'}</div></div>`;
+  const vots = S.votacoes.filter(v => !fechada(v) && !(v.votos[UI.me] || []).length).sort((a, b) => String(a.prazo || "9").localeCompare(String(b.prazo || "9")));
+  const ats = atividades(), novas = VISTO ? ats.filter(x => x.em > VISTO).length : 0;
+  const votLi = v => `<button class="li" data-act="vot" data-id="${v.id}"><span class="ic" aria-hidden="true">✓</span><span class="tx">Votar: ${esc(v.titulo)}<small${v.prazo && v.prazo <= amanha ? ' class="urg"' : ""}>${v.prazo ? (v.prazo === hoje ? "termina hoje" : v.prazo === amanha ? "termina amanhã" : "até " + dm(v.prazo)) : "sem prazo"}</small></span></button>`;
+  const tarLi = x => `<div class="li">${tck(x.t, x.p, x.i)}<button class="tx" data-act="edtarefa" data-p="${x.p.id}" data-i="${x.i}">${x.t.prio ? PRIO[x.t.prio][1] + " " : ""}${esc(x.t.t)}<small>${x.p.eu ? "🔒 Minha área" : esc(x.p.nome)}${x.t.prazo ? " · " + prazoTx(x.t) : ""}</small></button></div>`;
+  const total = minhas.length + vots.length;
+  // radar do clube: projetos pedindo gente e projetos parados, numa linha só
+  const gente = S.projetos.filter(p => p.vagas), parados = S.projetos.filter(parado);
+  const lk = p => `<button class="link" data-act="proj" data-id="${p.id}">${esc(p.nome)}</button>`;
+  return `<div class="home-row"><div class="card"><div class="ch"><h2>Para você${total ? ` · ${total}` : ""}</h2><button class="btn small" data-act="novatarefa" data-quem="eu">+ Tarefa</button></div>
+      ${vots.map(votLi).join("")}${minhas.slice(0, 6).map(tarLi).join("")}
+      ${total ? "" : '<p class="empty" style="margin:0">Nada pendente com você. Pegue uma tarefa sem responsável em Tarefas.</p>'}${minhas.length > 6 ? `<p style="margin:6px 0 0"><button class="link" data-act="go" data-v="tarefas">e mais ${minhas.length - 6} tarefas</button></p>` : ""}</div>
+    <div class="card"><h2>Novidades${novas ? ` · ${novas} desde sua última visita` : ""}</h2>${ats.map(x => `<button class="li${VISTO && x.em > VISTO ? " novo" : ""}" ${x.act}>${av(x.quem, 28)}<span class="tx"><b>${esc(nm(x.quem))}</b> ${x.tx}${x.n > 1 ? ` <span class="mais">e mais ${x.n - 1}</span>` : ""}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:0">Nada nos últimos 14 dias.</p>'}</div></div>
+  ${gente.length || parados.length ? `<div class="radar">${gente.length ? `<span><b>Procurando gente:</b>${gente.map(lk).join(", ")}</span>` : ""}${parados.length ? `<span><b>Parados há ${PARADO_DIAS}+ dias:</b>${parados.map(lk).join(", ")}</span>` : ""}</div>` : ""}`;
 }
 const T = { nodes: {}, links: [], scale: 1, raf: 0 };
 /* onde cada um deixou os blocos (só no navegador de quem mexeu); o desenho da árvore continua o mesmo */
@@ -1104,6 +1150,7 @@ function projHTML(p) {
       <label>Início do projeto<input class="field" type="date" name="inicio" id="sb-inicio" value="${esc(p.inicio || "")}"></label>
       <label>Outros campos, um por linha, no formato Título: texto<textarea class="field" name="detalhes" id="sb-det" style="min-height:110px" placeholder="Quando: segundas, às 8h&#10;Como funciona: ...">${esc(p.detalhes.map(([k, v]) => k + ": " + v).join(String.fromCharCode(10)))}</textarea></label>
       <label>Próximo passo<input class="field" name="proximo" id="sb-prox" value="${esc(p.proximo)}"></label>
+      <label>Procura gente para quê? (vazio se não precisa)<input class="field" name="vagas" id="sb-vagas" value="${esc(p.vagas || "")}" placeholder="Ex.: 1 pessoa para revisar textos, 1h por semana"></label>
       ${podeResp ? `<label>Responsável<select class="field" name="resp" id="sb-resp"><option value="">Ninguém</option>${S.membros.map(m => `<option value="${m.id}"${m.id === respProj(p) ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select></label>` : ""}
       <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="editnote" data-on="0">Cancelar</button></div></form></div></section></div></div>`;
     h += escopoHTML(p, f, dentro, podeEd);
@@ -1144,9 +1191,10 @@ function escopoHTML(p, f, dentro, podeEd) {
   const inicio = p.inicio ? dmy(p.inicio) : p.em ? dataDe(p.em) : "";
   const campo = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
   const docs = p.docs || [];
-  return `<div class="ler"><div class="esc-top"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span><span class="esp"></span>
+  return `<div class="ler"><div class="esc-top"><span class="chipf" style="--fc:${fc(f)}">${esc(f.nome)}</span><span class="pill ${p.status}">${STATUS[p.status]}</span>${parado(p) ? `<span class="pill" title="Nada novo em tarefas, notas ou chat">Parado há ${diasParado(p)} dias</span>` : ""}<span class="esp"></span>
     ${dentro ? `<button class="btn small ghost" data-act="leave">Sair do projeto</button>` : `<button class="btn small primary" data-act="join">Quero participar</button>`}${resp.length ? "" : `<button class="btn small" data-act="assumir">Assumir este projeto</button>`}${podeEd ? `<button class="btn small" data-act="editnote" data-on="1">Editar</button>` : ""}${souAdm() ? `<button class="btn small ghost" data-act="excluirproj" style="color:var(--bad)">Excluir projeto</button>` : ""}</div>
   <h1 class="esc-nome">${esc(p.nome)}</h1>
+  ${p.vagas ? `<div class="decisao" style="max-width:none;margin-top:4px"><b>Procuramos gente:</b> ${esc(p.vagas)}${dentro ? "" : ` <button class="link" data-act="join">Quero participar</button>`}</div>` : ""}
   <dl class="campos">${campo("Resumo", esc(p.resumo))}${campo("Missão", p.missao ? esc(p.missao) : '<span class="vazio">A definir</span>')}
     ${campo("Responsáveis", chips(resp))}${campo("Participantes", chips(outros))}${campo("Início do projeto", inicio || '<span class="vazio">A definir</span>')}
     ${p.detalhes.map(([k, v]) => campo(esc(k), esc(v))).join("")}
@@ -1369,19 +1417,22 @@ function apurar(v) {
 const liderTx = (r, fx) => !r.lider.length ? "ninguém votou ainda" : r.lider.length > 1 ? `empate entre ${r.lider.map(o => esc(o.t)).join(" e ")}` : `${fx ? "venceu" : "na frente"}: <b>${esc(r.lider[0].t)}</b>`;
 function votacoesHTML() {
   const ord = [...S.votacoes].sort((a, b) => (fechada(a) - fechada(b)) || String(b.criada).localeCompare(String(a.criada)));
-  return `<div class="wrap"><div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><h1>Votações</h1><p class="lede">Decisões do clube no voto. Qualquer integrante abre uma votação e sugere opções.</p></div><button class="btn primary" data-act="newvot">+ Nova votação</button></div>
-  <div class="polls">${ord.map(v => { const fx = fechada(v), r = apurar(v), eu = r.vs.includes(UI.me);
+  const card = v => { const fx = fechada(v), r = apurar(v), eu = r.vs.includes(UI.me);
     return `<button class="poll${fx ? " off" : ""}" data-act="vot" data-id="${v.id}"><span class="tx"><b>${esc(v.titulo)}</b>
-      <span class="meta">${fx ? "Encerrada" : v.prazo ? `Até ${dm(v.prazo)}` : "Aberta"} · ${r.vs.length} de ${S.membros.length} votaram · ${liderTx(r, fx)}</span></span>
-      ${fx ? "" : eu ? '<span class="badge ok">Votou</span>' : '<span class="badge">Falta você</span>'}</button>`; }).join("") || '<p class="empty">Nenhuma votação ainda.</p>'}</div></div>`;
+      <span class="meta">${fx ? (v.decisao ? `Decidido: ${esc(v.decisao)}` : `Encerrada · ${liderTx(r, fx)} · falta registrar a decisão`) : `${v.prazo ? `Até ${dm(v.prazo)}` : "Aberta"} · ${r.vs.length} de ${S.membros.length} votaram · ${liderTx(r, fx)}`}</span></span>
+      ${fx ? "" : eu ? '<span class="badge ok">Votou</span>' : '<span class="badge">Falta você</span>'}</button>`; };
+  const ab = ord.filter(v => !fechada(v)), fe = ord.filter(fechada);
+  return `<div class="wrap"><div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><h1>Votações</h1><p class="lede">Decisões do clube no voto. Qualquer integrante abre uma votação e sugere opções. Ao encerrar, fica registrado o que foi decidido.</p></div><button class="btn primary" data-act="newvot">+ Nova votação</button></div>
+  <div class="polls">${ab.map(card).join("") || '<p class="empty">Nenhuma votação aberta.</p>'}${fe.length ? `<h2>Decisões tomadas</h2>${fe.map(card).join("")}` : ""}</div></div>`;
 }
 function votacaoHTML(v) {
   if (!v) return `<div class="wrap"><button class="back" data-act="go" data-v="votacoes">‹ Votações</button><p class="empty">Essa votação não existe mais.</p></div>`;
   const fx = fechada(v), meus = v.votos[UI.me] || [], r = apurar(v), p = P(v.proj), ed = podeEditarVot(v);
   return `<div class="wrap"><button class="back" data-act="go" data-v="votacoes">‹ Votações</button>
-  <div class="vhead"><h1>${esc(v.titulo)}</h1>${ed ? `<span style="display:flex;gap:6px"><button class="btn small" data-act="editvot">Editar</button>${fx ? "" : `<button class="btn small ghost" data-act="encerrar">Encerrar</button>`}</span>` : ""}</div>
+  <div class="vhead"><h1>${esc(v.titulo)}</h1>${ed ? `<span style="display:flex;gap:6px"><button class="btn small" data-act="editvot">Editar</button>${fx ? "" : `<button class="btn small ghost" data-act="decidir">Encerrar</button>`}</span>` : ""}</div>
   <p class="vmeta">${fx ? "Encerrada" : "Aberta"} · ${v.multipla ? "pode marcar várias" : "escolha uma"}${v.prazo ? ` · ${fx ? "terminou em" : "até"} ${dm(v.prazo)}` : ""} · aberta por ${esc(nm(v.criador))}${p ? ` · <button class="wl" data-act="proj" data-id="${p.id}">${esc(p.nome)}</button>` : ""}</p>
   ${v.desc ? `<p class="lede">${esc(v.desc)}</p>` : ""}
+  ${fx ? (v.decisao ? `<div class="decisao"><b>Decidido:</b> ${esc(v.decisao)}<small>Registrado por ${esc(nm(v.decididaPor))}${v.decididaEm ? " em " + quando(v.decididaEm) : ""}${ed ? ` · <button class="link" data-act="decidir">mudar</button>` : ""}</small></div>` : ed ? `<div class="decisao" style="border-color:var(--warn)">A votação terminou. <button class="link" data-act="decidir">Registrar o que foi decidido</button></div>` : "") : ""}
   <div class="vsum"><span><b>${r.vs.length}</b> de ${S.membros.length} votaram</span><span>faltam <b>${r.faltam.length}</b></span><span>${liderTx(r, fx)}</span></div>
   <form data-form="votar"><div class="opts">${v.opcoes.map(o => { const c = r.cont[o.id], mine = meus.includes(o.id);
     return `<label class="opt${mine ? " mine" : ""}${r.max && c.length === r.max ? " win" : ""}"><span class="bar" style="width:${r.vs.length ? c.length / r.vs.length * 100 : 0}%"></span>
@@ -1391,6 +1442,15 @@ function votacaoHTML(v) {
   ${!fx && UI.addop ? `<form class="addop" data-form="addop"><input class="field" name="t" id="addop-t" placeholder="Nova opção" maxlength="120"><button class="btn">Adicionar</button><button type="button" class="btn ghost" data-act="addop">Cancelar</button></form>` : ""}
   ${r.vs.length ? `<details class="vdet"><summary>Quem votou em quê</summary>${v.opcoes.filter(o => r.cont[o.id].length).map(o => `<div class="li"><b>${esc(o.t)}</b><span>${esc(nomes(r.cont[o.id]))}</span></div>`).join("")}</details>` : ""}
   ${r.faltam.length ? `<details class="vdet"><summary>Faltam votar (${r.faltam.length})</summary><p style="font-size:14px;color:var(--muted);margin:4px 0">${esc(nomes(r.faltam))}</p></details>` : ""}</div>`;
+}
+/* encerrar = dizer o que ficou decidido (o "outcome" do Loomio); já vem escrito com a opção mais votada */
+function abrirDecisao(v) {
+  const r = apurar(v), sug = v.decisao || (r.lider.length === 1 ? r.lider[0].t : "");
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Decisão"><h2>${fechada(v) ? "O que foi decidido" : "Encerrar a votação"}</h2>
+  <form class="form" data-form="decisao"><p style="margin:0;color:var(--muted);font-size:14px">${r.vs.length} de ${S.membros.length} votaram · ${liderTx(r, true)}.</p>
+    <label>O que ficou decidido e o próximo passo<textarea class="field" name="decisao" id="dc-dec" style="min-height:90px" maxlength="500">${esc(sug)}</textarea></label>
+    <div class="row-form"><button class="btn primary">${fechada(v) ? "Salvar" : "Encerrar e registrar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div></form></div></div>`;
+  $("#dc-dec").focus();
 }
 const opRow = (o = {}) => `<div class="oprow"><input class="field" name="op_${o.id || "novo"}" value="${esc(o.t || "")}" placeholder="Opção" maxlength="120"><button type="button" class="btn ghost small" data-act="nvdelop" aria-label="Tirar a opção">✕</button></div>`;
 function abrirVotacao(v) {
@@ -1633,6 +1693,7 @@ function acao(t, e) {
   if (a === "delvot") { const v = S.votacoes.find(x => x.id === UI.vot); if (!v || !confirm(`Apagar a votação “${v.titulo}” e todos os votos dela?`)) return; S.votacoes = S.votacoes.filter(x => x !== v); save(); $("#overlay").innerHTML = ""; toast("Votação apagada."); return go("votacoes"); }
   if (a === "vot") { UI.addop = false; return go("votacao", { vot: t.dataset.id }); }
   if (a === "tirarvoto") { const v = S.votacoes.find(x => x.id === UI.vot); delete v.votos[UI.me]; save(); toast("Seu voto foi retirado."); return render(); }
+  if (a === "decidir") return abrirDecisao(S.votacoes.find(x => x.id === UI.vot));
   if (a === "encerrar") { const v = S.votacoes.find(x => x.id === UI.vot); v.encerrada = true; save(); toast("Votação encerrada."); return render(); }
   if (a === "arrumar") { POS = {}; savePOS(); toast("Árvore de volta ao desenho original."); return render(); }
   if (a === "abresemana") { UI.cal = "semana"; UI.ref = t.dataset.date; saveUI(); return render(); }
@@ -1666,7 +1727,7 @@ document.addEventListener("submit", e => {
     const novo = f.dataset.i === "", pid = fd.get("proj") || f.dataset.p, pp = P(pid); if (!pp) return toast("Escolha onde fica a tarefa.");
     const dados = { t: tx, quem: pp.eu ? UI.me : (fd.get("quem") || null), inicio: fd.get("inicio") || "", prazo: fd.get("prazo") || "", prio: fd.get("prio") || "", repete: fd.get("repete") || "", obs: String(fd.get("obs") || "").trim() };
     if (novo) { pp.tarefas.push({ ...dados, st: "afazer", em: Date.now(), por: UI.me }); UI.ultProj = pid; }
-    else { const x = pp.tarefas[+f.dataset.i], era = x.st; Object.assign(x, dados, { st: fd.get("st") || x.st }); if (x.st === "feito" && era !== "feito") concluir(pp, x); if (x.st !== "feito") { delete x.feitoEm; delete x.feitoPor; } }
+    else { const x = pp.tarefas[+f.dataset.i], era = x.st; Object.assign(x, dados, { st: fd.get("st") || x.st, alt: Date.now() }); if (x.st === "feito" && era !== "feito") concluir(pp, x); if (x.st !== "feito") { delete x.feitoEm; delete x.feitoPor; } }
     save(); $("#overlay").innerHTML = ""; toast(novo ? "Tarefa criada." : "Tarefa salva."); return render();
   }
   if (k === "doc") {
@@ -1683,7 +1744,7 @@ document.addEventListener("submit", e => {
   if (k === "sobre") {
     p.nome = String(fd.get("nome") || "").trim() || p.nome; if (fd.get("frente") && F(fd.get("frente"))) p.frente = fd.get("frente");
     p.status = fd.get("status"); p.resumo = (fd.get("resumo") || "").trim() || p.resumo; p.proximo = (fd.get("proximo") || "").trim();
-    p.missao = (fd.get("missao") || "").trim(); p.inicio = fd.get("inicio") || "";
+    p.missao = (fd.get("missao") || "").trim(); p.inicio = fd.get("inicio") || ""; p.vagas = (fd.get("vagas") || "").trim();
     if (fd.has("resp")) { const r0 = respProj(p), r1 = fd.get("resp");
       if (r0 !== r1) { p.papeis = p.papeis.map(x => x[1] === "Responsável" ? [x[0], "Participa"] : x); if (r1) { const x = p.papeis.find(y => y[0] === r1); if (x) x[1] = "Responsável"; else p.papeis.unshift([r1, "Responsável"]); } } }
     p.detalhes = String(fd.get("detalhes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => { const i = l.indexOf(":"); return i > 0 ? [l.slice(0, i).trim(), l.slice(i + 1).trim()] : ["Detalhe", l]; });
@@ -1724,6 +1785,10 @@ document.addEventListener("submit", e => {
     return;
   }
   if (k === "votar") { const v = S.votacoes.find(x => x.id === UI.vot); const ops = fd.getAll("op"); if (!ops.length) return toast("Marque uma opção."); v.votos[UI.me] = ops; save(); toast("Voto registrado."); return render(); }
+  if (k === "decisao") {
+    const v = S.votacoes.find(x => x.id === UI.vot), tx = String(fd.get("decisao") || "").trim(); if (!tx) return toast("Escreva o que foi decidido.");
+    Object.assign(v, { encerrada: true, decisao: tx, decididaPor: UI.me, decididaEm: Date.now() }); save(); $("#overlay").innerHTML = ""; toast("Decisão registrada."); return render();
+  }
   if (k === "addop") {
     const v = S.votacoes.find(x => x.id === UI.vot), tx = String(fd.get("t") || "").trim(); if (!tx) return toast("Escreva a opção.");
     if (v.opcoes.some(o => o.t.toLowerCase() === tx.toLowerCase())) return toast("Essa opção já existe.");
