@@ -378,12 +378,18 @@ a.btn.primary { color: var(--on-accent); }
 .home-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 18px auto 0; max-width: 1100px; }
 .card { background: var(--raised); border: 1px solid var(--line); border-radius: var(--r-l); padding: 12px 14px; min-width: 0; }
 .card h2 { font-size: 15px; margin: 0 0 6px; }
-.li.novo .tx > b:first-child::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: 1px; }
-.li .mais { color: var(--muted); }
-.li .ic { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-size: 14px; }
-.li .tx small.urg { color: var(--bad); }
-.radar { max-width: 1100px; margin: 12px auto 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13.5px; color: var(--muted); }
-.radar b { color: var(--fg); font-weight: 600; margin-right: 4px; }
+.home-head { position: relative; }
+.novbtn { position: absolute; right: 0; top: 0; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--raised); border-radius: 99px; padding: 3px 12px; min-height: 32px; font-size: 13px; color: var(--muted); }
+.novbtn:hover, .novbtn[aria-expanded="true"] { border-color: var(--accent); color: var(--fg); }
+.novbtn .n { background: var(--accent); color: var(--on-accent); border-radius: 99px; font-size: 11px; font-weight: 600; padding: 0 6px; line-height: 17px; }
+.novpop { box-sizing: border-box; position: absolute; right: 0; top: 40px; z-index: 20; width: min(360px, calc(100vw - 32px)); max-height: 60vh; overflow: auto; text-align: left; background: var(--panel); border: 1px solid var(--line-strong); border-radius: var(--r-l); box-shadow: var(--shadow); padding: 4px 10px; }
+.nli { display: flex; gap: 8px; align-items: flex-start; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid var(--line); padding: 8px 0; font-size: 13px; color: var(--fg); line-height: 1.4; }
+.nli:first-child { border-top: 0; }
+.nli .tx { flex: 1; min-width: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.nli small { display: block; color: var(--faint); font-size: 12px; }
+.nli .mais { color: var(--muted); }
+.nli.novo .tx > b:first-child::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); margin-right: 5px; vertical-align: 1px; }
+.nav button[data-n]:not([data-n=""])::after { content: attr(data-n); background: var(--accent); color: var(--on-accent); border-radius: 99px; font-size: 11px; font-weight: 600; padding: 0 6px; line-height: 17px; }
 .node .flag { display: inline-block; font-size: 11px; font-weight: 600; padding: 0 7px; border-radius: 99px; margin-top: 6px; }
 .flag.gente { background: color-mix(in oklch, var(--ok) 16%, transparent); color: var(--ok); }
 .flag.parado { background: var(--line); color: var(--muted); }
@@ -509,9 +515,9 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
 <header class="top">
   <nav class="nav" aria-label="Seções">
     <button data-act="go" data-v="inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18M5 4c0 5 3 8 7 8s7-3 7-8M5 4v3M19 4v3M12 3l-2 2M12 3l2 2"/></svg>Início</button>
+    <button data-act="area" data-v="area">Minha Área</button>
     <button data-act="go" data-v="integrantes">Integrantes</button>
     <button data-act="go" data-v="tarefas">Tarefas</button>
-    <button data-act="area" data-v="area">Minha área</button>
     <button data-act="go" data-v="votacoes">Votações</button>
   </nav>
   <div class="right">
@@ -697,7 +703,7 @@ function renderAgora() {
   const el = $("#agora"); if (!el) return;
   if (document.querySelector("header.top").hidden) { el.innerHTML = ""; return; }
   const on = S.membros.filter(m => online(m.id)).map(m => m.id);
-  el.innerHTML = acontecendo().map(e => `<div class="live"><span class="pulse"></span><span><b>Acontecendo agora:</b> ${esc(e.titulo)} <span style="color:var(--muted)">até ${e.fim || "?"}</span></span><span class="esp"></span>${ehLink(e.local) ? `<a class="btn primary small" href="${esc(e.local.trim())}" target="_blank" rel="noopener">Entrar</a>` : e.local ? `<span style="color:var(--muted)">${esc(e.local)}</span>` : ""}${e.sala && (e.criador === UI.me || souAdm()) ? `<button class="btn ghost small" data-act="fechasala" data-id="${e.id}">Encerrar sala</button>` : ""}</div>`).join("")
+  el.innerHTML = acontecendo().map(e => `<div class="live"><span class="pulse"></span><span><b>Acontecendo agora:</b> ${esc(e.titulo)} <span style="color:var(--muted)">até ${e.fim || "?"}</span></span><span class="esp"></span>${ehLink(e.local) ? `<a class="btn primary small" href="${esc(e.local.trim())}" target="_blank" rel="noopener">Entrar</a>` : e.local ? `<span style="color:var(--muted)">${esc(e.local)}</span>` : ""}${e.sala && editaTudo() ? `<button class="btn ghost small" data-act="fechasala" data-id="${e.id}">Encerrar sala</button>` : ""}</div>`).join("")
     + `<span class="pulse" style="background:${on.length ? "var(--c-green)" : "var(--line-strong)"}"></span><span>${on.length ? plural(on.length, "pessoa online", "pessoas online") : "Ninguém online agora"}</span>${on.length ? stack(on, 6, 24) : ""}<span class="esp"></span><button class="btn small" data-act="sala">Abrir sala agora</button>`;
 }
 const quando = ms => { const d = new Date(ms), k = ymd(d); return (k === hojeISO() ? "hoje" : k === ymd(addD(new Date(), -1)) ? "ontem" : dm(k)) + ", " + hm(d); };
@@ -742,7 +748,7 @@ function gcal(e) {
 const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM">👑</span>' : "";
 /* minha área funciona como um projeto só da pessoa (id __eu): mesma tela, tarefas e notas, sem escopo nem chat */
 const EU_ID = "__eu";
-const EU = () => ({ id: EU_ID, eu: true, nome: "Minha área", frente: "", status: "ativo", resumo: "", detalhes: [], proximo: "", papeis: [[UI.me, "Responsável"]], tarefas: S.pessoal.tarefas, ideias: [], docs: [] });
+const EU = () => ({ id: EU_ID, eu: true, nome: "Minha Área", frente: "", status: "ativo", resumo: "", detalhes: [], proximo: "", papeis: [[UI.me, "Responsável"]], tarefas: S.pessoal.tarefas, ideias: [], docs: [] });
 const M = id => S.membros.find(m => m.id === id), P = id => id === EU_ID ? EU() : S.projetos.find(p => p.id === id), F = id => S.frentes.find(f => f.id === id);
 /* nome inteiro em tudo o que mostra pessoa (pedido de 22/10/2026: nada de apelido) */
 const nm = id => (M(id) || {}).nome || "alguém";
@@ -759,7 +765,10 @@ const projsFrente = f => S.projetos.filter(p => p.frente === f.id);
 const pessoasFrente = f => [...new Set([].concat(...projsFrente(f).map(pessoasProj)))];
 const semProjeto = () => { const c = new Set(S.projetos.flatMap(pessoasProj)); return S.membros.filter(m => !c.has(m.id)); };
 /* quem cria projeto: ADM em qualquer frente; os outros só na frente aberta (Ideias), onde qualquer um adiciona e assume */
-const podeCriarEm = f => !!f && (souAdm() || !!f.aberta);
+/* 22/10/2026, pedido de Matheus: o clube é pequeno, então todo integrante cria e edita tudo (frentes, projetos, votações, agenda).
+   ADM continua só para apagar e restaurar. Para voltar ao modelo antigo, troque por souAdm. */
+const editaTudo = () => !!UI.me;
+const podeCriarEm = f => !!f && editaTudo();
 const CORES = [["purple", "Roxo"], ["red", "Vermelho"], ["orange", "Laranja"], ["yellow", "Amarelo"], ["green", "Verde"], ["cyan", "Ciano"], ["pink", "Rosa"], ["gray", "Cinza"]];
 const coresHTML = sel => `<div class="cores" role="radiogroup" aria-label="Cor da frente">${CORES.map(([c, l]) => `<label title="${l}"><input type="radio" name="cor" value="${c}"${c === sel ? " checked" : ""} aria-label="${l}"><span style="--fc:var(--c-${c})"></span></label>`).join("")}</div>`;
 const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
@@ -787,9 +796,10 @@ const STATUS = { ativo: "Em andamento", ideia: "Ideia", pausado: "Pausado", feit
 /* ===== NAVEGAÇÃO ===== */
 function go(v, extra) {
   salvarNotaAberta();
-  Object.assign(UI, { v, edit: false }, extra || {});
+  Object.assign(UI, { v, edit: false, nov: false }, extra || {});
   const marca = v === "projeto" ? (UI.proj === EU_ID ? "area" : "inicio") : v === "pessoa" ? "integrantes" : v === "votacao" ? "votacoes" : v;
   document.querySelectorAll("header [data-v]").forEach(b => b.setAttribute("aria-current", b.dataset.v === marca ? "page" : "false"));
+  const bv = document.querySelector('header [data-v="votacoes"]'); if (bv && UI.me) { const n = S.votacoes.filter(x => !fechada(x) && !(x.votos[UI.me] || []).length).length; bv.dataset.n = n || ""; bv.title = n ? plural(n, "votação esperando seu voto", "votações esperando seu voto") : ""; }
   $("#meBtn").innerHTML = av(UI.me, 34);
   render(); scrollTo(0, 0);
 }
@@ -811,15 +821,14 @@ function render() {
 function homeHTML() {
   const sp = semProjeto().length;
   const mexeu = Object.keys(POS).length > 0;
-  return `<div class="wrap" style="max-width:1400px"><div class="home-head"><h1>Projetos</h1><p>Em cima, os projetos; embaixo, a frente de cada um. Clique num projeto para ver tudo sobre ele.</p>
-  <div class="home-acts"><button class="btn primary" data-act="newproj">+ Novo projeto</button>${souAdm() ? `<button class="btn" data-act="newfrente">+ Nova frente</button>` : ""}${mexeu ? `<button class="btn ghost" data-act="arrumar">Arrumar a árvore</button>` : ""}</div></div>
-  ${inicioCards()}
+  return `<div class="wrap" style="max-width:1400px"><div class="home-head">${novidadesHTML()}<h1>Projetos</h1><p>Em cima, os projetos; embaixo, a frente de cada um. Clique num projeto para ver tudo sobre ele.</p>
+  <div class="home-acts"><button class="btn primary" data-act="newproj">+ Novo projeto</button>${editaTudo() ? `<button class="btn" data-act="newfrente">+ Nova frente</button>` : ""}${mexeu ? `<button class="btn ghost" data-act="arrumar">Arrumar a árvore</button>` : ""}</div></div>
   <div class="tree-box" id="treeBox"><div class="tree" id="tree"><svg id="treeLines" width="1" height="1"></svg>
   ${S.projetos.map(p => { const f = F(p.frente), r = respProj(p), outros = pessoasProj(p).filter(x => x !== r);
     return `<button class="node proj" data-node="p:${p.id}" style="--fc:${fc(f)}"><span class="nm">${esc(p.nome)}</span>
       <span class="who">${stack(outros, 2, 30)}</span>${r ? `<span class="resp">${av(r, 22)} ${esc(nm(r))}, responsável</span>` : `<span class="resp">Sem responsável</span>`}${p.vagas ? `<span class="flag gente" title="${esc(p.vagas)}">Procura gente</span>` : parado(p) ? `<span class="flag parado">Parado há ${diasParado(p)} dias</span>` : ""}</button>`; }).join("")}
   ${S.frentes.map(f => { const ppl = pessoasFrente(f);
-    return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}">${souAdm() ? `<span class="edf" data-edf="${f.id}" title="Editar a frente: nome e cor" aria-label="Editar a frente ${esc(f.nome)}">✎</span>` : ""}${podeCriarEm(f) ? `<span class="add" data-add="${f.id}" title="Novo projeto em ${esc(f.nome)}" aria-label="Novo projeto em ${esc(f.nome)}">+</span>` : ""}<span class="nm">${esc(f.nome)}</span>
+    return `<button class="node frente${f.aberta ? " open" : ""}" data-node="f:${f.id}" style="--fc:${fc(f)}">${editaTudo() ? `<span class="edf" data-edf="${f.id}" title="Editar a frente: nome e cor" aria-label="Editar a frente ${esc(f.nome)}">✎</span>` : ""}${podeCriarEm(f) ? `<span class="add" data-add="${f.id}" title="Novo projeto em ${esc(f.nome)}" aria-label="Novo projeto em ${esc(f.nome)}">+</span>` : ""}<span class="nm">${esc(f.nome)}</span>
       <span class="who">${stack(ppl, 4, 28)}</span><span class="resp" style="justify-content:center">${plural(ppl.length, "pessoa", "pessoas")}</span></button>`; }).join("")}
   </div></div>
   <p class="foot-note">${plural(S.membros.length, "integrante", "integrantes")}. ${sp ? `${plural(sp, "ainda não está", "ainda não estão")} em nenhum projeto: <button class="link" data-act="go" data-v="integrantes" data-filtro="sem">ver quem</button>.` : ""}${souAdm() && S.lixo.length ? ` <button class="link" data-act="lixo">Projetos excluídos (${S.lixo.length})</button>` : ""}</p></div>`;
@@ -830,23 +839,12 @@ function marcarVisita() {
   if (VISTO !== null) return; const k = KEY + "-visto-" + UI.me;
   try { VISTO = +(localStorage.getItem(k) || 0); localStorage.setItem(k, String(Date.now())); } catch (e) { VISTO = 0; }
 }
-function inicioCards() {
+/* Novidades: botão discreto no canto do Início; abre a lista curta do que aconteceu nos últimos 14 dias */
+function novidadesHTML() {
   marcarVisita();
-  const hoje = hojeISO(), amanha = ymd(addD(new Date(), 1));
-  const minhas = S.projetos.concat([EU()]).flatMap(p => p.tarefas.map((t, i) => ({ t, i, p }))).filter(x => (x.p.eu || x.t.quem === UI.me) && x.t.st !== "feito").sort((a, b) => ordTarefa(a.t, b.t));
-  const vots = S.votacoes.filter(v => !fechada(v) && !(v.votos[UI.me] || []).length).sort((a, b) => String(a.prazo || "9").localeCompare(String(b.prazo || "9")));
   const ats = atividades(), novas = VISTO ? ats.filter(x => x.em > VISTO).length : 0;
-  const votLi = v => `<button class="li" data-act="vot" data-id="${v.id}"><span class="ic" aria-hidden="true">✓</span><span class="tx">Votar: ${esc(v.titulo)}<small${v.prazo && v.prazo <= amanha ? ' class="urg"' : ""}>${v.prazo ? (v.prazo === hoje ? "termina hoje" : v.prazo === amanha ? "termina amanhã" : "até " + dm(v.prazo)) : "sem prazo"}</small></span></button>`;
-  const tarLi = x => `<div class="li">${tck(x.t, x.p, x.i)}<button class="tx" data-act="edtarefa" data-p="${x.p.id}" data-i="${x.i}">${x.t.prio ? PRIO[x.t.prio][1] + " " : ""}${esc(x.t.t)}<small>${x.p.eu ? "🔒 Minha área" : esc(x.p.nome)}${x.t.prazo ? " · " + prazoTx(x.t) : ""}</small></button></div>`;
-  const total = minhas.length + vots.length;
-  // radar do clube: projetos pedindo gente e projetos parados, numa linha só
-  const gente = S.projetos.filter(p => p.vagas), parados = S.projetos.filter(parado);
-  const lk = p => `<button class="link" data-act="proj" data-id="${p.id}">${esc(p.nome)}</button>`;
-  return `<div class="home-row"><div class="card"><div class="ch"><h2>Para você${total ? ` · ${total}` : ""}</h2><button class="btn small" data-act="novatarefa" data-quem="eu">+ Tarefa</button></div>
-      ${vots.map(votLi).join("")}${minhas.slice(0, 6).map(tarLi).join("")}
-      ${total ? "" : '<p class="empty" style="margin:0">Nada pendente com você. Pegue uma tarefa sem responsável em Tarefas.</p>'}${minhas.length > 6 ? `<p style="margin:6px 0 0"><button class="link" data-act="go" data-v="tarefas">e mais ${minhas.length - 6} tarefas</button></p>` : ""}</div>
-    <div class="card"><h2>Novidades${novas ? ` · ${novas} desde sua última visita` : ""}</h2>${ats.map(x => `<button class="li${VISTO && x.em > VISTO ? " novo" : ""}" ${x.act}>${av(x.quem, 28)}<span class="tx"><b>${esc(nm(x.quem))}</b> ${x.tx}${x.n > 1 ? ` <span class="mais">e mais ${x.n - 1}</span>` : ""}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:0">Nada nos últimos 14 dias.</p>'}</div></div>
-  ${gente.length || parados.length ? `<div class="radar">${gente.length ? `<span><b>Procurando gente:</b>${gente.map(lk).join(", ")}</span>` : ""}${parados.length ? `<span><b>Parados há ${PARADO_DIAS}+ dias:</b>${parados.map(lk).join(", ")}</span>` : ""}</div>` : ""}`;
+  return `<button class="novbtn" data-act="novidades" aria-expanded="${!!UI.nov}">Novidades${novas ? `<span class="n">${novas}</span>` : ""}</button>
+  ${UI.nov ? `<div class="novpop" role="dialog" aria-label="Novidades">${ats.map(x => `<button class="nli${VISTO && x.em > VISTO ? " novo" : ""}" ${x.act}>${av(x.quem, 22)}<span class="tx"><b>${esc(nm(x.quem))}</b> ${x.tx}${x.n > 1 ? ` <span class="mais">e mais ${x.n - 1}</span>` : ""}<small>${quando(x.em)}</small></span></button>`).join("") || '<p class="empty" style="margin:4px 0">Nada nos últimos 14 dias.</p>'}</div>` : ""}`;
 }
 const T = { nodes: {}, links: [], scale: 1, raf: 0 };
 /* onde cada um deixou os blocos (só no navegador de quem mexeu); o desenho da árvore continua o mesmo */
@@ -1067,7 +1065,7 @@ const ICO = { afazer: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor
 const tck = (t, p, i) => `<button class="tck ${t.st}" data-act="cyc" data-p="${p.id}" data-i="${i}" title="${ST_NOME[t.st]}. Clique para marcar como ${ST_PROX[t.st]}." aria-label="${ST_NOME[t.st]}; marcar como ${ST_PROX[t.st]}">${ICO[t.st]}</button>`;
 const prazoTx = t => { const late = t.st !== "feito" && t.prazo && t.prazo < hojeISO(); return t.prazo ? `<span${late ? ' class="late"' : ""}>${late ? "atrasada, " : t.prazo === hojeISO() ? "hoje, " : "até "}${dm(t.prazo)}</span>` : ""; };
 function tarefaHTML(t, p, i, comProj) {
-  const info = [comProj ? (p.eu ? "🔒 Minha área" : esc(p.nome)) : "", t.st === "fazendo" ? "fazendo" : "", t.inicio ? "começa " + dm(t.inicio) : "", prazoTx(t), t.repete ? "🔁 " + REPETE[t.repete] : ""].filter(Boolean).join(" · ");
+  const info = [comProj ? (p.eu ? "🔒 Minha Área" : esc(p.nome)) : "", t.st === "fazendo" ? "fazendo" : "", t.inicio ? "começa " + dm(t.inicio) : "", prazoTx(t), t.repete ? "🔁 " + REPETE[t.repete] : ""].filter(Boolean).join(" · ");
   const resp = p.eu ? "" : t.quem && M(t.quem) ? `<span class="tresp" title="Responsável: ${esc(nm(t.quem))}">${av(t.quem, 26)}<span class="nm">${esc(nm(t.quem))}</span></span>`
     : `<button class="btn small" data-act="take" data-p="${p.id}" data-i="${i}" title="Sem responsável. Clique para ficar com ela.">Pegar</button>`;
   return `<div class="task${t.st === "feito" ? " done" : ""}">${tck(t, p, i)}
@@ -1084,7 +1082,7 @@ function abrirTarefaForm(o) {
   $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="${novo ? "Nova tarefa" : "Tarefa"}"><h2>${novo ? "Nova tarefa" : "Tarefa"}</h2>
   <form class="form" data-form="tarefa" data-p="${p ? p.id : ""}" data-i="${novo ? "" : o.i}">
     <label>Tarefa<input class="field" name="t" id="tf-t" required value="${esc(t.t)}" placeholder="O que precisa ser feito"></label>
-    ${escolhe ? `<label>Onde fica<select class="field" name="proj" id="tf-p"><option value="${EU_ID}"${eu ? " selected" : ""}>🔒 Minha área (só eu vejo)</option>${S.projetos.map(x => `<option value="${x.id}"${x.id === pid ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select></label>` : `<p class="tipo-eu">${eu ? "🔒 Minha área: só você vê esta tarefa." : "Projeto: " + esc(p.nome)}</p>`}
+    ${escolhe ? `<label>Onde fica<select class="field" name="proj" id="tf-p"><option value="${EU_ID}"${eu ? " selected" : ""}>🔒 Minha Área (só eu vejo)</option>${S.projetos.map(x => `<option value="${x.id}"${x.id === pid ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select></label>` : `<p class="tipo-eu">${eu ? "🔒 Minha Área: só você vê esta tarefa." : "Projeto: " + esc(p.nome)}</p>`}
     <label id="tf-resp-l"${eu ? " hidden" : ""}>Responsável<select class="field" name="quem" id="tf-q">${opcoesPessoas(t.quem)}</select></label>
     <div class="two"><label>Prazo<input class="field" type="date" name="prazo" id="tf-d" value="${t.prazo || ""}"></label><label>Começa em<input class="field" type="date" name="inicio" id="tf-i" value="${t.inicio || ""}"></label></div>
     <div class="two"><label>Prioridade<select class="field" name="prio" id="tf-pr">${opcoesPrio(t.prio)}</select></label><label>Repetição<select class="field" name="repete" id="tf-r">${opcoesRepete(t.repete)}</select></label></div>
@@ -1113,7 +1111,7 @@ function tarefasHTML() {
   if (tf.q === "feitas") corpo = sec("Feitas, das mais recentes", lista, "", true);
   else if (tf.por === "prazo") corpo = [["Atrasadas", x => x.t.prazo && x.t.prazo < hoje, "late"], ["Hoje", x => x.t.prazo === hoje], ["Próximos 7 dias", x => x.t.prazo > hoje && x.t.prazo <= sem], ["Mais para frente", x => x.t.prazo > sem], ["Sem prazo", x => !x.t.prazo]]
     .map(([tit, f, cls]) => sec(tit, lista.filter(f), cls, true)).join("");
-  else corpo = base.map(p => sec(p.eu ? "🔒 Minha área" : `<button class="wl" data-act="proj" data-id="${p.id}" data-tab="tarefas" style="color:inherit"><span class="chipf" style="--fc:${fc(F(p.frente))}">${esc(p.nome)}</span></button>`, lista.filter(x => x.p === p), "", false)).join("");
+  else corpo = base.map(p => sec(p.eu ? "🔒 Minha Área" : `<button class="wl" data-act="proj" data-id="${p.id}" data-tab="tarefas" style="color:inherit"><span class="chipf" style="--fc:${fc(F(p.frente))}">${esc(p.nome)}</span></button>`, lista.filter(x => x.p === p), "", false)).join("");
   return `<div class="wrap"><div class="thead"><h1>Tarefas</h1><span class="esp"></span><button class="btn primary" data-act="novatarefa"${tf.quem === "eu" ? ' data-quem="eu"' : ""}>+ Nova tarefa</button></div>
   <p class="lede">As tarefas dos projetos e as da sua área (🔒, só você vê). Clique numa tarefa para ver as observações ou mudar responsável, prazo e prioridade.</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap"><div class="seg" role="group" aria-label="De quem"><button data-act="tfq" data-v="eu" aria-pressed="${tf.quem === "eu"}">Minhas</button><button data-act="tfq" data-v="sem" aria-pressed="${tf.quem === "sem"}">Sem responsável</button><button data-act="tfq" data-v="todos" aria-pressed="${tf.quem === "todos"}">Do clube todo</button></div>
@@ -1124,7 +1122,7 @@ function tarefasHTML() {
 
 function projHTML(p) {
   if (!p) return `<div class="wrap"><button class="back" data-act="go" data-v="inicio">‹ Projetos</button><p class="empty">Esse projeto não existe mais.</p></div>`;
-  const f = F(p.frente), me = UI.me, dentro = pessoasProj(p).includes(me), podeEd = dentro || souAdm(), podeResp = souAdm() || respProj(p) === me;
+  const f = F(p.frente), me = UI.me, dentro = pessoasProj(p).includes(me), podeEd = dentro || editaTudo(), podeResp = editaTudo() || respProj(p) === me;
   const abertas = p.tarefas.filter(t => t.st !== "feito").length;
   /* três botões fixos, como no desenho; as ideias ficaram dentro de Tarefas (ideia é tarefa que ainda não nasceu), nada delas se perdeu */
   if (UI.tab === "ideias") { UI.tab = "tarefas"; setTimeout(() => { const x = $("#ideias"); if (x) x.scrollIntoView({ block: "start" }); }, 0); }
@@ -1136,14 +1134,14 @@ function projHTML(p) {
     pasta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg>',
     rede: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8.3 8.2l2.6 7.4M15.9 7.4l-2.8 8.3M8.5 6.8l7-.6"/></svg>' };
   let h = `<div class="wrap" style="max-width:1280px">
-  <div class="pwrap"><aside class="pside" aria-label="Itens do projeto"><button class="back" data-act="go" data-v="inicio">‹ ${p.eu ? "Início" : "Projetos"}</button>${p.eu ? `<div style="font-weight:600;margin:0 0 8px 6px">🔒 Minha área</div>` : ""}<nav class="pfix">${fixos.map(([k, l, c]) => `<button data-act="tab" data-tab="${k}" aria-current="${tab === k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</nav>
+  <div class="pwrap"><aside class="pside" aria-label="Itens do projeto"><button class="back" data-act="go" data-v="inicio">‹ ${p.eu ? "Início" : "Projetos"}</button>${p.eu ? `<div style="font-weight:600;margin:0 0 8px 6px">🔒 Minha Área</div>` : ""}<nav class="pfix">${fixos.map(([k, l, c]) => `<button data-act="tab" data-tab="${k}" aria-current="${tab === k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</nav>
     <div class="phead"><span>${p.eu ? "Minhas notas" : "Notas do Projeto"}</span><span><button class="ib" data-act="novanota" data-pai="" title="Nova nota" aria-label="Nova nota">${IC.nota}</button><button class="ib" data-act="novapasta" data-pai="" title="Nova pasta" aria-label="Nova pasta">${IC.pasta}</button><button class="ib" data-act="tab" data-tab="rede" title="Rede das notas" aria-label="Rede das notas"${tab === "rede" ? ' style="color:var(--accent)"' : ""}>${IC.rede}</button></span></div>
     <div class="ptree">${arvoreHTML(p, "") || '<p class="empty" style="padding:0 8px">Nenhuma nota ainda.</p>'}</div>
     <p class="dica">Botão direito (ou ⋯) para criar, renomear, mover ou apagar. Arraste para mudar de pasta.</p></aside><section class="pmain">`;
   if (tab === "sobre") {
     if (UI.edit === true) return h + `<div class="ler"><h2 class="sec">Editar o escopo</h2><form class="form" data-form="sobre">
       <label>Nome do projeto<input class="field" name="nome" id="sb-nome" value="${esc(p.nome)}"></label>
-      ${souAdm() ? `<label>Frente<select class="field" name="frente" id="sb-frente">${S.frentes.map(x => `<option value="${x.id}"${x.id === p.frente ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select></label>` : ""}
+      ${editaTudo() ? `<label>Frente<select class="field" name="frente" id="sb-frente">${S.frentes.map(x => `<option value="${x.id}"${x.id === p.frente ? " selected" : ""}>${esc(x.nome)}</option>`).join("")}</select></label>` : ""}
       <label>Situação<select class="field" name="status" id="sb-status">${Object.entries(STATUS).map(([v, l]) => `<option value="${v}"${p.status === v ? " selected" : ""}>${l}</option>`).join("")}</select></label>
       <label>Resumo, em uma frase<input class="field" name="resumo" id="sb-resumo" value="${esc(p.resumo)}"></label>
       <label>Missão: aonde o projeto quer chegar<input class="field" name="missao" id="sb-missao" value="${esc(p.missao || "")}"></label>
@@ -1397,7 +1395,7 @@ function membersHTML() {
   const chip = (k, l, n, cor) => `<button class="chip" data-act="filtro" data-k="${k}" aria-pressed="${UI.filtro === k}">${cor ? `<span class="chipf" style="--fc:${cor}"></span>` : ""}${l} · ${n}</button>`;
   return `<div class="wrap"><h1>Integrantes</h1><p class="lede">Quem está no clube e em que projeto cada um está. Clique numa pessoa para ver o perfil.</p>
   <div class="filters">${chip("todos", "Todos", S.membros.length)}${chip("sem", "Sem projeto", sp.size)}${S.frentes.map(f => chip(f.id, esc(f.nome), S.membros.filter(m => projDe(m.id).some(p => p.frente === f.id)).length, fc(f))).join("")}</div>
-  ${F(UI.filtro) && souAdm() ? `<p style="margin:-6px 0 14px"><button class="btn small" data-act="editfrente" data-id="${UI.filtro}">Editar a frente ${esc(F(UI.filtro).nome)}</button></p>` : ""}
+  ${F(UI.filtro) && editaTudo() ? `<p style="margin:-6px 0 14px"><button class="btn small" data-act="editfrente" data-id="${UI.filtro}">Editar a frente ${esc(F(UI.filtro).nome)}</button></p>` : ""}
   <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${esc(m.nome)}${coroa(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
 }
 
@@ -1405,7 +1403,7 @@ function membersHTML() {
 const hojeISO = () => ymd(new Date());
 const fechada = v => v.encerrada || (v.prazo && v.prazo < hojeISO());
 const votantes = v => Object.keys(v.votos || {}).filter(k => (v.votos[k] || []).length && M(k));
-const podeEditarVot = v => v.criador === UI.me || souAdm();
+const podeEditarVot = v => v.criador === UI.me || editaTudo();
 const nomes = ids => ids.map(nm).join(", ");
 // contagem por opção, quem lidera (ou empate) e quem falta votar; serve para a lista e para a página
 function apurar(v) {
@@ -1589,16 +1587,16 @@ document.addEventListener("contextmenu", e => {
   const nd = UI.v === "inicio" && e.target.closest(".node"); if (!nd) return; e.preventDefault();
   const [k, id] = nd.dataset.node.split(":");
   if (k === "p") { const p = P(id); if (!p) return; menu(e.clientX, e.clientY, [p.nome, ["📂", "Abrir o projeto", () => go("projeto", { proj: id, tab: "sobre" })], ["✓", "Tarefas", () => go("projeto", { proj: id, tab: "tarefas" })], souAdm() ? "-" : null, souAdm() ? ["🗑", "Excluir projeto", () => { if (confirm(`Excluir o projeto “${p.nome}”? Ele sai da árvore e fica em Projetos excluídos, de onde um ADM pode restaurar.`)) { excluirProjeto(p); render(); } }, "warn"] : null]); }
-  else { const f = F(id); if (!f) return; menu(e.clientX, e.clientY, [f.nome, podeCriarEm(f) ? ["＋", "Novo projeto nesta frente", () => abrirProjeto(id)] : null, souAdm() ? ["✎", "Editar a frente (nome e cor)", () => abrirFrente(id)] : null, ["👥", "Ver quem está nela", () => go("integrantes", { filtro: id })]]); }
+  else { const f = F(id); if (!f) return; menu(e.clientX, e.clientY, [f.nome, podeCriarEm(f) ? ["＋", "Novo projeto nesta frente", () => abrirProjeto(id)] : null, editaTudo() ? ["✎", "Editar a frente (nome e cor)", () => abrirFrente(id)] : null, ["👥", "Ver quem está nela", () => go("integrantes", { filtro: id })]]); }
 });
 /* janela de projeto novo */
 function abrirProjeto(fid) {
-  const ok = S.frentes.filter(podeCriarEm); if (!ok.length && !souAdm()) return toast("Só os ADM criam projetos fora da frente de ideias.");
+  const ok = S.frentes.filter(podeCriarEm); if (!ok.length && !editaTudo()) return toast("Entre no site para criar projetos.");
   $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Novo projeto"><h2>Novo projeto</h2>
   <form class="form" data-form="projeto">
     <label>Nome do projeto<input class="field" name="nome" id="np-nome" required placeholder="Ex.: Grupo de estudos de ACT"></label>
     <label>Em uma frase, o que é<input class="field" name="resumo" id="np-resumo" placeholder="Para quem está de fora entender"></label>
-    <label>Frente<select class="field" name="frente" id="np-frente" data-act="npfrente">${ok.map(f => `<option value="${f.id}"${f.id === fid ? " selected" : ""}>${esc(f.nome)}</option>`).join("")}${souAdm() ? `<option value="__nova">Uma frente nova...</option>` : ""}</select></label>
+    <label>Frente<select class="field" name="frente" id="np-frente" data-act="npfrente">${ok.map(f => `<option value="${f.id}"${f.id === fid ? " selected" : ""}>${esc(f.nome)}</option>`).join("")}${editaTudo() ? `<option value="__nova">Uma frente nova...</option>` : ""}</select></label>
     <div id="np-nova-l" style="display:none;gap:12px"><label>Nome da frente nova<input class="field" name="nova" id="np-nova" placeholder="Ex.: Estudos"></label><div><div style="font-size:13.5px;color:var(--muted);margin-bottom:6px">Cor da frente</div>${coresHTML(CORES.map(c => c[0]).find(c => !S.frentes.some(f => f.cor === c)) || "purple")}</div></div>
     <label>Responsável<select class="field" name="resp" id="np-resp"><option value="">Ninguém ainda</option>${S.membros.map(m => `<option value="${m.id}"${m.id === UI.me ? " selected" : ""}>${esc(m.nome)}</option>`).join("")}</select></label>
     <div class="row-form"><button class="btn primary">Criar projeto</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button></div>
@@ -1612,13 +1610,14 @@ function abrirFrente(id) {
     <label>Nome da frente<input class="field" name="nome" id="fr-nome" required value="${esc(f.nome)}" placeholder="Ex.: Prática Clínica"></label>
     <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:6px">Cor</div>${coresHTML(f.cor)}</div>
     <label style="display:flex;gap:8px;align-items:center;color:var(--fg)"><input type="checkbox" name="aberta" id="fr-ab"${f.aberta ? " checked" : ""}> Frente aberta: qualquer integrante pode criar projeto nela</label>
-    <div class="row-form"><button class="btn primary">${id ? "Salvar" : "Criar frente"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${vazia ? `<button type="button" class="btn ghost" data-act="delfrente" data-id="${id}" style="margin-left:auto;color:var(--bad)">Apagar frente</button>` : ""}</div>
+    <div class="row-form"><button class="btn primary">${id ? "Salvar" : "Criar frente"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${vazia && souAdm() ? `<button type="button" class="btn ghost" data-act="delfrente" data-id="${id}" style="margin-left:auto;color:var(--bad)">Apagar frente</button>` : ""}</div>
   </form>${id && !vazia ? `<p class="empty" style="margin-top:12px">Para apagar, primeiro mude os projetos desta frente para outra (no Editar de cada projeto).</p>` : ""}</div></div>`;
   $("#fr-nome").focus();
 }
 
 /* ===== AÇÕES ===== */
 document.addEventListener("click", e => {
+  if (UI.nov && !e.target.closest(".novpop, .novbtn")) { UI.nov = false; const x = $(".novpop"); if (x) x.remove(); const b = $(".novbtn"); if (b) b.setAttribute("aria-expanded", "false"); }
   const node = e.target.closest(".node");
   if (node) { if (DRAG && DRAG.done) return; const add = e.target.closest("[data-add]"); if (add) return abrirProjeto(add.dataset.add); const edf = e.target.closest("[data-edf]"); if (edf) return abrirFrente(edf.dataset.edf); const [k, id] = node.dataset.node.split(":"); return k === "p" ? go("projeto", { proj: id, tab: "sobre" }) : go("integrantes", { filtro: id }); }
   const mx = e.target.closest("[data-ctx]"); if (mx) { e.stopPropagation(); const n = NT(mx.dataset.ctx), r = mx.getBoundingClientRect(); if (n) menuNota(n, r.left, r.bottom + 2); return; }
@@ -1693,6 +1692,7 @@ function acao(t, e) {
   if (a === "delvot") { const v = S.votacoes.find(x => x.id === UI.vot); if (!v || !confirm(`Apagar a votação “${v.titulo}” e todos os votos dela?`)) return; S.votacoes = S.votacoes.filter(x => x !== v); save(); $("#overlay").innerHTML = ""; toast("Votação apagada."); return go("votacoes"); }
   if (a === "vot") { UI.addop = false; return go("votacao", { vot: t.dataset.id }); }
   if (a === "tirarvoto") { const v = S.votacoes.find(x => x.id === UI.vot); delete v.votos[UI.me]; save(); toast("Seu voto foi retirado."); return render(); }
+  if (a === "novidades") { UI.nov = !UI.nov; return render(); }
   if (a === "decidir") return abrirDecisao(S.votacoes.find(x => x.id === UI.vot));
   if (a === "encerrar") { const v = S.votacoes.find(x => x.id === UI.vot); v.encerrada = true; save(); toast("Votação encerrada."); return render(); }
   if (a === "arrumar") { POS = {}; savePOS(); toast("Árvore de volta ao desenho original."); return render(); }
