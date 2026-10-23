@@ -1,11 +1,11 @@
 {
-  "name": "Mapa do Psychology",
-  "short_name": "Psychology",
+  "name": "Mapa do Lastro",
+  "short_name": "Lastro",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#1c1c1c",
-  "theme_color": "#7852ee",
+  "background_color": "#F3EAD8",
+  "theme_color": "#6E1E2B",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }

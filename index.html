@@ -1,66 +1,81 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mapa do Psychology</title>
+<title>Mapa do Lastro</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#7852ee">
+<meta name="theme-color" content="#6E1E2B">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Layout (desenho do Matheus, 21/10/2026): barra com Início e Integrantes à esquerda, Calendário e o perfil à direita.
-   O Início é a árvore dos projetos: projetos em cima, frentes embaixo, ligados por linhas. Cada coisa abre em tela própria. */
+   O Início é a árvore dos projetos: projetos em cima, frentes embaixo, ligados por linhas. Cada coisa abre em tela própria.
+   Identidade do Clube Lastro (23/10/2026, nota Identidade Visual - Lastro): papel, vinho, mostarda, ameixa, tinta e ouro escuro;
+   Libre Caslon Display nos títulos e Libre Caslon Text no resto. A barra é vinho com a assinatura; mostarda nunca vira texto sobre papel. */
 :root {
-  --bg: #ffffff; --panel: #f6f6f6; --raised: #ffffff; --line: #e4e4e4; --line-strong: #cfcfcf;
-  --fg: #222222; --muted: #5c5c5c; --faint: #707070; --dot: #e4e4e4;
-  --accent: #7852ee; --accent-soft: color-mix(in oklch, #7852ee 12%, transparent); --on-accent: #ffffff;
-  --c-red: #e93147; --c-orange: #ec7500; --c-yellow: #c99a00; --c-green: #08b94e; --c-cyan: #00a8a6; --c-purple: #7852ee; --c-pink: #d53984; --c-gray: #8a8a8a;
-  --ok: #08b94e; --warn: #b88a00; --bad: #e93147;
-  --shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 18px rgba(0,0,0,.07);
-  --font: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --r-s: 4px; --r-m: 8px; --r-l: 12px;
-  --fds-bg: #f3f3f5; --fds-line: #e2e2e6; --quente-bg: #fdeccd; --quente-fg: #7d5210; --quente-line: #e9c890; --chip: #ececec;
+  --bg: #F3EAD8; --panel: #ECE1CB; --raised: #FAF5EA; --line: #DDCFB4; --line-strong: #C6B392;
+  --fg: #1E1A17; --muted: #5A4D43; --faint: #73665A; --dot: #D9CAAD;
+  --accent: #6E1E2B; --accent-soft: color-mix(in oklch, #6E1E2B 10%, transparent); --on-accent: #F3EAD8;
+  --c-red: #9E2F3A; --c-orange: #A85A22; --c-yellow: #B8892A; --c-green: #4D7042; --c-cyan: #2E6B70; --c-purple: #4B2A4F; --c-pink: #9C456A; --c-gray: #827363;
+  --ok: #4D7042; --warn: #95680F; --bad: #A8322E;
+  --shadow: 0 1px 2px rgba(30,26,23,.06), 0 6px 18px rgba(75,42,79,.08);
+  --font: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --display: "Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
+  --r-s: 3px; --r-m: 6px; --r-l: 10px;
+  --fds-bg: #EADFC8; --fds-line: #D8C8AA; --quente-bg: #F5E2AE; --quente-fg: #5E400B; --quente-line: #E2B53E; --chip: #E5D9C0;
+  --bar: #6E1E2B; --bar-fg: #F3EAD8; --bar-muted: color-mix(in oklch, #F3EAD8 74%, #6E1E2B); --bar-line: color-mix(in oklch, #F3EAD8 16%, transparent); --miolo: #E2B53E; --anel: #6E1E2B;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #1c1c1c; --panel: #232323; --raised: #262626; --line: #333333; --line-strong: #444444;
-  --fg: #dadada; --muted: #a3a3a3; --faint: #8a8a8a; --dot: #2e2e2e;
-  --accent: #a882ff; --accent-soft: color-mix(in oklch, #a882ff 16%, transparent); --on-accent: #1c1c1c;
-  --c-red: #fb464c; --c-orange: #e9973f; --c-yellow: #e0de71; --c-green: #44cf6e; --c-cyan: #53dfdd; --c-purple: #a882ff; --c-pink: #fa99cd; --c-gray: #8f8f8f;
-  --ok: #44cf6e; --warn: #e0de71; --bad: #fb464c;
+  --bg: #1D1519; --panel: #251A20; --raised: #2D2027; --line: #3E2F37; --line-strong: #56434E;
+  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #34272E;
+  --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 15%, transparent); --on-accent: #1E1A17;
+  --c-red: #E07A7E; --c-orange: #E09A62; --c-yellow: #E2B53E; --c-green: #9DBE8A; --c-cyan: #7DBDBC; --c-purple: #B897C2; --c-pink: #E39AB8; --c-gray: #A89A8C;
+  --ok: #9DBE8A; --warn: #E2B53E; --bad: #E8746E;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  --fds-bg: #212123; --fds-line: #2f2f33; --quente-bg: #3b2d11; --quente-fg: #f3cd83; --quente-line: #66501f; --chip: #2e2e2e;
+  --fds-bg: #22181D; --fds-line: #3A2B33; --quente-bg: #3D2E12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #33262D; --anel: #F3EAD8;
   color-scheme: dark;
 } }
 :root[data-theme="dark"] {
-  --bg: #1c1c1c; --panel: #232323; --raised: #262626; --line: #333333; --line-strong: #444444;
-  --fg: #dadada; --muted: #a3a3a3; --faint: #8a8a8a; --dot: #2e2e2e;
-  --accent: #a882ff; --accent-soft: color-mix(in oklch, #a882ff 16%, transparent); --on-accent: #1c1c1c;
-  --c-red: #fb464c; --c-orange: #e9973f; --c-yellow: #e0de71; --c-green: #44cf6e; --c-cyan: #53dfdd; --c-purple: #a882ff; --c-pink: #fa99cd; --c-gray: #8f8f8f;
-  --ok: #44cf6e; --warn: #e0de71; --bad: #fb464c;
+  --bg: #1D1519; --panel: #251A20; --raised: #2D2027; --line: #3E2F37; --line-strong: #56434E;
+  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #34272E;
+  --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 15%, transparent); --on-accent: #1E1A17;
+  --c-red: #E07A7E; --c-orange: #E09A62; --c-yellow: #E2B53E; --c-green: #9DBE8A; --c-cyan: #7DBDBC; --c-purple: #B897C2; --c-pink: #E39AB8; --c-gray: #A89A8C;
+  --ok: #9DBE8A; --warn: #E2B53E; --bad: #E8746E;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  --fds-bg: #212123; --fds-line: #2f2f33; --quente-bg: #3b2d11; --quente-fg: #f3cd83; --quente-line: #66501f; --chip: #2e2e2e;
+  --fds-bg: #22181D; --fds-line: #3A2B33; --quente-bg: #3D2E12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #33262D; --anel: #F3EAD8;
   color-scheme: dark;
 }
 [hidden] { display: none !important; }
 html, body { min-height: 100%; }
-body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font); touch-action: manipulation; }
-body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--panel); }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font); touch-action: manipulation; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bar); }
+h1, .dialog h2, .esc-nome, .ntitle, .range { font-family: var(--display); font-weight: 400; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* barra */
-.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: stretch; background: var(--panel); border-bottom: 1px solid var(--line); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); min-height: 52px; }
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: stretch; background: var(--bar); color: var(--bar-fg); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); min-height: 56px; }
+.top :focus-visible { outline-color: var(--miolo); }
+/* assinatura horizontal: ícone | LASTRO, descritor em itálico embaixo; anéis papel sobre vinho, miolo mostarda */
+.marca { display: flex; align-items: center; gap: 10px; border: 0; background: none; color: var(--bar-fg); padding: 0 20px 0 0; margin-right: 4px; border-right: 1px solid var(--bar-line); text-align: left; }
+.marca svg { width: 34px; height: 34px; flex: none; }
+.marca .mk { display: grid; line-height: 1.1; }
+.marca .mk b { font-family: var(--display); font-weight: 400; font-size: 21px; letter-spacing: .12em; }
+.marca .mk i { font-size: 11.5px; color: var(--bar-muted); white-space: nowrap; }
 .nav { display: flex; align-items: stretch; }
-.nav button { border: 0; border-right: 1px solid var(--line); background: none; padding: 0 18px; color: var(--muted); font-weight: 500; display: flex; align-items: center; gap: 8px; }
-.nav button:first-child { padding-left: 0; }
-.nav button[aria-current="page"] { color: var(--fg); box-shadow: inset 0 -2px 0 var(--accent); }
-.nav svg { color: var(--accent); }
+.nav button { border: 0; background: none; padding: 0 16px; color: var(--bar-muted); display: flex; align-items: center; gap: 8px; }
+.nav button:hover { color: var(--bar-fg); }
+.nav button[aria-current="page"] { color: var(--bar-fg); box-shadow: inset 0 -3px 0 var(--miolo); }
+.nav svg { display: none; }
 .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-.cal-btn { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line-strong); background: var(--raised); border-radius: 99px; padding: 5px 16px; min-height: 36px; font-weight: 500; }
-.cal-btn[aria-current="page"] { border-color: var(--accent); background: var(--accent-soft); }
+.cal-btn { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--bar-line); background: none; color: var(--bar-fg); border-radius: 99px; padding: 5px 16px; min-height: 36px; }
+.cal-btn:hover { border-color: var(--bar-muted); }
+.cal-btn[aria-current="page"] { border-color: var(--miolo); background: var(--bar-line); }
 .me-btn { border: 0; background: none; padding: 0; border-radius: 50%; display: grid; }
-.me-btn[aria-current="page"] .av { box-shadow: 0 0 0 2px var(--accent); }
+.me-btn .av { border-color: var(--bar); }
+.me-btn[aria-current="page"] .av { box-shadow: 0 0 0 2px var(--miolo); }
+.top .nav button[data-n]:not([data-n=""])::after { background: var(--miolo); color: #1E1A17; }
 
 /* avatares */
 .av { --s: 28px; width: var(--s); height: var(--s); border-radius: 50%; display: inline-grid; place-items: center; font-size: calc(var(--s) * .38); font-weight: 600; color: #fff; background: hsl(var(--h) 42% 46%); flex: none; overflow: hidden; box-sizing: border-box; border: 2px solid var(--raised); }
@@ -71,14 +86,14 @@ button { cursor: pointer; }
 
 .screen { padding-block: 28px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .wrap { max-width: 1000px; margin: 0 auto; }
-h1 { font-size: 28px; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.015em; text-wrap: balance; }
+h1 { font-size: 32px; line-height: 1.15; margin: 0 0 8px; text-wrap: balance; }
 .lede { color: var(--muted); margin: 0 0 20px; max-width: 62ch; }
 .back { border: 0; background: none; color: var(--muted); padding: 4px 0; margin-bottom: 14px; font-size: 14px; }
 .back:hover { color: var(--fg); }
 
 /* árvore */
 .home-head { text-align: center; margin-bottom: 8px; }
-.home-head h1 { font-size: 22px; letter-spacing: .02em; }
+.home-head h1 { font-size: 30px; }
 .home-head p { margin: 0 auto; color: var(--muted); font-size: 14px; }
 .home-acts { display: flex; gap: 8px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
 .tree-box { position: relative; margin: 18px auto 0; background-image: radial-gradient(var(--dot) 1.2px, transparent 1.3px); background-size: 22px 22px; border-radius: var(--r-l); }
@@ -160,7 +175,11 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 
 /* entrada (versão na nuvem) */
 .gate { max-width: 440px; margin: 8vh auto 0; text-align: center; }
-.gate h1 { font-size: 30px; }
+.gate h1 { font-size: 34px; }
+.gate .sela { display: grid; justify-items: center; gap: 6px; margin-bottom: 22px; }
+.gate .sela svg { width: 84px; height: 84px; color: var(--anel); }
+.gate .sela b { font-family: var(--display); font-weight: 400; font-size: 34px; letter-spacing: .14em; }
+.gate .sela i { color: var(--muted); font-size: 14px; }
 .gate p { color: var(--muted); }
 .gate .form { text-align: left; margin: 18px auto 0; }
 .gate .form .field { width: 100%; min-width: 0; box-sizing: border-box; }
@@ -496,7 +515,9 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
 .node .edf:hover { color: var(--fg); border-color: var(--fc); }
 .lixo-li { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
 .lixo-li .tx { flex: 1; min-width: 0; } .lixo-li small { display: block; color: var(--faint); font-size: 12.5px; }
+@media (max-width: 1180px) { .marca .mk i { display: none; } }
 @media (max-width: 760px) {
+  .marca { padding-right: 10px; margin-right: 0; } .marca .mk { display: none; } .marca svg { width: 30px; height: 30px; }
   .nav { overflow-x: auto; scrollbar-width: none; min-width: 0; } .nav button { padding: 0 10px; font-size: 14px; white-space: nowrap; } .nav button:first-child svg { display: none; } .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
   .grid2 { grid-template-columns: 1fr; }
   .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
@@ -518,6 +539,7 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
 </style>
 
 <header class="top">
+  <button class="marca" data-act="go" data-v="inicio" aria-label="Lastro, Clube de Psicologia Baseada em Evidências: ir para o Início"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><clipPath id="mk-b"><circle cx="35.98" cy="60.06" r="26"/></clipPath><clipPath id="mk-c"><circle cx="64.02" cy="60.06" r="26"/></clipPath></defs><g clip-path="url(#mk-c)"><circle cx="50" cy="35.88" r="26" fill="var(--miolo)" clip-path="url(#mk-b)"/></g><g fill="none" stroke="currentColor" stroke-width="5"><circle cx="50" cy="35.88" r="26"/><circle cx="35.98" cy="60.06" r="26"/><circle cx="64.02" cy="60.06" r="26"/></g></svg><span class="mk"><b>LASTRO</b><i>Clube de Psicologia Baseada em Evidências</i></span></button>
   <nav class="nav" aria-label="Seções">
     <button data-act="go" data-v="inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18M5 4c0 5 3 8 7 8s7-3 7-8M5 4v3M19 4v3M12 3l-2 2M12 3l2 2"/></svg>Início</button>
     <button data-act="area" data-v="area">Minha Área</button>
@@ -554,13 +576,14 @@ async function ligarNuvem() {
   for (const f of ["app", "auth", "firestore"]) await loadScript(`https://www.gstatic.com/firebasejs/10.12.2/firebase-${f}-compat.js`);
   firebase.initializeApp(window.FIREBASE_CONFIG); NV.db = firebase.firestore(); NV.on = true; return true;
 }
+const SELA = `<div class="sela">${document.querySelector(".marca svg").outerHTML.replace(/mk-([bc])/g, "sl-$1")}<b>LASTRO</b><i>Clube de Psicologia Baseada em Evidências</i></div>`;
 const tela = h => { $("#screen").innerHTML = `<div class="gate">${h}</div>`; document.querySelector("header.top").hidden = true; $("#agora").innerHTML = ""; };
 function telaLogin(msg) {
-  tela(`<h1>Clube de Psicologia</h1><p>O espaço do grupo Psychology para acompanhar projetos, agenda e votações.</p>
+  tela(`${SELA}<p>O espaço do clube para acompanhar projetos, agenda e votações.</p>
   <button class="btn primary" data-act="login" style="margin-top:12px">Entrar com Google</button>${msg ? `<p style="color:var(--bad);margin-top:14px">${esc(msg)}</p>` : ""}`);
 }
 function telaCodigo(msg) {
-  tela(`<h1>Primeiro acesso</h1><p>Digite o código do grupo, que está no WhatsApp do Psychology.</p>
+  tela(`<h1>Primeiro acesso</h1><p>Digite o código do grupo, que está no WhatsApp do Lastro.</p>
   <form class="form" data-form="codigo"><input class="field" name="codigo" id="cod" autocomplete="off" placeholder="Código do grupo" style="width:100%">${msg ? `<p style="color:var(--bad);margin:0">${esc(msg)}</p>` : ""}
   <button class="btn primary">Entrar</button></form><p style="font-size:13px;margin-top:18px">Entrou como ${esc(NV.user.email)}. <button class="link" data-act="sair">Usar outra conta</button></p>`);
 }
@@ -1688,7 +1711,7 @@ function acao(t, e) {
   if (a === "delfrente") { const id = t.dataset.id; if (projsFrente(F(id)).length) return toast("A frente ainda tem projetos."); S.frentes = S.frentes.filter(f => f.id !== id); save(); $("#overlay").innerHTML = ""; toast("Frente apagada."); return go("inicio"); }
   if (a === "assumir") { const x = p.papeis.find(y => y[0] === UI.me); if (x) x[1] = "Responsável"; else p.papeis.unshift([UI.me, "Responsável"]); save(); toast("Agora você é responsável por este projeto."); return render(); }
   if (a === "sala") {
-    const url = "https://meet.jit.si/Psychology-" + Math.random().toString(36).slice(2, 10), d = new Date(), f = new Date(d.getTime() + 60 * 60e3);
+    const url = "https://meet.jit.si/Lastro-" + Math.random().toString(36).slice(2, 10), d = new Date(), f = new Date(d.getTime() + 60 * 60e3);
     S.eventos.push({ id: "e" + Date.now(), titulo: "Sala aberta por " + nm(UI.me), data: hojeISO(), ini: hm(d), fim: f.getDate() === d.getDate() ? hm(f) : "23:59", local: url, proj: "", quem: [UI.me], semanal: false, desc: "Sala aberta na hora pelo botão do site.", criador: UI.me, sala: true, em: Date.now() });
     save(); window.open(url, "_blank", "noopener"); toast("Sala aberta. Quem estiver no site vê o aviso para entrar."); return render();
   }
