@@ -1,3 +1,5 @@
+<!doctype html>
+<html lang="pt-BR">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mapa do Lastro</title>
@@ -16,7 +18,7 @@
   --bg: #F3EAD8; --panel: #ECE1CB; --raised: #FAF5EA; --line: #DDCFB4; --line-strong: #C6B392;
   --fg: #1E1A17; --muted: #5A4D43; --faint: #73665A; --dot: #D9CAAD;
   --accent: #6E1E2B; --accent-soft: color-mix(in oklch, #6E1E2B 10%, transparent); --on-accent: #F3EAD8;
-  --c-red: #9E2F3A; --c-orange: #A85A22; --c-yellow: #B8892A; --c-green: #4D7042; --c-cyan: #2E6B70; --c-purple: #4B2A4F; --c-pink: #9C456A; --c-gray: #827363;
+  --c-red: #9E2F3A; --c-orange: #A35A26; --c-yellow: #946D1F; --c-green: #5E6E35; --c-cyan: #3F6A62; --c-purple: #5B3560; --c-pink: #8F3F60; --c-gray: #7A6B5D;
   --ok: #4D7042; --warn: #95680F; --bad: #A8322E;
   --shadow: 0 1px 2px rgba(30,26,23,.06), 0 6px 18px rgba(75,42,79,.08);
   --font: "Libre Caslon Text", Georgia, "Times New Roman", serif;
@@ -26,23 +28,25 @@
   --bar: #6E1E2B; --bar-fg: #F3EAD8; --bar-muted: color-mix(in oklch, #F3EAD8 74%, #6E1E2B); --bar-line: color-mix(in oklch, #F3EAD8 16%, transparent); --miolo: #E2B53E; --anel: #6E1E2B;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #1D1519; --panel: #251A20; --raised: #2D2027; --line: #3E2F37; --line-strong: #56434E;
-  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #34272E;
+  --bg: #120D10; --panel: #1A1317; --raised: #22191E; --line: #33272D; --line-strong: #4B3B43;
+  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #2C2127;
   --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 15%, transparent); --on-accent: #1E1A17;
-  --c-red: #E07A7E; --c-orange: #E09A62; --c-yellow: #E2B53E; --c-green: #9DBE8A; --c-cyan: #7DBDBC; --c-purple: #B897C2; --c-pink: #E39AB8; --c-gray: #A89A8C;
+  --c-red: #D9898B; --c-orange: #DDA172; --c-yellow: #E2B53E; --c-green: #AEBF84; --c-cyan: #93B8AE; --c-purple: #C2A0C8; --c-pink: #D99CB2; --c-gray: #AB9C8E;
   --ok: #9DBE8A; --warn: #E2B53E; --bad: #E8746E;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  --fds-bg: #22181D; --fds-line: #3A2B33; --quente-bg: #3D2E12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #33262D; --anel: #F3EAD8;
+  --fds-bg: #171115; --fds-line: #2E2329; --quente-bg: #3A2C12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #2B2127; --anel: #F3EAD8;
+  --bar: #561522; --bar-line: color-mix(in oklch, #F3EAD8 14%, transparent);
   color-scheme: dark;
 } }
 :root[data-theme="dark"] {
-  --bg: #1D1519; --panel: #251A20; --raised: #2D2027; --line: #3E2F37; --line-strong: #56434E;
-  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #34272E;
+  --bg: #120D10; --panel: #1A1317; --raised: #22191E; --line: #33272D; --line-strong: #4B3B43;
+  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #2C2127;
   --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 15%, transparent); --on-accent: #1E1A17;
-  --c-red: #E07A7E; --c-orange: #E09A62; --c-yellow: #E2B53E; --c-green: #9DBE8A; --c-cyan: #7DBDBC; --c-purple: #B897C2; --c-pink: #E39AB8; --c-gray: #A89A8C;
+  --c-red: #D9898B; --c-orange: #DDA172; --c-yellow: #E2B53E; --c-green: #AEBF84; --c-cyan: #93B8AE; --c-purple: #C2A0C8; --c-pink: #D99CB2; --c-gray: #AB9C8E;
   --ok: #9DBE8A; --warn: #E2B53E; --bad: #E8746E;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  --fds-bg: #22181D; --fds-line: #3A2B33; --quente-bg: #3D2E12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #33262D; --anel: #F3EAD8;
+  --fds-bg: #171115; --fds-line: #2E2329; --quente-bg: #3A2C12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #2B2127; --anel: #F3EAD8;
+  --bar: #561522; --bar-line: color-mix(in oklch, #F3EAD8 14%, transparent);
   color-scheme: dark;
 }
 [hidden] { display: none !important; }
@@ -67,7 +71,13 @@ button { cursor: pointer; }
 .nav button { border: 0; background: none; padding: 0 16px; color: var(--bar-muted); display: flex; align-items: center; gap: 8px; }
 .nav button:hover { color: var(--bar-fg); }
 .nav button[aria-current="page"] { color: var(--bar-fg); box-shadow: inset 0 -3px 0 var(--miolo); }
-.nav svg { display: none; }
+.nav svg { display: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+/* tema: lua no claro (vai para o escuro), sol no escuro */
+.tema-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--bar-line); background: none; color: var(--bar-fg); display: grid; place-items: center; padding: 0; }
+.tema-btn:hover { border-color: var(--bar-muted); }
+.tema-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
+.tema-btn .sol, :root[data-theme="dark"] .tema-btn .lua { display: none; }
+:root[data-theme="dark"] .tema-btn .sol { display: block; }
 .right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
 .cal-btn { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--bar-line); background: none; color: var(--bar-fg); border-radius: 99px; padding: 5px 16px; min-height: 36px; }
 .cal-btn:hover { border-color: var(--bar-muted); }
@@ -85,7 +95,8 @@ button { cursor: pointer; }
 .more { margin-left: 6px; font-size: 13px; color: var(--muted); }
 
 .screen { padding-block: 28px 72px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-.wrap { max-width: 1000px; margin: 0 auto; }
+/* uma largura só para todas as telas (antes 1000, 1200 e 1280, e o título pulava de lugar); a árvore do Início usa mais */
+.wrap { max-width: 1200px; margin: 0 auto; }
 h1 { font-size: 32px; line-height: 1.15; margin: 0 0 8px; text-wrap: balance; }
 .lede { color: var(--muted); margin: 0 0 20px; max-width: 62ch; }
 .back { border: 0; background: none; color: var(--muted); padding: 4px 0; margin-bottom: 14px; font-size: 14px; }
@@ -115,9 +126,10 @@ h1 { font-size: 32px; line-height: 1.15; margin: 0 0 8px; text-wrap: balance; }
 .node.proj .nm { font-weight: 600; font-size: 14.5px; line-height: 1.3; display: block; }
 .node .who { display: flex; align-items: center; gap: 6px; margin-top: 8px; min-height: 30px; }
 .node .resp { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); margin-top: 6px; }
-.node.frente { border-color: color-mix(in oklch, var(--fc) 70%, transparent); background: color-mix(in oklch, var(--fc) 8%, var(--raised)); text-align: center; }
+/* frente: papel como os projetos, com a cor só na faixa de cima e na bolinha (antes era fundo pastel, que brigava com o papel) */
+.node.frente { border-color: color-mix(in oklch, var(--fc) 50%, var(--line-strong)); background: var(--raised); text-align: center; box-shadow: inset 0 4px 0 var(--fc), var(--shadow); padding-top: 14px; }
 .node.frente .nm { font-weight: 600; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 6px; }
-.node.frente .nm::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--fc); }
+.node.frente .nm { text-wrap: balance; }
 .node.frente .who { justify-content: center; }
 .node.frente.open { border-style: dashed; }
 .foot-note { text-align: center; margin-top: 18px; font-size: 14px; color: var(--muted); }
@@ -231,7 +243,8 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .mcard b { display: block; font-weight: 600; line-height: 1.3; }
 .mcard span.sub { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
 .mcard .none { color: var(--faint); }
-.adm { font-size: .85em; margin-left: 2px; }
+.adm { display: inline-block; width: .8em; height: .8em; vertical-align: -.05em; color: var(--c-yellow); }
+.adm svg { display: block; width: 100%; height: 100%; fill: currentColor; }
 
 /* perfil */
 .prof-head { display: flex; gap: 18px; align-items: center; margin-bottom: 20px; }
@@ -392,7 +405,7 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .av { overflow: visible; position: relative; }
 .av img { border-radius: 50%; }
 .av.on::after { content: ""; position: absolute; right: -2px; bottom: -2px; width: max(9px, calc(var(--s) * .3)); height: max(9px, calc(var(--s) * .3)); border-radius: 50%; background: var(--c-green); border: 2px solid var(--bg); box-sizing: border-box; }
-.agora { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; max-width: 1400px; margin: 0 auto; padding: 8px 16px 0; font-size: 14px; color: var(--muted); }
+.agora { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 10px 16px 0; font-size: 14px; color: var(--muted); }
 .agora:empty { display: none; }
 .agora .live { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; width: 100%; box-sizing: border-box; background: color-mix(in oklch, var(--c-green) 12%, transparent); border: 1px solid color-mix(in oklch, var(--c-green) 40%, transparent); color: var(--fg); border-radius: var(--r-m); padding: 8px 12px; }
 .agora .pulse { width: 9px; height: 9px; border-radius: 50%; background: var(--c-green); flex: none; }
@@ -453,7 +466,7 @@ a.btn.primary { color: var(--on-accent); }
 .tsec { display: flex; align-items: baseline; gap: 8px; font-size: 13px; font-weight: 600; color: var(--muted); margin: 22px 0 4px; padding: 0 8px; }
 .tsec .n { font-weight: 400; color: var(--faint); }
 .tsec.late { color: var(--bad); }
-.tlist { border: 1px solid var(--line); border-radius: var(--r-l); background: var(--raised); padding: 4px; }
+.tlist { border: 1px solid var(--line); border-radius: var(--r-l); background: var(--raised); padding: 4px; max-width: 920px; }
 details.feitas { margin-top: 18px; }
 details.feitas summary, details.ideias-old summary { cursor: pointer; color: var(--muted); font-size: 13.5px; padding: 6px 8px; }
 .dialog textarea.field.obs { min-height: 96px; }
@@ -516,9 +529,23 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
 .lixo-li { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
 .lixo-li .tx { flex: 1; min-width: 0; } .lixo-li small { display: block; color: var(--faint); font-size: 12.5px; }
 @media (max-width: 1180px) { .marca .mk i { display: none; } }
+/* celular e tablet estreito: as cinco seções descem para uma barra fixa embaixo, com ícone e nome (antes Tarefas e Votações sumiam à direita) */
+@media (max-width: 860px) {
+  .marca { border-right: 0; padding-right: 0; } .marca .mk i { display: none; } .marca .mk b { font-size: 19px; }
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--bar); border-top: 1px solid var(--bar-line); padding: 0 max(4px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(4px, env(safe-area-inset-left, 0px)); }
+  .nav button { position: relative; flex: 1 1 0; min-width: 0; flex-direction: column; justify-content: center; gap: 3px; padding: 7px 2px 6px; min-height: 58px; font-size: 11.5px; line-height: 1.1; }
+  .nav button span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .nav svg { display: block; }
+  .nav button[aria-current="page"] { box-shadow: inset 0 3px 0 var(--miolo); }
+  .nav button[data-n]:not([data-n=""])::after { position: absolute; top: 5px; left: calc(50% + 6px); }
+  .screen { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+}
 @media (max-width: 760px) {
-  .marca { padding-right: 10px; margin-right: 0; } .marca .mk { display: none; } .marca svg { width: 30px; height: 30px; }
-  .nav { overflow-x: auto; scrollbar-width: none; min-width: 0; } .nav button { padding: 0 10px; font-size: 14px; white-space: nowrap; } .nav button:first-child svg { display: none; } .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
+  .marca svg { width: 30px; height: 30px; }
+  .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
+  .pfix { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); } .pfix button { padding: 6px 6px; }
+  .ptree { min-height: 0; padding-bottom: 6px; } .dica { display: none; }
   .grid2 { grid-template-columns: 1fr; }
   .kv { grid-template-columns: 1fr; gap: 2px; } .kv dd { margin-bottom: 8px; }
   .facts li { grid-template-columns: 1fr; gap: 0; }
@@ -532,22 +559,24 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
   .cbar .stats { order: 3; }
   .modal { padding: 0; } .dialog { max-height: 100vh; height: 100%; border-radius: 0; width: 100%; }
   .tresp .nm { display: none; } .task { padding: 9px 4px; }
-  .chatbox { height: calc(100vh - 170px); } .msg .bub { max-width: 86%; }
+  .chatbox { height: calc(100vh - 240px); } .msg .bub { max-width: 86%; }
   .grafo { height: 64vh; }
 }
 @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
 </style>
+<script id="tema">/* tema antes de desenhar, para não piscar claro (a mesma chave do fim do código) */ try { document.documentElement.dataset.theme = localStorage.getItem("psychology-site-v2-theme") || "dark"; } catch (e) { document.documentElement.dataset.theme = "dark"; }</script>
 
 <header class="top">
   <button class="marca" data-act="go" data-v="inicio" aria-label="Lastro, Clube de Psicologia Baseada em Evidências: ir para o Início"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><clipPath id="mk-b"><circle cx="35.98" cy="60.06" r="26"/></clipPath><clipPath id="mk-c"><circle cx="64.02" cy="60.06" r="26"/></clipPath></defs><g clip-path="url(#mk-c)"><circle cx="50" cy="35.88" r="26" fill="var(--miolo)" clip-path="url(#mk-b)"/></g><g fill="none" stroke="currentColor" stroke-width="5"><circle cx="50" cy="35.88" r="26"/><circle cx="35.98" cy="60.06" r="26"/><circle cx="64.02" cy="60.06" r="26"/></g></svg><span class="mk"><b>LASTRO</b><i>Clube de Psicologia Baseada em Evidências</i></span></button>
   <nav class="nav" aria-label="Seções">
-    <button data-act="go" data-v="inicio"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v18M5 4c0 5 3 8 7 8s7-3 7-8M5 4v3M19 4v3M12 3l-2 2M12 3l2 2"/></svg>Início</button>
-    <button data-act="area" data-v="area">Minha Área</button>
-    <button data-act="go" data-v="integrantes">Integrantes</button>
-    <button data-act="go" data-v="tarefas">Tarefas</button>
-    <button data-act="go" data-v="votacoes">Votações</button>
+    <button data-act="go" data-v="inicio"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M12 7.5v4M12 11.5c-4 0-6 2-6 4M12 11.5c4 0 6 2 6 4"/></svg><span>Início</span></button>
+    <button data-act="area" data-v="area"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span>Minha Área</span></button>
+    <button data-act="go" data-v="integrantes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"/><path d="M15.5 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .7 3.2 2.5 3.5 5.2"/></svg><span>Integrantes</span></button>
+    <button data-act="go" data-v="tarefas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l2 2 3.5-3.5M4 15.5l2 2 3.5-3.5M13 7h7M13 16h7"/></svg><span>Tarefas</span></button>
+    <button data-act="go" data-v="votacoes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h16v7H4zM8 13V4h8v9M10.5 8.5l1.5 1.5 3-3"/></svg><span>Votações</span></button>
   </nav>
   <div class="right">
+    <button class="tema-btn" data-act="theme" aria-label="Trocar entre tema claro e escuro" title="Trocar entre tema claro e escuro"><svg class="lua" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
     <button class="cal-btn" data-act="go" data-v="calendario" aria-label="Calendário"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="lbl">Calendário</span></button>
     <button class="me-btn" data-act="go" data-v="perfil" id="meBtn" aria-label="Meu perfil"></button>
   </div>
@@ -773,7 +802,9 @@ function gcal(e) {
   return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(e.titulo) + "&dates=" + d + "T" + h(e.ini) + "/" + d + "T" + h(e.fim || e.ini)
     + "&ctz=America/Sao_Paulo&details=" + encodeURIComponent((e.desc || "") + (ehLink(e.local) ? "\n" + e.local.trim() : "")) + "&location=" + encodeURIComponent(e.local || "") + (e.semanal ? "&recur=" + encodeURIComponent("RRULE:FREQ=WEEKLY") : "");
 }
-const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM">👑</span>' : "";
+const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg></span>' : "";
+/* a coroa anda junto com o sobrenome: sem isso ela caía sozinha na linha de baixo */
+const nomeC = m => { const n = esc(m.nome); if (!m || !m.adm) return n; const i = n.lastIndexOf(" "); return `${n.slice(0, i + 1)}<span style="white-space:nowrap">${n.slice(i + 1)}${coroa(m)}</span>`; };
 /* minha área funciona como um projeto só da pessoa (id __eu): mesma tela, tarefas e notas, sem escopo nem chat */
 const EU_ID = "__eu";
 const EU = () => ({ id: EU_ID, eu: true, nome: "Minha Área", frente: "", status: "ativo", resumo: "", detalhes: [], proximo: "", papeis: [[UI.me, "Responsável"]], tarefas: S.pessoal.tarefas, ideias: [], docs: [] });
@@ -1161,7 +1192,7 @@ function projHTML(p) {
   const IC = { nota: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 12v6M9 15h6"/></svg>',
     pasta: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M12 10v6M9 13h6"/></svg>',
     rede: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="6" cy="7" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8.3 8.2l2.6 7.4M15.9 7.4l-2.8 8.3M8.5 6.8l7-.6"/></svg>' };
-  let h = `<div class="wrap" style="max-width:1280px">
+  let h = `<div class="wrap">
   <div class="pwrap"><aside class="pside" aria-label="Itens do projeto"><button class="back" data-act="go" data-v="inicio">‹ ${p.eu ? "Início" : "Projetos"}</button>${p.eu ? `<div style="font-weight:600;margin:0 0 8px 6px">🔒 Minha Área</div>` : ""}<nav class="pfix">${fixos.map(([k, l, c]) => `<button data-act="tab" data-tab="${k}" aria-current="${tab === k}">${l}${c ? `<span class="c">${c}</span>` : ""}</button>`).join("")}</nav>
     <div class="phead"><span>${p.eu ? "Minhas notas" : "Notas do Projeto"}</span><span><button class="ib" data-act="novanota" data-pai="" title="Nova nota" aria-label="Nova nota">${IC.nota}</button><button class="ib" data-act="novapasta" data-pai="" title="Nova pasta" aria-label="Nova pasta">${IC.pasta}</button><button class="ib" data-act="tab" data-tab="rede" title="Rede das notas" aria-label="Rede das notas"${tab === "rede" ? ' style="color:var(--accent)"' : ""}>${IC.rede}</button></span></div>
     <div class="ptree">${arvoreHTML(p, "") || '<p class="empty" style="padding:0 8px">Nenhuma nota ainda.</p>'}</div>
@@ -1432,7 +1463,7 @@ function membersHTML() {
   return `<div class="wrap"><h1>Integrantes</h1><p class="lede">Quem está no clube e em que projeto cada um está. Clique numa pessoa para ver o perfil.</p>
   <div class="filters">${chip("todos", "Todos", S.membros.length)}${chip("sem", "Sem projeto", sp.size)}${S.frentes.map(f => chip(f.id, esc(f.nome), S.membros.filter(m => projDe(m.id).some(p => p.frente === f.id)).length, fc(f))).join("")}</div>
   ${F(UI.filtro) && editaTudo() ? `<p style="margin:-6px 0 14px"><button class="btn small" data-act="editfrente" data-id="${UI.filtro}">Editar a frente ${esc(F(UI.filtro).nome)}</button></p>` : ""}
-  <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${esc(m.nome)}${coroa(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
+  <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${nomeC(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
 }
 
 /* ===== VOTAÇÕES ===== */
@@ -1511,7 +1542,7 @@ function personHTML(m) {
   const ps = S.projetos.filter(p => pessoasProj(p).includes(m.id));
   const tk = S.projetos.flatMap(p => p.tarefas.filter(t => t.quem === m.id && t.st !== "feito").map(t => ({ ...t, p })));
   let h = `<div class="wrap">${UI.v === "pessoa" ? `<button class="back" data-act="go" data-v="integrantes">‹ Integrantes</button>` : ""}
-  <div class="prof-head">${av(m.id, 96)}<div><h1 style="margin:0">${esc(m.nome)}${coroa(m)}</h1><div style="color:var(--muted)">${esc(m.bio || "")}</div></div></div>`;
+  <div class="prof-head">${av(m.id, 96)}<div><h1 style="margin:0">${nomeC(m)}</h1><div style="color:var(--muted)">${esc(m.bio || "")}</div></div></div>`;
   if (pode && UI.edit) {
     return h + `<form class="form" data-form="perfil"><label>${m.foto ? "Trocar a foto" : "Foto"}<input class="field" type="file" name="foto" id="pf-foto" accept="image/jpeg,image/png,image/webp"></label><div class="two"><label>Nome<input class="field" name="nome" id="pf-nome" value="${esc(m.nome)}"></label><label>Como prefere ser chamado<input class="field" name="curto" id="pf-curto" value="${esc(m.curto)}"></label></div>
       <label>Uma frase sobre você<input class="field" name="bio" id="pf-bio" value="${esc(m.bio)}"></label>
@@ -1579,7 +1610,7 @@ function calHTML() {
           ${evs.length ? `<div class="linha"><span>${evs.map(o => { const [hh, mm] = o.e.ini.split(":").map(Number); return hh + "h" + (mm ? pad(mm) : ""); }).join(" · ")}</span></div>` : ""}
           ${tk.length ? `<div class="linha tk"><span>${plural(tk.length, "tarefa", "tarefas")}</span></div>` : ""}</div>`; }).join("")}</div>`;
   }
-  return `<div class="wrap" style="max-width:1200px"><h1>Calendário</h1>
+  return `<div class="wrap"><h1>Calendário</h1>
   <div class="seg" role="group" aria-label="Ver a semana ou o mês"><button data-act="calv" data-c="semana" aria-pressed="${UI.cal === "semana"}">Semana</button><button data-act="calv" data-c="mes" aria-pressed="${UI.cal === "mes"}">Mês</button></div>
   <div class="cbar"><div class="cnav"><button class="btn arrow" data-act="calnav" data-d="-1" aria-label="${UI.cal === "semana" ? "Semana anterior" : "Mês anterior"}">‹</button><button class="btn" data-act="calnav" data-d="0">${UI.cal === "semana" ? "Hoje" : "Mês atual"}</button><button class="btn arrow" data-act="calnav" data-d="1" aria-label="${UI.cal === "semana" ? "Próxima semana" : "Próximo mês"}">›</button>
     <div class="range">${range}${sub ? `<small>${sub}</small>` : ""}</div></div>${stats}
@@ -1698,7 +1729,7 @@ function acao(t, e) {
   if (a === "imprimir") return print();
   if (a === "savenote") { p.nota = $("#nota").value; UI.edit = false; save(); toast("Nota salva."); return render(); }
   if (a === "editprof") { UI.edit = t.dataset.on === "1"; return render(); }
-  if (a === "theme") { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem(KEY + "-theme", r.dataset.theme); } catch (x) {} return; }
+  if (a === "theme") { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; corDaBarra(); try { localStorage.setItem(KEY + "-theme", r.dataset.theme); } catch (x) {} return; }
   if (a === "reset") { if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para confirmar"; return; } S = JSON.parse(JSON.stringify(SEED)); save(); toast("Dados de exemplo restaurados."); return render(); }
   if (a === "login") { const pr = new firebase.auth.GoogleAuthProvider(); pr.setCustomParameters({ prompt: "select_account" });
     return firebase.auth().signInWithPopup(pr).catch(e => telaLogin(e.code === "auth/popup-blocked" ? "O navegador bloqueou a janela de login. Libere as janelas pop-up deste site e tente de novo." : e.code === "auth/popup-closed-by-user" || e.code === "auth/cancelled-popup-request" ? "" : "Não deu para entrar (" + e.code + ").")); }
@@ -1869,7 +1900,10 @@ document.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s" && typeof UI.edit === "string") { e.preventDefault(); const b = $("[data-act=salvanota]"); if (b) b.click(); return; }
   if (e.key === "Escape") $("#overlay").innerHTML = ""; if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".day[data-act]")) { e.preventDefault(); e.target.click(); } });
 
-try { const th = localStorage.getItem(KEY + "-theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+/* tema: escuro de saída (pedido de 23/10/2026); quem troca no botão da barra fica com a escolha neste navegador */
+function corDaBarra() { const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = document.documentElement.dataset.theme === "dark" ? "#561522" : "#6E1E2B"; }
+let TEMA = "dark"; try { TEMA = localStorage.getItem(KEY + "-theme") || "dark"; } catch (e) {}
+document.documentElement.dataset.theme = TEMA; corDaBarra();
 if ("serviceWorker" in navigator && location.protocol === "https:" && !/claude/.test(location.hostname)) navigator.serviceWorker.register("sw.js").catch(() => {});
 ligarNuvem().then(on => on ? entrarNuvem() : (migrarNotas(), go("inicio"))).catch(() => go("inicio"));
 </script>
