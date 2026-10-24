@@ -5,53 +5,56 @@
 <title>Mapa do Lastro</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#6E1E2B">
+<meta name="theme-color" content="#141211">
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 /* Layout (desenho do Matheus, 21/10/2026): barra com Início e Integrantes à esquerda, Calendário e o perfil à direita.
    O Início é a árvore dos projetos: projetos em cima, frentes embaixo, ligados por linhas. Cada coisa abre em tela própria.
-   Identidade do Clube Lastro (23/10/2026, nota Identidade Visual - Lastro): papel, vinho, mostarda, ameixa, tinta e ouro escuro;
-   Libre Caslon Display nos títulos e Libre Caslon Text no resto. A barra é vinho com a assinatura; mostarda nunca vira texto sobre papel. */
+   Identidade do Clube Lastro (nota Identidade Visual - Lastro): papel, vinho, mostarda, ameixa, tinta e ouro escuro.
+   Acabamento de 24/10/2026 (pedido dele: "muito vinho", barra e fonte estranhas, claro e escuro à escolha): o vinho ficou só na marca e no destaque
+   do tema claro; a barra é da cor da página; fundo escuro neutro e quente, da tinta; IBM Plex Sans na interface, Libre Caslon Display nos títulos
+   e Libre Caslon Text na leitura das notas. Mostarda nunca vira texto sobre papel. */
 :root {
-  --bg: #F3EAD8; --panel: #ECE1CB; --raised: #FAF5EA; --line: #DDCFB4; --line-strong: #C6B392;
-  --fg: #1E1A17; --muted: #5A4D43; --faint: #73665A; --dot: #D9CAAD;
-  --accent: #6E1E2B; --accent-soft: color-mix(in oklch, #6E1E2B 10%, transparent); --on-accent: #F3EAD8;
+  --bg: #F6F1E7; --panel: #EFE8DB; --raised: #FFFDF8; --line: #E3D9C7; --line-strong: #CDBFA8;
+  --fg: #1E1A17; --muted: #5E544B; --faint: #776C61; --dot: #DDD3C1;
+  --accent: #6E1E2B; --accent-soft: color-mix(in oklch, #6E1E2B 9%, transparent); --on-accent: #F6F1E7;
   --c-red: #9E2F3A; --c-orange: #A35A26; --c-yellow: #946D1F; --c-green: #5E6E35; --c-cyan: #3F6A62; --c-purple: #5B3560; --c-pink: #8F3F60; --c-gray: #7A6B5D;
   --ok: #4D7042; --warn: #95680F; --bad: #A8322E;
-  --shadow: 0 1px 2px rgba(30,26,23,.06), 0 6px 18px rgba(75,42,79,.08);
-  --font: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --shadow: 0 1px 2px rgba(30,26,23,.05), 0 4px 14px rgba(30,26,23,.06);
+  --font: "IBM Plex Sans", system-ui, "Segoe UI", sans-serif;
   --display: "Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
-  --r-s: 3px; --r-m: 6px; --r-l: 10px;
-  --fds-bg: #EADFC8; --fds-line: #D8C8AA; --quente-bg: #F5E2AE; --quente-fg: #5E400B; --quente-line: #E2B53E; --chip: #E5D9C0;
-  --bar: #6E1E2B; --bar-fg: #F3EAD8; --bar-muted: color-mix(in oklch, #F3EAD8 74%, #6E1E2B); --bar-line: color-mix(in oklch, #F3EAD8 16%, transparent); --miolo: #E2B53E; --anel: #6E1E2B;
+  --leitura: "Libre Caslon Text", Georgia, serif;
+  --r-s: 4px; --r-m: 8px; --r-l: 12px;
+  --fds-bg: #EEE6D6; --fds-line: #DDD1BC; --quente-bg: #F5E2AE; --quente-fg: #5E400B; --quente-line: #E2B53E; --chip: #E9E0CF;
+  --bar: #FFFDF8; --bar-fg: #1E1A17; --bar-muted: #5E544B; --bar-line: #E3D9C7; --miolo: #E2B53E; --anel: #6E1E2B; --sel: #6E1E2B;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #120D10; --panel: #1A1317; --raised: #22191E; --line: #33272D; --line-strong: #4B3B43;
-  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #2C2127;
-  --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 15%, transparent); --on-accent: #1E1A17;
+  --bg: #141211; --panel: #1A1715; --raised: #211D1A; --line: #2E2925; --line-strong: #433C36;
+  --fg: #EDE5D8; --muted: #B8AD9F; --faint: #918678; --dot: #29241F;
+  --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 13%, transparent); --on-accent: #1E1A17;
   --c-red: #D9898B; --c-orange: #DDA172; --c-yellow: #E2B53E; --c-green: #AEBF84; --c-cyan: #93B8AE; --c-purple: #C2A0C8; --c-pink: #D99CB2; --c-gray: #AB9C8E;
   --ok: #9DBE8A; --warn: #E2B53E; --bad: #E8746E;
-  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  --fds-bg: #171115; --fds-line: #2E2329; --quente-bg: #3A2C12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #2B2127; --anel: #F3EAD8;
-  --bar: #561522; --bar-line: color-mix(in oklch, #F3EAD8 14%, transparent);
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.3);
+  --fds-bg: #181513; --fds-line: #2A2521; --quente-bg: #3A2C12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #2A2521; --anel: #F3EAD8;
+  --bar: #141211; --bar-fg: #EDE5D8; --bar-muted: #B8AD9F; --bar-line: #2E2925; --sel: #E2B53E;
   color-scheme: dark;
 } }
 :root[data-theme="dark"] {
-  --bg: #120D10; --panel: #1A1317; --raised: #22191E; --line: #33272D; --line-strong: #4B3B43;
-  --fg: #F3EAD8; --muted: #CBBBA7; --faint: #A39282; --dot: #2C2127;
-  --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 15%, transparent); --on-accent: #1E1A17;
+  --bg: #141211; --panel: #1A1715; --raised: #211D1A; --line: #2E2925; --line-strong: #433C36;
+  --fg: #EDE5D8; --muted: #B8AD9F; --faint: #918678; --dot: #29241F;
+  --accent: #E2B53E; --accent-soft: color-mix(in oklch, #E2B53E 13%, transparent); --on-accent: #1E1A17;
   --c-red: #D9898B; --c-orange: #DDA172; --c-yellow: #E2B53E; --c-green: #AEBF84; --c-cyan: #93B8AE; --c-purple: #C2A0C8; --c-pink: #D99CB2; --c-gray: #AB9C8E;
   --ok: #9DBE8A; --warn: #E2B53E; --bad: #E8746E;
-  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
-  --fds-bg: #171115; --fds-line: #2E2329; --quente-bg: #3A2C12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #2B2127; --anel: #F3EAD8;
-  --bar: #561522; --bar-line: color-mix(in oklch, #F3EAD8 14%, transparent);
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.3);
+  --fds-bg: #181513; --fds-line: #2A2521; --quente-bg: #3A2C12; --quente-fg: #F0CF7A; --quente-line: #6A5220; --chip: #2A2521; --anel: #F3EAD8;
+  --bar: #141211; --bar-fg: #EDE5D8; --bar-muted: #B8AD9F; --bar-line: #2E2925; --sel: #E2B53E;
   color-scheme: dark;
 }
 [hidden] { display: none !important; }
 html, body { min-height: 100%; }
-body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font); touch-action: manipulation; }
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--font); touch-action: manipulation; -webkit-font-smoothing: antialiased; }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bar); }
 h1, .dialog h2, .esc-nome, .ntitle, .range { font-family: var(--display); font-weight: 400; }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -59,32 +62,34 @@ button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* barra */
-.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: stretch; background: var(--bar); color: var(--bar-fg); padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); min-height: 56px; }
-.top :focus-visible { outline-color: var(--miolo); }
-/* assinatura horizontal: ícone | LASTRO, descritor em itálico embaixo; anéis papel sobre vinho, miolo mostarda */
-.marca { display: flex; align-items: center; gap: 10px; border: 0; background: none; color: var(--bar-fg); padding: 0 20px 0 0; margin-right: 4px; border-right: 1px solid var(--bar-line); text-align: left; }
-.marca svg { width: 34px; height: 34px; flex: none; }
-.marca .mk { display: grid; line-height: 1.1; }
-.marca .mk b { font-family: var(--display); font-weight: 400; font-size: 21px; letter-spacing: .12em; }
-.marca .mk i { font-size: 11.5px; color: var(--bar-muted); white-space: nowrap; }
-.nav { display: flex; align-items: stretch; }
-.nav button { border: 0; background: none; padding: 0 16px; color: var(--bar-muted); display: flex; align-items: center; gap: 8px; }
+/* barra da cor da página, com uma linha fina embaixo: a marca fala sozinha, sem a faixa vinho (24/10/2026) */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: stretch; gap: 8px; background: color-mix(in oklch, var(--bar) 92%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--bar-fg); border-bottom: 1px solid var(--bar-line); padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); min-height: 60px; }
+/* assinatura horizontal: ícone | LASTRO, descritor em itálico embaixo; anéis vinho no claro e papel no escuro, miolo mostarda */
+.marca { display: flex; align-items: center; gap: 11px; border: 0; background: none; color: var(--bar-fg); padding: 0 14px 0 0; margin-right: 10px; text-align: left; }
+.marca svg { width: 32px; height: 32px; flex: none; color: var(--anel); }
+.marca .mk { display: grid; line-height: 1.05; }
+.marca .mk b { font-family: var(--display); font-weight: 400; font-size: 21px; letter-spacing: .14em; }
+.marca .mk i { font-family: var(--leitura); font-size: 11.5px; color: var(--bar-muted); white-space: nowrap; margin-top: 2px; }
+.nav { display: flex; align-items: stretch; gap: 2px; }
+.nav button { position: relative; border: 0; background: none; padding: 0 13px; color: var(--bar-muted); display: flex; align-items: center; gap: 8px; font-size: 14.5px; font-weight: 500; letter-spacing: .005em; }
 .nav button:hover { color: var(--bar-fg); }
-.nav button[aria-current="page"] { color: var(--bar-fg); box-shadow: inset 0 -3px 0 var(--miolo); }
+.nav button[aria-current="page"] { color: var(--bar-fg); }
+.nav button[aria-current="page"]::before { content: ""; position: absolute; left: 13px; right: 13px; bottom: -1px; height: 2px; border-radius: 2px 2px 0 0; background: var(--sel); }
 .nav svg { display: none; width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-/* tema: lua no claro (vai para o escuro), sol no escuro */
-.tema-btn { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--bar-line); background: none; color: var(--bar-fg); display: grid; place-items: center; padding: 0; }
-.tema-btn:hover { border-color: var(--bar-muted); }
-.tema-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; }
-.tema-btn .sol, :root[data-theme="dark"] .tema-btn .lua { display: none; }
-:root[data-theme="dark"] .tema-btn .sol { display: block; }
-.right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-.cal-btn { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--bar-line); background: none; color: var(--bar-fg); border-radius: 99px; padding: 5px 16px; min-height: 36px; }
-.cal-btn:hover { border-color: var(--bar-muted); }
-.cal-btn[aria-current="page"] { border-color: var(--miolo); background: var(--bar-line); }
+/* tema: chave com sol e lua sempre à vista; o lado aceso é o tema que está valendo */
+.tema { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 99px; background: var(--panel); border: 1px solid var(--bar-line); }
+.tema button { width: 30px; height: 30px; border-radius: 50%; border: 0; background: none; color: var(--bar-muted); display: grid; place-items: center; padding: 0; }
+.tema button:hover { color: var(--bar-fg); }
+.tema button[aria-pressed="true"] { background: var(--raised); color: var(--bar-fg); box-shadow: 0 1px 2px rgba(0,0,0,.18); }
+.tema svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.cal-btn { position: relative; display: inline-flex; align-items: center; gap: 7px; border: 0; background: none; color: var(--bar-muted); padding: 0 6px; height: 100%; font-size: 14.5px; font-weight: 500; }
+.cal-btn:hover { color: var(--bar-fg); }
+.cal-btn[aria-current="page"] { color: var(--bar-fg); }
+.cal-btn[aria-current="page"]::before { content: ""; position: absolute; left: 6px; right: 6px; bottom: -1px; height: 2px; border-radius: 2px 2px 0 0; background: var(--sel); }
 .me-btn { border: 0; background: none; padding: 0; border-radius: 50%; display: grid; }
 .me-btn .av { border-color: var(--bar); }
-.me-btn[aria-current="page"] .av { box-shadow: 0 0 0 2px var(--miolo); }
+.me-btn[aria-current="page"] .av { box-shadow: 0 0 0 2px var(--sel); }
 .top .nav button[data-n]:not([data-n=""])::after { background: var(--miolo); color: #1E1A17; }
 
 /* avatares */
@@ -179,8 +184,14 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .idea small { display: block; font-size: 12.5px; color: var(--faint); }
 .vote { border: 1px solid var(--line); background: var(--raised); border-radius: var(--r-m); min-width: 48px; min-height: 42px; font-size: 13px; color: var(--muted); line-height: 1.1; }
 .vote[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.md { line-height: 1.65; max-width: 68ch; }
-.md p { margin: 0 0 10px; } .md ul { margin: 0 0 10px; padding-left: 20px; } .md h3 { font-size: 16px; margin: 16px 0 6px; }
+.md { font-family: var(--leitura); font-size: 16px; line-height: 1.7; max-width: 68ch; }
+.md p { margin: 0 0 12px; } .md ul, .md ol { margin: 0 0 12px; padding-left: 22px; } .md li { margin-bottom: 4px; }
+.md h3 { font-family: var(--display); font-weight: 400; font-size: 21px; line-height: 1.25; margin: 26px 0 8px; }
+.md blockquote { margin: 0 0 14px; padding: 2px 0 2px 16px; border-left: 3px solid var(--line-strong); color: var(--muted); }
+.md blockquote p { margin-bottom: 8px; }
+.md hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0; }
+.md a { color: var(--accent); text-underline-offset: 3px; text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent); overflow-wrap: anywhere; }
+.md .tag, .md .wl { font-family: var(--font); font-size: .9em; }
 .wl { border: 0; background: none; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: color-mix(in oklch, var(--accent) 40%, transparent); }
 .tag { border: 0; color: var(--accent); background: var(--accent-soft); border-radius: var(--r-s); padding: 0 5px; font-size: .92em; }
 .notice { font-size: 13.5px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-m); padding: 8px 12px; }
@@ -386,6 +397,9 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .doc.novo { min-height: 150px; padding: 14px; border: 1px dashed var(--line-strong); border-radius: var(--r-m); border-style: dashed; box-shadow: none; color: var(--muted); justify-content: center; align-items: center; text-align: center; }
 .folha { background: #fff; color: #1d1d1f; max-width: 760px; margin: 0 auto; padding: 46px 54px; box-sizing: border-box; border-radius: 4px; box-shadow: 0 2px 14px rgba(0,0,0,.18); min-height: 60vh; }
 .folha .md, .folha h1, .folha h3 { color: #1d1d1f; }
+.folha .md a, .folha .wl { color: #6E1E2B; text-decoration-color: rgba(110,30,43,.35); }
+.folha .md blockquote { color: #55504a; border-left-color: #d6cdbd; } .folha .md hr { border-top-color: #e2dccf; }
+.folha .tag { color: #6E1E2B; background: rgba(110,30,43,.08); }
 .folha .fcab { font-size: 12px; color: #6e6e73; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-bottom: 22px; }
 .folha h1 { font-size: 26px; margin: 0 0 16px; }
 .pdfbox { width: 100%; height: 78vh; border: 1px solid var(--line); border-radius: var(--r-m); background: #fff; }
@@ -432,7 +446,7 @@ a.btn.primary { color: var(--on-accent); }
 .flag.parado { background: var(--line); color: var(--muted); }
 .decisao { max-width: 640px; border-left: 3px solid var(--ok); background: color-mix(in oklch, var(--ok) 8%, transparent); border-radius: 0 var(--r-m) var(--r-m) 0; padding: 8px 12px; margin: 0 0 14px; font-size: 14.5px; }
 .decisao small { display: block; color: var(--muted); font-size: 12.5px; }
-.polls h2 { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin: 14px 0 0; }
+.polls h2 { font-size: 14px; font-weight: 600; color: var(--muted); margin: 14px 0 0; }
 .li { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid var(--line); padding: 7px 0; font-size: 14px; color: var(--fg); }
 .card h2 + .li { border-top: 0; }
 .li .tx { flex: 1; min-width: 0; }
@@ -532,18 +546,22 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
 /* celular e tablet estreito: as cinco seções descem para uma barra fixa embaixo, com ícone e nome (antes Tarefas e Votações sumiam à direita) */
 @media (max-width: 860px) {
   .marca { border-right: 0; padding-right: 0; } .marca .mk i { display: none; } .marca .mk b { font-size: 19px; }
+  /* o desfoque da barra faria a barra de seções (fixa embaixo) ficar presa a ela */
+  .top { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--bar); }
   .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--bar); border-top: 1px solid var(--bar-line); padding: 0 max(4px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(4px, env(safe-area-inset-left, 0px)); }
   .nav button { position: relative; flex: 1 1 0; min-width: 0; flex-direction: column; justify-content: center; gap: 3px; padding: 7px 2px 6px; min-height: 58px; font-size: 11.5px; line-height: 1.1; }
   .nav button span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .nav svg { display: block; }
-  .nav button[aria-current="page"] { box-shadow: inset 0 3px 0 var(--miolo); }
+  .nav button[aria-current="page"] { color: var(--sel); }
+  .nav button[aria-current="page"]::before { top: -1px; bottom: auto; left: 30%; right: 30%; border-radius: 0 0 2px 2px; }
   .nav button[data-n]:not([data-n=""])::after { position: absolute; top: 5px; left: calc(50% + 6px); }
   .screen { padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
   .toast { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 }
 @media (max-width: 760px) {
   .marca svg { width: 30px; height: 30px; }
-  .cal-btn .lbl { display: none; } .cal-btn { padding: 5px 10px; } .right { gap: 8px; }
+  .cal-btn .lbl { display: none; } .cal-btn { padding: 0 4px; } .cal-btn svg { width: 20px; height: 20px; } .right { gap: 10px; }
+  .top { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
   .pfix { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); } .pfix button { padding: 6px 6px; }
   .ptree { min-height: 0; padding-bottom: 6px; } .dica { display: none; }
   .grid2 { grid-template-columns: 1fr; }
@@ -576,7 +594,7 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
     <button data-act="go" data-v="votacoes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h16v7H4zM8 13V4h8v9M10.5 8.5l1.5 1.5 3-3"/></svg><span>Votações</span></button>
   </nav>
   <div class="right">
-    <button class="tema-btn" data-act="theme" aria-label="Trocar entre tema claro e escuro" title="Trocar entre tema claro e escuro"><svg class="lua" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="sol" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button>
+    <div class="tema" role="group" aria-label="Tema da tela"><button data-act="tema" data-t="light" aria-pressed="false" aria-label="Tema claro" title="Tema claro"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button><button data-act="tema" data-t="dark" aria-pressed="true" aria-label="Tema escuro" title="Tema escuro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div>
     <button class="cal-btn" data-act="go" data-v="calendario" aria-label="Calendário"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span class="lbl">Calendário</span></button>
     <button class="me-btn" data-act="go" data-v="perfil" id="meBtn" aria-label="Meu perfil"></button>
   </div>
@@ -1317,7 +1335,7 @@ function notaHTML(p, n) {
   if (ed) h += `<input class="field ntit" id="ntTit" value="${esc(n.titulo)}" aria-label="Título da nota">
     <label class="nmove">Pasta <select class="field" id="ntPai"><option value="">(fora das pastas)</option>${pastas.map(d => `<option value="${d.id}"${d.id === n.pai ? " selected" : ""}>${esc(nomeP(d))}</option>`).join("")}</select></label>
     <textarea class="field ntxt" id="ntTxt" aria-label="Texto da nota">${esc(n.texto)}</textarea>
-    <p class="nmeta">[[Nome de outra nota]] cria um link, #tema marca o assunto, **texto** fica em negrito, # no começo faz título e - faz lista. Ctrl+S salva; ao sair da nota ela também é salva.</p>`;
+    <p class="nmeta">[[Nome de outra nota]] cria um link, #tema marca o assunto, **texto** fica em negrito e *texto* em itálico, # no começo faz título, - faz lista, 1. faz lista numerada, > faz citação e --- uma linha. Endereço com https:// vira link. Ctrl+S salva; ao sair da nota ela também é salva.</p>`;
   else h += `<div class="md">${md(n.texto, p.id) || '<p class="empty">Nota vazia. Clique em Editar para escrever.</p>'}</div>`;
   if (p.frente === "intervisao") h += `<p class="notice" style="margin-top:12px">Sigilo: não escreva nada que identifique paciente.</p>`;
   return h + `<p class="nmeta">${quem.length ? "Editada por " + esc(quem.join(", ")) + " · " : ""}última mudança ${quando(n.alt || n.em)}</p></div>`;
@@ -1335,16 +1353,24 @@ function pastaHTML(p, d) {
 function md(src, pid) {
   const byName = n => S.projetos.find(p => p.nome.toLowerCase() === n.trim().toLowerCase());
   const nota = n => pid && notasDe(pid).find(x => x.tipo === "nota" && x.titulo.toLowerCase() === n.trim().toLowerCase());
+  /* 24/10/2026: *itálico*, link https clicável, > citação, 1. lista numerada e --- linha, para as notas longas (e-mails, pesquisas) */
   const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>")
+    .replace(/(^|[\s(“"])\*(?![\s*])([^*]+?)\*(?=[\s.,;:!?)”"]|$)/g, "$1<i>$2</i>")
+    .replace(/https?:\/\/[^\s<]+[^\s<.,;:!?)”"]/g, u => `<a href="${u}" target="_blank" rel="noopener">${u.replace(/^https?:\/\/(www\.)?/, "")}</a>`)
     .replace(/\[\[([^\]]+)\]\]/g, (_, n) => { const x = nota(n); if (x) return `<button class="wl" data-act="abrenota" data-id="${x.id}">${n}</button>`; const p = byName(n); return p ? `<button class="wl" data-act="proj" data-id="${p.id}">${n}</button>` : `<span style="color:var(--faint)" title="Ainda não existe nota com esse nome">${n}</span>`; })
     .replace(/(^|\s)#([\p{L}\d_-]+)/gu, '$1<span class="tag">#$2</span>');
-  let out = "", list = false;
+  let out = "", bloco = "";
+  const abre = b => { if (bloco !== b) { if (bloco) out += `</${bloco}>`; if (b) out += `<${b}>`; bloco = b; } };
   for (const l of String(src || "").split("\n")) {
-    if (/^\s*- /.test(l)) { if (!list) { out += "<ul>"; list = true; } const cx = l.match(/^\s*- \[( |x|X)\] /); out += cx ? `<li class="ck">${cx[1] === " " ? "☐" : "☑"} ${inl(l.replace(/^\s*- \[.\] /, ""))}</li>` : `<li>${inl(l.replace(/^\s*- /, ""))}</li>`; continue; }
-    if (list) { out += "</ul>"; list = false; }
-    if (/^#{1,3} /.test(l)) out += `<h3>${inl(l.replace(/^#+ /, ""))}</h3>`; else if (l.trim()) out += `<p>${inl(l)}</p>`;
+    if (/^\s*- /.test(l)) { abre("ul"); const cx = l.match(/^\s*- \[( |x|X)\] /); out += cx ? `<li class="ck">${cx[1] === " " ? "☐" : "☑"} ${inl(l.replace(/^\s*- \[.\] /, ""))}</li>` : `<li>${inl(l.replace(/^\s*- /, ""))}</li>`; continue; }
+    if (/^\s*\d+[.)] /.test(l)) { abre("ol"); out += `<li>${inl(l.replace(/^\s*\d+[.)] /, ""))}</li>`; continue; }
+    if (/^\s*>/.test(l)) { abre("blockquote"); const x = l.replace(/^\s*> ?/, ""); if (x.trim()) out += `<p>${inl(x)}</p>`; continue; }
+    abre("");
+    if (/^-{3,}\s*$/.test(l)) out += "<hr>";
+    else if (/^#{1,3} /.test(l)) out += `<h3>${inl(l.replace(/^#+ /, ""))}</h3>`; else if (l.trim()) out += `<p>${inl(l)}</p>`;
   }
-  return out + (list ? "</ul>" : "");
+  abre("");
+  return out;
 }
 
 /* ===== REDE DAS NOTAS. Refeita a partir do Obsidian 1.14.4 (sim.js e app.js, lidos em 22/10/2026), sem copiar código:
@@ -1729,6 +1755,7 @@ function acao(t, e) {
   if (a === "imprimir") return print();
   if (a === "savenote") { p.nota = $("#nota").value; UI.edit = false; save(); toast("Nota salva."); return render(); }
   if (a === "editprof") { UI.edit = t.dataset.on === "1"; return render(); }
+  if (a === "tema") { document.documentElement.dataset.theme = t.dataset.t; corDaBarra(); try { localStorage.setItem(KEY + "-theme", t.dataset.t); } catch (x) {} return; }
   if (a === "theme") { const r = document.documentElement; const dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; corDaBarra(); try { localStorage.setItem(KEY + "-theme", r.dataset.theme); } catch (x) {} return; }
   if (a === "reset") { if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para confirmar"; return; } S = JSON.parse(JSON.stringify(SEED)); save(); toast("Dados de exemplo restaurados."); return render(); }
   if (a === "login") { const pr = new firebase.auth.GoogleAuthProvider(); pr.setCustomParameters({ prompt: "select_account" });
@@ -1900,8 +1927,9 @@ document.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s" && typeof UI.edit === "string") { e.preventDefault(); const b = $("[data-act=salvanota]"); if (b) b.click(); return; }
   if (e.key === "Escape") $("#overlay").innerHTML = ""; if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".day[data-act]")) { e.preventDefault(); e.target.click(); } });
 
-/* tema: escuro de saída (pedido de 23/10/2026); quem troca no botão da barra fica com a escolha neste navegador */
-function corDaBarra() { const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = document.documentElement.dataset.theme === "dark" ? "#561522" : "#6E1E2B"; }
+/* tema: escuro de saída (pedido de 23/10/2026); quem troca na chave da barra fica com a escolha neste navegador */
+function corDaBarra() { const t = document.documentElement.dataset.theme, m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = t === "dark" ? "#141211" : "#FFFDF8";
+  document.querySelectorAll(".tema button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.t === t))); }
 let TEMA = "dark"; try { TEMA = localStorage.getItem(KEY + "-theme") || "dark"; } catch (e) {}
 document.documentElement.dataset.theme = TEMA; corDaBarra();
 if ("serviceWorker" in navigator && location.protocol === "https:" && !/claude/.test(location.hostname)) navigator.serviceWorker.register("sw.js").catch(() => {});
