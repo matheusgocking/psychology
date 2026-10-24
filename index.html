@@ -542,6 +542,12 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
 .node .edf:hover { color: var(--fg); border-color: var(--fc); }
 .lixo-li { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
 .lixo-li .tx { flex: 1; min-width: 0; } .lixo-li small { display: block; color: var(--faint); font-size: 12.5px; }
+/* acesso ao site (ADM) */
+.acc { max-width: 760px; margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); }
+.acc .lixo-li { gap: 10px; } .acc .lixo-li .tx b { font-weight: 500; } .acc .lixo-li small { overflow-wrap: anywhere; }
+.acc .sec .n { display: inline-block; margin-left: 6px; background: var(--miolo); color: #1E1A17; border-radius: 99px; font-size: 11px; padding: 0 7px; line-height: 18px; vertical-align: 1px; }
+.acc-ped { margin: 0 0 22px; padding: 14px 16px; border: 1px solid color-mix(in oklch, var(--miolo) 45%, var(--line)); border-radius: var(--r-l); background: color-mix(in oklch, var(--miolo) 6%, var(--raised)); }
+.acc-dica { font-size: 13.5px; color: var(--muted); margin: 0 0 6px; max-width: 64ch; }
 @media (max-width: 1180px) { .marca .mk i { display: none; } }
 /* celular e tablet estreito: as cinco seções descem para uma barra fixa embaixo, com ícone e nome (antes Tarefas e Votações sumiam à direita) */
 @media (max-width: 860px) {
@@ -656,13 +662,33 @@ function telaCadastro() {
     <div class="row-form"><button class="btn primary">Entrar no clube</button>${NV.on ? `<button type="button" class="btn ghost" data-act="voltaquem">Voltar à lista</button>` : ""}</div>
   </form>`);
 }
+/* acesso interno (24/10/2026, pedido das ADM): o código só faz o pedido de entrada; um ADM libera, recusa ou tira o acesso depois.
+   Pedido novo nasce com ok = false; contas de antes, sem o campo, já estão liberadas. bloqueado = acesso retirado. */
+function telaEspera() {
+  tela(`${SELA}<h1>Pedido enviado</h1><p>Um ADM do Lastro precisa liberar a sua entrada. Assim que liberar, esta tela abre o site sozinha.</p>
+  <p style="font-size:13px;margin-top:18px">Pedido feito como ${esc(NV.user.email)}. <button class="link" data-act="sair">Usar outra conta</button></p>`);
+}
+function telaSemAcesso() {
+  tela(`${SELA}<h1>Sem acesso</h1><p>O acesso desta conta ao site do clube foi retirado. Se acha que é engano, fale com um ADM do Lastro.</p>
+  <p style="font-size:13px;margin-top:18px">Conta: ${esc(NV.user.email)}. <button class="link" data-act="sair">Usar outra conta</button></p>`);
+}
+function esperarAcesso(uid) {
+  if (NV.espera) return;
+  NV.espera = NV.db.collection("acessos").doc(uid).onSnapshot(s => {
+    const a = s.exists ? s.data() : null; if (!a) return telaCodigo();
+    if (a.bloqueado) return telaSemAcesso(); if (a.ok === false) return telaEspera();
+    NV.espera(); NV.espera = null; NV.acesso = a; assinar();
+  }, () => telaEspera());
+}
 async function entrarNuvem() {
   firebase.auth().onAuthStateChanged(async u => {
     NV.user = u; if (!u) return telaLogin();
     const ref = NV.db.collection("acessos").doc(u.uid);
     const snap = await ref.get().catch(() => null);
     if (!snap || !snap.exists) return telaCodigo();
-    NV.acesso = snap.data(); assinar();
+    const a = snap.data();
+    if (a.bloqueado || a.ok === false) return esperarAcesso(u.uid);
+    NV.acesso = a; assinar();
   });
 }
 function assinar() {
@@ -680,6 +706,16 @@ function assinar() {
     if (NV.prontos < COLS.length) { NV.prontos++; if (NV.prontos === COLS.length) pronto(); return; }
     agendarRender();
   }, () => telaCodigo("Sem acesso ao banco. Confira o código."));
+}
+/* ADM: lista das contas que pediram ou têm acesso (o banco só entrega a ADM); o número de pedidos aparece na aba Integrantes */
+function assinarAcessos() {
+  if (NV.acessosOn || !NV.on || !souAdm()) return; NV.acessosOn = true;
+  NV.db.collection("acessos").onSnapshot(snap => { NV.acessos = snap.docs.map(d => ({ uid: d.id, ...d.data() })); marcarPedidos(); if (UI.v === "integrantes" && !editando()) render(); }, () => { NV.acessos = null; });
+}
+const pedidos = () => (NV.acessos || []).filter(a => a.ok === false && !a.bloqueado).sort((a, b) => (a.em || 0) - (b.em || 0));
+function marcarPedidos() {
+  const bi = document.querySelector('header [data-v="integrantes"]'); if (!bi) return;
+  const n = souAdm() ? pedidos().length : 0; bi.dataset.n = n || ""; bi.title = n ? plural(n, "pedido de entrada esperando", "pedidos de entrada esperando") : "";
 }
 /* minha área: tarefas e notas que só a própria pessoa vê. Ficam na coleção "pessoal", e o banco só entrega a cada um o que é dele (firestore.rules) */
 function assinarPessoal(me) {
@@ -700,7 +736,7 @@ function pronto() {
   if (!NV.acesso.membro || !M(NV.acesso.membro)) return telaQuem();
   UI.me = NV.acesso.membro;
   /* cada perfil guarda a conta Google que é dele: assim ninguém entra como outra pessoa */
-  assinarPessoal(UI.me);
+  assinarPessoal(UI.me); assinarAcessos();
   if (!M(UI.me).uid) { M(UI.me).uid = NV.user.uid; save(); } document.querySelector("header.top").hidden = false; go("inicio");
   if (!NV.pulso) { NV.pulso = setInterval(pulsar, 120e3); pulsar(); }
   tentarMigrar();
@@ -877,6 +913,7 @@ function go(v, extra) {
   const marca = v === "projeto" ? (UI.proj === EU_ID ? "area" : "inicio") : v === "pessoa" ? "integrantes" : v === "votacao" ? "votacoes" : v;
   document.querySelectorAll("header [data-v]").forEach(b => b.setAttribute("aria-current", b.dataset.v === marca ? "page" : "false"));
   const bv = document.querySelector('header [data-v="votacoes"]'); if (bv && UI.me) { const n = S.votacoes.filter(x => !fechada(x) && !(x.votos[UI.me] || []).length).length; bv.dataset.n = n || ""; bv.title = n ? plural(n, "votação esperando seu voto", "votações esperando seu voto") : ""; }
+  marcarPedidos();
   $("#meBtn").innerHTML = av(UI.me, 34);
   render(); scrollTo(0, 0);
 }
@@ -1489,7 +1526,26 @@ function membersHTML() {
   return `<div class="wrap"><h1>Integrantes</h1><p class="lede">Quem está no clube e em que projeto cada um está. Clique numa pessoa para ver o perfil.</p>
   <div class="filters">${chip("todos", "Todos", S.membros.length)}${chip("sem", "Sem projeto", sp.size)}${S.frentes.map(f => chip(f.id, esc(f.nome), S.membros.filter(m => projDe(m.id).some(p => p.frente === f.id)).length, fc(f))).join("")}</div>
   ${F(UI.filtro) && editaTudo() ? `<p style="margin:-6px 0 14px"><button class="btn small" data-act="editfrente" data-id="${UI.filtro}">Editar a frente ${esc(F(UI.filtro).nome)}</button></p>` : ""}
-  <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${nomeC(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div></div>`;
+  ${acessosHTML(true)}
+  <div class="members">${lista.map(m => { const ps = projDe(m.id); return `<button class="mcard" data-act="person" data-id="${m.id}">${av(m.id, 48)}<span style="min-width:0"><b>${nomeC(m)}</b><span class="sub${ps.length ? "" : " none"}">${ps.length ? ps.map(p => esc(p.nome)).join(", ") : "Ainda sem projeto"}</span></span></button>`; }).join("") || '<p class="empty">Ninguém neste filtro.</p>'}</div>
+  ${acessosHTML(false)}</div>`;
+}
+/* acesso ao site, só para ADM (24/10/2026): pedidos de entrada no alto da tela; contas liberadas e retiradas no fim */
+function acessosHTML(topo) {
+  if (!NV.on || !souAdm()) return "";
+  const lista = NV.acessos || [], ped = pedidos();
+  const quem = a => { const m = a.membro && M(a.membro), n = m ? m.nome : a.nome || a.email || "Conta sem nome";
+    return `${m ? av(m.id, 32) : `<span class="av" style="--s:32px;--h:28">${esc(n.trim()[0] || "?").toUpperCase()}</span>`}<span class="tx"><b>${esc(n)}</b><small>${esc(a.email || "")}${!m && a.em ? ", pediu em " + dataDe(a.em) : ""}</small></span>`; };
+  const bt = (a, op, l, cls) => `<button class="btn small ${cls || ""}" data-act="acc" data-uid="${a.uid}" data-op="${op}">${l}</button>`;
+  const intocavel = a => a.uid === (NV.user && NV.user.uid) || (!souDono() && a.membro && (M(a.membro) || {}).adm);
+  if (topo) return ped.length ? `<div class="acc acc-ped"><h2 class="sec">Pedidos de entrada <span class="n">${ped.length}</span></h2>
+    <p class="acc-dica">Entraram com o código do grupo e esperam um ADM liberar. Só os ADM veem esta parte.</p>
+    ${ped.map(a => `<div class="lixo-li">${quem(a)}${bt(a, "liberar", "Liberar", "primary")}${bt(a, "recusar", "Recusar", "ghost")}</div>`).join("")}</div>` : "";
+  const lib = lista.filter(a => !a.bloqueado && a.ok !== false), bloq = lista.filter(a => a.bloqueado);
+  return `<div class="acc"><h2 class="sec">Acesso ao site</h2>
+    <p class="acc-dica">Só os ADM veem esta parte. Quem entra pelo código fica esperando até um ADM liberar. Tirar o acesso bloqueia a conta Google, mas mantém o perfil; para tirar a pessoa do clube, abra o perfil dela.${NV.acessos ? "" : " Carregando as contas."}</p>
+    <details class="feitas"><summary>Contas com acesso (${lib.length})</summary>${lib.map(a => `<div class="lixo-li">${quem(a)}${intocavel(a) ? "" : bt(a, "tirar", "Tirar acesso", "ghost")}</div>`).join("")}</details>
+    ${bloq.length ? `<details class="feitas" open><summary>Acesso retirado (${bloq.length})</summary>${bloq.map(a => `<div class="lixo-li">${quem(a)}${bt(a, "devolver", "Devolver acesso")}</div>`).join("")}</details>` : ""}</div>`;
 }
 
 /* ===== VOTAÇÕES ===== */
@@ -1576,7 +1632,9 @@ function personHTML(m) {
       ${CAMPOS.map(([k, l]) => `<label>${l}<input class="field" name="${k}" id="pf-${k}" value="${esc(pf[k] || "")}"></label>`).join("")}
       <div class="row-form"><button class="btn primary">Salvar perfil</button><button type="button" class="btn ghost" data-act="editprof" data-on="0">Cancelar</button></div></form></div>`;
   }
-  h += `${pode ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px"><button class="btn" data-act="editprof" data-on="1">${meu ? "Editar meu perfil" : "Editar perfil"}</button>${souDono() && !meu ? `<button class="btn ghost" data-act="togadm">${m.adm ? "Tirar de ADM" : "Tornar ADM"}</button>` : ""}</div>` : ""}
+  /* ADM tira do clube quem não é ADM (o dono tira qualquer um, menos ele mesmo): apaga o perfil e bloqueia a conta Google ligada a ele */
+  const tira = !meu && souAdm() && (!m.adm || souDono());
+  h += `${pode || tira ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px">${pode ? `<button class="btn" data-act="editprof" data-on="1">${meu ? "Editar meu perfil" : "Editar perfil"}</button>` : ""}${souDono() && !meu ? `<button class="btn ghost" data-act="togadm">${m.adm ? "Tirar de ADM" : "Tornar ADM"}</button>` : ""}${tira ? `<button class="btn ghost" data-act="tirarclube" data-id="${m.id}" style="color:var(--bad)">Tirar do clube</button>` : ""}</div>` : ""}
   <div class="grid2"><div>
     <h2 class="sec">Projetos</h2>${ps.map(p => `<button class="person" data-act="proj" data-id="${p.id}"><span class="chipf" style="--fc:${fc(F(p.frente))}"></span><span><b>${esc(p.nome)}</b><small>${esc(p.papeis.find(r => r[0] === m.id)[1])}</small></span></button>`).join("") || '<p class="empty">Ainda não está em nenhum projeto.</p>'}
     <h2 class="sec" style="margin-top:22px">Ficha de inscrição</h2><dl class="kv">${CAMPOS.map(([k, l]) => `<dt>${l}</dt><dd>${pf[k] ? esc(pf[k]) : '<span style="color:var(--faint)">ainda não preencheu</span>'}</dd>`).join("")}</dl>
@@ -1764,6 +1822,20 @@ function acao(t, e) {
   if (a === "souEu") { const id = t.dataset.id, b = NV.db.batch(); b.update(NV.db.collection("membros").doc(id), { uid: NV.user.uid }); b.update(NV.db.collection("acessos").doc(NV.user.uid), { membro: id });
     b.commit().then(() => { NV.acesso.membro = id; M(id).uid = NV.user.uid; NV.last["membros/" + id] = JSON.stringify(M(id)); pronto(); }).catch(() => toast("Esse perfil já está ligado a outra conta. Se é você, fale com o Matheus.")); return; }
   if (a === "cadastro") return telaCadastro();
+  if (a === "acc") { const uid = t.dataset.uid, op = t.dataset.op;
+    if ((op === "tirar" || op === "recusar") && !t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo para confirmar"; return; }
+    const up = op === "liberar" || op === "devolver" ? { ok: true, bloqueado: false } : { ok: false, bloqueado: true };
+    t.disabled = true;
+    NV.db.collection("acessos").doc(uid).update({ ...up, porQuem: UI.me, quando: Date.now() })
+      .then(() => toast({ liberar: "Entrada liberada.", devolver: "Acesso devolvido.", recusar: "Pedido recusado.", tirar: "Acesso retirado." }[op]))
+      .catch(e => { t.disabled = false; toast("Não consegui mudar o acesso: " + e.message); }); return; }
+  if (a === "tirarclube") { const id = t.dataset.id, m = M(id); if (!m) return;
+    if (!t.dataset.ok) { t.dataset.ok = 1; t.textContent = "Clique de novo: apaga o perfil e tira o acesso"; return; }
+    if (!NV.on) { S.membros = S.membros.filter(x => x.id !== id); save(); toast(m.nome + " saiu do clube."); return go("integrantes"); }
+    const b = NV.db.batch(); b.delete(NV.db.collection("membros").doc(id));
+    if (m.uid && (!NV.acessos || NV.acessos.some(x => x.uid === m.uid))) b.update(NV.db.collection("acessos").doc(m.uid), { ok: false, bloqueado: true, membro: "", porQuem: UI.me, quando: Date.now() });
+    t.disabled = true;
+    b.commit().then(() => { toast(m.nome + " saiu do clube."); go("integrantes"); }).catch(e => { t.disabled = false; toast("Não consegui tirar: " + e.message); }); return; }
   if (a === "newfrente") return abrirFrente(null);
   if (a === "editfrente") return abrirFrente(t.dataset.id);
   if (a === "delfrente") { const id = t.dataset.id; if (projsFrente(F(id)).length) return toast("A frente ainda tem projetos."); S.frentes = S.frentes.filter(f => f.id !== id); save(); $("#overlay").innerHTML = ""; toast("Frente apagada."); return go("inicio"); }
@@ -1844,7 +1916,9 @@ document.addEventListener("submit", e => {
     p.detalhes = String(fd.get("detalhes") || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => { const i = l.indexOf(":"); return i > 0 ? [l.slice(0, i).trim(), l.slice(i + 1).trim()] : ["Detalhe", l]; });
     UI.edit = false; save(); toast("Projeto atualizado."); return render();
   }
-  if (k === "codigo") { const c = (fd.get("codigo") || "").trim(); NV.db.collection("acessos").doc(NV.user.uid).set({ codigo: c, email: NV.user.email, membro: "" }).then(() => { NV.acesso = { membro: "" }; assinar(); }).catch(() => telaCodigo("Código errado.")); return; }
+  if (k === "codigo") { const c = (fd.get("codigo") || "").trim(), ok = souDono();
+    NV.db.collection("acessos").doc(NV.user.uid).set({ codigo: c, email: NV.user.email, nome: NV.user.displayName || "", membro: "", ok, em: Date.now() })
+      .then(() => { if (!ok) return esperarAcesso(NV.user.uid); NV.acesso = { membro: "" }; assinar(); }).catch(() => telaCodigo("Código errado.")); return; }
   if (k === "importar") {
     const f = fd.get("arq"); if (!f || !f.size) return telaImportar("Escolha o arquivo.");
     f.text().then(txt => { const d = JSON.parse(txt); const b = NV.db.batch(); for (const c of COLS) (d[c] || []).forEach((x, i) => b.set(NV.db.collection(c).doc(x.id), ida({ ...x, ordem: i }))); return b.commit(); })
