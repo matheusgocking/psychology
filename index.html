@@ -402,6 +402,11 @@ textarea.field { width: 100%; min-height: 200px; resize: vertical; line-height: 
 .folha .tag { color: #6E1E2B; background: rgba(110,30,43,.08); }
 .folha .fcab { font-size: 12px; color: #6e6e73; border-bottom: 1px solid #ddd; padding-bottom: 8px; margin-bottom: 22px; }
 .folha h1 { font-size: 26px; margin: 0 0 16px; }
+.doc .pg .vz.pag { display: grid; align-content: center; justify-items: center; gap: 6px; background: var(--panel); color: var(--muted); }
+.vz.pag svg { width: 34px; height: 34px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.pagina { max-width: 560px; margin: 6vh auto 0; text-align: center; display: grid; justify-items: center; gap: 10px; }
+.pagina .vz.pag { display: grid; place-items: center; width: 72px; height: 72px; border-radius: 50%; background: var(--panel); color: var(--accent); }
+.pagina h1 { margin: 6px 0 0; } .pagina p { margin: 0; color: var(--muted); max-width: 52ch; }
 .pdfbox { width: 100%; height: 78vh; border: 1px solid var(--line); border-radius: var(--r-m); background: #fff; }
 @media print { body * { visibility: hidden; } .folha, .folha * { visibility: visible; } .folha { position: absolute; left: 0; top: 0; box-shadow: none; max-width: none; width: 100%; } }
 .ntit { font-size: 20px; font-weight: 600; width: 100%; box-sizing: border-box; margin-bottom: 8px; }
@@ -1313,7 +1318,7 @@ function escopoHTML(p, f, dentro, podeEd) {
     ${campo("Próximo passo", p.proximo ? esc(p.proximo) : '<span class="vazio">A definir</span>')}
     ${ev ? campo("Próximo encontro", `<button class="wl" data-act="ev" data-id="${ev.e.id}">${esc(ev.e.titulo)}</button>, ${dm(ev.d)} às ${ev.e.ini}`) : ""}</dl>
   <div class="docs-h"><h2 class="sec">Documentos do projeto</h2><span class="esp" style="flex:1"></span>${podeEd && docs.length ? `<button class="btn small" data-act="novodoc">+ Documento</button>` : ""}</div>
-  <div class="trilha">${docs.map((d, i) => `<button class="doc" data-act="tab" data-tab="doc:${d.id}"><span class="pg">${docCapa(d)}</span><span class="dt">${esc(docTitulo(d))}</span><small>${d.link ? "PDF" : "Nota"}${docData(d) ? " · " + docData(d) : ""}</small><span class="num">${i + 1}</span></button>`).join("")}
+  <div class="trilha">${docs.map((d, i) => `<button class="doc" data-act="tab" data-tab="doc:${d.id}"><span class="pg">${docCapa(d)}</span><span class="dt">${esc(docTitulo(d))}</span><small>${d.link ? tipoDoc(d) : "Nota"}${docData(d) ? " · " + docData(d) : ""}</small><span class="num">${i + 1}</span></button>`).join("")}
     ${!docs.length ? (podeEd ? `<button class="doc novo" data-act="novodoc"><span class="dt">+ Primeiro documento</span><small>O 1 é o resumo detalhado do projeto. Pode ser uma nota daqui ou um PDF do Google Drive.</small></button>` : '<p class="empty">Nenhum documento ainda.</p>') : ""}</div></div>`;
 }
 const proxSemanal = s => { const d = new Date(s + "T12:00"), h = new Date(hojeISO() + "T12:00"); while (d < h) d.setDate(d.getDate() + 7); return ymd(d); };
@@ -1326,8 +1331,10 @@ function docCapa(d) {
   const n = docNota(d);
   if (n) return '<span class="ptx"><b>' + esc(docTitulo(d)) + "</b>" + esc(String(n.texto || "").replace(/[#*_>\x60\[\]]/g, "").slice(0, 600)) + "</span>";
   const id = driveId(d.link);
-  return id ? `<img src="https://drive.google.com/thumbnail?id=${id}&sz=w400" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'vz',textContent:'PDF'}))">` : '<span class="vz">PDF</span>';
+  return id ? `<img src="https://drive.google.com/thumbnail?id=${id}&sz=w400" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'vz',textContent:'PDF'}))">` : `<span class="vz pag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg>Página</span>`;
 }
+/* 24/10/2026: além de PDF do Drive, o link pode ser uma página (artefato do Claude, site): abre em outra aba, porque esses sites não deixam aparecer dentro de outro */
+const tipoDoc = d => docNota(d) ? "Nota" : driveId(d.link) ? "PDF" : "Página";
 const docData = d => { const n = docNota(d); return n ? dataDe(n.alt || n.em) : d.alt ? dmy(d.alt) : ""; };
 const linkPreview = u => { const m = String(u || "").match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([\w-]+)/); return m ? `https://drive.google.com/file/d/${m[1]}/preview` : u; };
 function docHTML(p, d) {
@@ -1339,6 +1346,9 @@ function docHTML(p, d) {
     ${n ? `<button class="btn small" data-act="abrenota" data-id="${n.id}">Editar o texto</button><button class="btn small" data-act="imprimir">Salvar em PDF</button>` : `<a class="btn small" href="${esc(d.link)}" target="_blank" rel="noopener">Abrir em outra aba</a>`}
     <button class="btn small ghost" data-act="editdoc" data-id="${d.id}">Trocar</button><button class="btn small ghost" data-act="tab" data-tab="sobre">Voltar</button></div>`;
   if (n) h += `<article class="folha"><div class="fcab">${esc(p.nome)} · Documento ${i + 1} · atualizado em ${docData(d)}${quem ? " por " + esc(quem) : ""}</div><h1>${esc(docTitulo(d))}</h1><div class="md">${md(n.texto, p.id) || "<p>Ainda sem texto.</p>"}</div></article>`;
+  else if (d.link && !driveId(d.link)) h += `<div class="pagina"><span class="vz pag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg></span>
+    <h1>${esc(docTitulo(d))}</h1>${d.desc ? `<p>${esc(d.desc)}</p>` : ""}<a class="btn primary" href="${esc(d.link)}" target="_blank" rel="noopener">Abrir a página</a>
+    <p class="nmeta">Abre numa aba nova, sem precisar de conta. Atualizado em ${docData(d) || "?"}${quem ? ", posto por " + esc(quem) : ""}.</p></div>`;
   else if (d.link) h += `<iframe class="pdfbox" src="${esc(linkPreview(d.link))}" title="${esc(docTitulo(d))}" loading="lazy" allow="autoplay"></iframe><p class="nmeta">Atualizado em ${docData(d) || "?"}${quem ? ", posto por " + esc(quem) : ""}. Se o PDF não aparecer, no Google Drive deixe o arquivo em "Qualquer pessoa com o link" ou use Abrir em outra aba.</p>`;
   else h += '<p class="empty">Essa nota foi apagada. Use Trocar para escolher outra.</p>';
   return h;
@@ -1349,7 +1359,7 @@ function abrirDoc(p, id) {
   $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Documento"><h2>${d ? "Documento " + ((p.docs.indexOf(d)) + 1) : "Novo documento"}</h2>
   <form class="form" data-form="doc" data-id="${d ? d.id : ""}">
     <label>Título<input class="field" name="titulo" id="dc-tit" value="${esc(d ? d.titulo || "" : "")}" placeholder="Ex.: Resumo detalhado"></label>
-    <label>De onde vem<select class="field" name="tipo" id="dc-tipo"><option value="nota"${tipo === "nota" ? " selected" : ""}>Uma nota deste projeto (escrita aqui no site)</option><option value="link"${tipo === "link" ? " selected" : ""}>Um PDF no Google Drive (link)</option></select></label>
+    <label>De onde vem<select class="field" name="tipo" id="dc-tipo"><option value="nota"${tipo === "nota" ? " selected" : ""}>Uma nota deste projeto (escrita aqui no site)</option><option value="link"${tipo === "link" ? " selected" : ""}>Um link: PDF do Google Drive ou página (artefato, site)</option></select></label>
     <label id="dc-nota-l"${tipo === "link" ? ' style="display:none"' : ""}>Qual nota<select class="field" name="nota" id="dc-nota"><option value="__nova">Criar uma nota nova com esse título</option>${notas.map(x => `<option value="${x.id}"${d && d.nota === x.id ? " selected" : ""}>${esc([...caminho(x), x.titulo].join(" / "))}</option>`).join("")}</select></label>
     <div class="two" id="dc-link-l"${tipo === "nota" ? ' style="display:none"' : ""}><label>Link do PDF<input class="field" name="link" id="dc-link" type="url" value="${esc(d ? d.link || "" : "")}" placeholder="https://drive.google.com/file/d/..."></label><label>Atualizado em<input class="field" type="date" name="alt" id="dc-alt" value="${esc(d && d.alt ? d.alt : hojeISO())}"></label></div>
     ${n > 1 && d ? `<label>Posição na trilha<select class="field" name="pos" id="dc-pos">${p.docs.map((_, i) => `<option value="${i}"${p.docs[i] === d ? " selected" : ""}>${i + 1}</option>`).join("")}</select></label>` : ""}
