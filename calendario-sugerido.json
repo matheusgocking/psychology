@@ -1,0 +1,426 @@
+{
+ "sobre": "Instagram e WhatsApp do Lastro, juntos: os compromissos que se repetem e as próximas 4 semanas de posts. Montado em 25/10/2026 a partir do Plano do Instagram e do plano da comunidade.",
+ "eventos": [
+  {
+   "id": "sug-ig-seg",
+   "titulo": "Instagram: carrossel informativo",
+   "data": "2026-11-23",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Matheus"
+   ],
+   "desc": "Pilar Evidência. Pauta do banco I1 a I20 do Plano do Instagram. Stories: divulgar o post e uma enquete sobre o tema. Arte pronta 5 dias antes; Matheus revisa a fonte.",
+   "semanal": true
+  },
+  {
+   "id": "sug-ig-qua",
+   "titulo": "Instagram: reel",
+   "data": "2026-11-25",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Reel de 30 a 60 s sobre um projeto ou uma pessoa. Gabi escreve o roteiro, Luiza grava e edita. Stories: divulgar o reel.",
+   "semanal": true
+  },
+  {
+   "id": "sug-ig-sex",
+   "titulo": "Instagram: carrossel de projeto ou ensaio",
+   "data": "2026-11-27",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Pauta do banco P1 a P20 (projetos) ou F1 a F8 (pessoas). Notícia real de projeto passa na frente da pauta.",
+   "semanal": true
+  },
+  {
+   "id": "sug-ig-ter",
+   "titulo": "Instagram: stories de bastidores",
+   "data": "2026-10-27",
+   "ini": "18:00",
+   "fim": "18:15",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza"
+   ],
+   "desc": "3 a 5 stories mostrando um projeto em andamento. Donos de projeto mandam material pelo grupo.",
+   "semanal": true
+  },
+  {
+   "id": "sug-ig-qui",
+   "titulo": "Instagram: caixinha de perguntas",
+   "data": "2026-10-29",
+   "ini": "18:00",
+   "fim": "18:15",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza"
+   ],
+   "desc": "Abre a caixinha da semana. Na sexta, responder 5 a 8 perguntas nos stories. As respostas viram pauta.",
+   "semanal": true
+  },
+  {
+   "id": "sug-ig-dom",
+   "titulo": "Instagram: Estante do Lastro (story)",
+   "data": "2026-11-01",
+   "ini": "18:00",
+   "fim": "18:15",
+   "projeto": "Instagram",
+   "quem": [
+    "Tatiane",
+    "Luiza"
+   ],
+   "desc": "Um livro ou trecho da semana em 1 story. Tatiane envia, Luiza publica.",
+   "semanal": true
+  },
+  {
+   "id": "sug-ig-cal",
+   "titulo": "Fechar o calendário do Instagram do mês seguinte",
+   "data": "2026-11-25",
+   "ini": "10:00",
+   "fim": "10:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Gabi",
+    "Luiza",
+    "Matheus"
+   ],
+   "desc": "Gabi fecha, Luiza sugere pautas, Matheus aprova em uma leitura. Donos de projeto avisam datas de encontros e lançamentos.",
+   "mensal": "dia"
+  },
+  {
+   "id": "sug-wa-seg",
+   "titulo": "WhatsApp: Semana no Lastro (Avisos)",
+   "data": "2026-11-02",
+   "ini": "12:00",
+   "fim": "12:15",
+   "projeto": "Comunidade",
+   "quem": [
+    "Gabi"
+   ],
+   "desc": "A agenda das frentes em até cinco linhas, no canal de Avisos.",
+   "semanal": true
+  },
+  {
+   "id": "sug-wa-qua",
+   "titulo": "WhatsApp: Pergunta da quarta (Geral)",
+   "data": "2026-11-04",
+   "ini": "12:00",
+   "fim": "12:15",
+   "projeto": "Comunidade",
+   "quem": [
+    "Gabi"
+   ],
+   "desc": "Ritual 1. Alternar: dúvida clínica sem caso real, o que você está lendo, enquete de opinião, mito ou fato. Marcar duas pessoas com afinidade pelo tema.",
+   "semanal": true
+  },
+  {
+   "id": "sug-wa-sex",
+   "titulo": "WhatsApp: Achado da semana (Geral)",
+   "data": "2026-11-06",
+   "ini": "12:00",
+   "fim": "12:15",
+   "projeto": "Comunidade",
+   "quem": [],
+   "desc": "Ritual 2, em rodízio: semana 1 Revista Crivo, semana 2 Plataformas e Pesquisa, semana 3 Clube do Livro, semana 4 Intervisão. Numa quinta semana, quem quiser do Geral.",
+   "semanal": true
+  },
+  {
+   "id": "sug-wa-num",
+   "titulo": "Números da semana (Instagram e WhatsApp)",
+   "data": "2026-10-30",
+   "ini": "17:00",
+   "fim": "17:15",
+   "projeto": "Comunidade",
+   "quem": [
+    "Gabi",
+    "Luiza"
+   ],
+   "desc": "15 minutos. Instagram: envios, salvamentos e seguidores. WhatsApp: quem falou no Geral, novos membros, boas-vindas em 24 h, presença na intervisão.",
+   "semanal": true
+  },
+  {
+   "id": "sug-wa-dom",
+   "titulo": "Intervisão: criar o Evento da segunda no grupo",
+   "data": "2026-11-01",
+   "ini": "19:00",
+   "fim": "19:15",
+   "projeto": "Intervisão",
+   "quem": [
+    "Luiza"
+   ],
+   "desc": "Evento do WhatsApp com o tema do caso, para o grupo receber lembrete.",
+   "semanal": true
+  },
+  {
+   "id": "sug-wa-linhas",
+   "titulo": "Donos de frente mandam as três linhas do mês",
+   "data": "2026-11-28",
+   "ini": "10:00",
+   "fim": "10:15",
+   "projeto": "Comunidade",
+   "quem": [
+    "Gabi"
+   ],
+   "desc": "Até o dia 28, cada dono manda no Administradores o que a frente fez e o que vem. Gabi cobra.",
+   "mensal": "dia"
+  },
+  {
+   "id": "sug-wa-boletim",
+   "titulo": "WhatsApp: Boletim do mês (Avisos)",
+   "data": "2026-12-07",
+   "ini": "12:30",
+   "fim": "12:45",
+   "projeto": "Comunidade",
+   "quem": [
+    "Gabi"
+   ],
+   "desc": "Uma linha por frente com o que foi feito e o que vem, e no fim quantas pessoas entraram no mês.",
+   "mensal": "semana"
+  },
+  {
+   "id": "sug-adm-reuniao",
+   "titulo": "Reunião mensal dos administradores",
+   "data": "2026-12-07",
+   "ini": "20:00",
+   "fim": "20:30",
+   "projeto": "Comunidade",
+   "quem": [
+    "Matheus",
+    "Gabi",
+    "Luiza",
+    "Tatiane"
+   ],
+   "desc": "30 minutos: números do mês e o que ajustar nas responsabilidades. Em 7/12: rever o rodízio entre as admins e o resultado do primeiro mês do Instagram.",
+   "mensal": "semana"
+  },
+  {
+   "id": "sug-wa-bracos",
+   "titulo": "WhatsApp: Chamada de braços (Geral)",
+   "data": "2026-11-10",
+   "ini": "12:00",
+   "fim": "12:15",
+   "projeto": "Comunidade",
+   "quem": [
+    "Matheus"
+   ],
+   "desc": "Tarefas abertas nas frentes para quem quer entrar num projeto.",
+   "mensal": "semana"
+  },
+  {
+   "id": "sug-wa-enquete",
+   "titulo": "WhatsApp: Enquete do mês (Geral)",
+   "data": "2026-11-17",
+   "ini": "12:00",
+   "fim": "12:15",
+   "projeto": "Comunidade",
+   "quem": [
+    "Gabi"
+   ],
+   "desc": "Tema de encontro, livro ou pauta da revista.",
+   "mensal": "semana"
+  },
+  {
+   "id": "sug-wa-combinados",
+   "titulo": "WhatsApp: repetir os combinados do Geral (Avisos)",
+   "data": "2026-11-03",
+   "ini": "12:00",
+   "fim": "12:15",
+   "projeto": "Comunidade",
+   "quem": [
+    "Tatiane"
+   ],
+   "desc": "Uma vez por mês: foco em psicologia, fonte confiável, divergir com respeito, nenhum dado de paciente, divulgação só no Achado da semana.",
+   "mensal": "semana"
+  },
+  {
+   "id": "sug-ig-01",
+   "titulo": "Instagram: P1 O que é o Lastro (carrossel)",
+   "data": "2026-10-26",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Manifesto curto: a dor, o que o clube é, os projetos em uma linha cada. Semana do congresso."
+  },
+  {
+   "id": "sug-ig-02",
+   "titulo": "Instagram: Reel do congresso: estamos aqui",
+   "data": "2026-10-28",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Gravar no congresso. Stories ao vivo com as marcações oficiais do evento."
+  },
+  {
+   "id": "sug-ig-03",
+   "titulo": "Instagram: P2 Como participar (carrossel)",
+   "data": "2026-10-30",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Os níveis: leitor, membro, braço, dono de projeto, e como entrar em cada um."
+  },
+  {
+   "id": "sug-ig-04",
+   "titulo": "Instagram: I1 PBE não é só pesquisa (carrossel)",
+   "data": "2026-11-02",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Fonte conferida: definição da APA (pesquisa, expertise clínica, características do paciente)."
+  },
+  {
+   "id": "sug-ig-05",
+   "titulo": "Instagram: F1 Quem faz o Lastro (carrossel com fotos)",
+   "data": "2026-11-04",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Um slide por administrador: foto, nome, CRP, frente e uma frase. Autorização de imagem antes."
+  },
+  {
+   "id": "sug-ig-06",
+   "titulo": "Instagram: P3 Uma revista com crivo (carrossel)",
+   "data": "2026-11-06",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Revista Crivo: os três registros (evidência, ensaio, debate), para quem é, quando sai."
+  },
+  {
+   "id": "sug-ig-07",
+   "titulo": "Instagram: I5 Por que medir resultados em cada sessão (carrossel)",
+   "data": "2026-11-09",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Revisão sobre monitoramento de rotina; Matheus revisa a fonte."
+  },
+  {
+   "id": "sug-ig-08",
+   "titulo": "Instagram: Reel: Matheus explica o CORE-10 em 45 s",
+   "data": "2026-11-11",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi",
+    "Matheus"
+   ],
+   "desc": "10 itens, sofrimento psicológico, versão curta do CORE-OM. Conferir licença com o CORE System Trust antes de anunciar a plataforma."
+  },
+  {
+   "id": "sug-ig-09",
+   "titulo": "Instagram: P7 Intervisão não é supervisão (carrossel)",
+   "data": "2026-11-13",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "O que é, diferença para supervisão, para quem serve. Luiza aparece."
+  },
+  {
+   "id": "sug-ig-10",
+   "titulo": "Instagram: I9 5 sinais de pseudociência (carrossel)",
+   "data": "2026-11-16",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi"
+   ],
+   "desc": "Fonte: literatura sobre pseudociência e notas técnicas do CFP, a conferir."
+  },
+  {
+   "id": "sug-ig-11",
+   "titulo": "Instagram: Reel: Tatiane apresenta o livro do clube",
+   "data": "2026-11-18",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi",
+    "Tatiane"
+   ],
+   "desc": "Livro do mês, por que, data do encontro."
+  },
+  {
+   "id": "sug-ig-12",
+   "titulo": "Instagram: P9 O livro do mês (carrossel)",
+   "data": "2026-11-20",
+   "ini": "19:00",
+   "fim": "19:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Luiza",
+    "Gabi",
+    "Tatiane"
+   ],
+   "desc": "Clube do livro: livro escolhido, datas, como participar."
+  },
+  {
+   "id": "sug-cong-imp",
+   "titulo": "Congresso: imprimir o panfleto com QR",
+   "data": "2026-10-27",
+   "ini": "10:00",
+   "fim": "10:30",
+   "projeto": "Instagram",
+   "quem": [
+    "Matheus"
+   ],
+   "desc": "A6 frente e verso, 4 por folha. Falta mandar o @ do Instagram para gerar a versão final. Testar o QR com 2 celulares."
+  }
+ ],
+ "documentos": [
+  {
+   "projeto": "Instagram",
+   "titulo": "Plano do Instagram do Lastro",
+   "link": "https://claude.ai/artifact/DBfBZaLpWfemkY3DXkC7je",
+   "alt": "2026-10-25"
+  }
+ ]
+}
