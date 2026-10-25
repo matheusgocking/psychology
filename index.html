@@ -859,7 +859,7 @@ function atividades(pid) {
 function gcal(e) {
   const d = e.data.replace(/-/g, ""), h = x => x.replace(":", "") + "00";
   return "https://calendar.google.com/calendar/render?action=TEMPLATE&text=" + encodeURIComponent(e.titulo) + "&dates=" + d + "T" + h(e.ini) + "/" + d + "T" + h(e.fim || e.ini)
-    + "&ctz=America/Sao_Paulo&details=" + encodeURIComponent((e.desc || "") + (ehLink(e.local) ? "\n" + e.local.trim() : "")) + "&location=" + encodeURIComponent(e.local || "") + (e.semanal ? "&recur=" + encodeURIComponent("RRULE:FREQ=WEEKLY") : "");
+    + "&ctz=America/Sao_Paulo&details=" + encodeURIComponent((e.desc || "") + (ehLink(e.local) ? "\n" + e.local.trim() : "")) + "&location=" + encodeURIComponent(e.local || "") + (e.mensal || e.semanal ? "&recur=" + encodeURIComponent(e.mensal === "dia" ? "RRULE:FREQ=MONTHLY;BYMONTHDAY=" + +e.data.slice(8) : e.mensal ? "RRULE:FREQ=MONTHLY;BYDAY=" + (Math.ceil(+e.data.slice(8) / 7) > 4 ? -1 : Math.ceil(+e.data.slice(8) / 7)) + ["SU", "MO", "TU", "WE", "TH", "FR", "SA"][new Date(e.data + "T12:00").getDay()] : "RRULE:FREQ=WEEKLY") : "");
 }
 const coroa = m => m && m.adm ? ' <span class="adm" title="ADM do grupo" aria-label="ADM"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z"/></svg></span>' : "";
 /* a coroa anda junto com o sobrenome: sem isso ela caía sozinha na linha de baixo */
@@ -1304,7 +1304,7 @@ const dataDe = ms => ms ? new Date(ms).toLocaleDateString("pt-BR") : "";
 function escopoHTML(p, f, dentro, podeEd) {
   const resp = p.papeis.filter(r => r[1] === "Responsável" && M(r[0])), outros = p.papeis.filter(r => r[1] !== "Responsável" && M(r[0]));
   const chips = l => l.length ? `<div class="pchips">${l.map(([id, papel]) => `<button class="pchip" data-act="person" data-id="${id}">${av(id, 24)}<span>${esc(nm(id))}${papel && papel !== "Participa" && papel !== "Responsável" ? ` <small>${esc(papel)}</small>` : ""}</span></button>`).join("")}</div>` : '<span class="vazio">Ninguém ainda</span>';
-  const ev = S.eventos.filter(e => e.proj === p.id && !e.sala).map(e => ({ e, d: e.semanal ? proxSemanal(e.data) : e.data })).filter(x => x.d >= hojeISO()).sort((a, b) => (a.d + a.e.ini).localeCompare(b.d + b.e.ini))[0];
+  const ev = S.eventos.filter(e => e.proj === p.id && !e.sala).map(e => ({ e, d: e.mensal ? proxMensal(e) : e.semanal ? proxSemanal(e.data) : e.data })).filter(x => x.d >= hojeISO()).sort((a, b) => (a.d + a.e.ini).localeCompare(b.d + b.e.ini))[0];
   const inicio = p.inicio ? dmy(p.inicio) : p.em ? dataDe(p.em) : "";
   const campo = (k, v) => `<dt>${k}</dt><dd>${v}</dd>`;
   const docs = p.docs || [];
@@ -1321,6 +1321,17 @@ function escopoHTML(p, f, dentro, podeEd) {
   <div class="trilha">${docs.map((d, i) => `<button class="doc" data-act="tab" data-tab="doc:${d.id}"><span class="pg">${docCapa(d)}</span><span class="dt">${esc(docTitulo(d))}</span><small>${d.link ? tipoDoc(d) : "Nota"}${docData(d) ? " · " + docData(d) : ""}</small><span class="num">${i + 1}</span></button>`).join("")}
     ${!docs.length ? (podeEd ? `<button class="doc novo" data-act="novodoc"><span class="dt">+ Primeiro documento</span><small>O 1 é o resumo detalhado do projeto. Pode ser uma nota daqui ou um PDF do Google Drive.</small></button>` : '<p class="empty">Nenhum documento ainda.</p>') : ""}</div></div>`;
 }
+/* repetição por mês: "dia" (mesmo dia do mês, que cai no último dia em mês curto) ou "semana" (mesma posição do dia da semana, ex.: 1ª segunda; 5ª vira a última) */
+function mesN(e, i) {
+  const b = new Date(e.data + "T12:00"), y = b.getFullYear(), m = b.getMonth() + i, ult = new Date(y, m + 1, 0).getDate();
+  if (e.mensal === "dia") return ymd(new Date(y, m, Math.min(b.getDate(), ult), 12));
+  const n = Math.ceil(b.getDate() / 7), p1 = (b.getDay() - new Date(y, m, 1).getDay() + 7) % 7 + 1; let dia = p1 + (n - 1) * 7; if (dia > ult) dia -= 7;
+  return ymd(new Date(y, m, dia, 12));
+}
+const proxMensal = e => { const h = hojeISO(); for (let i = 0; ; i++) { const d = mesN(e, i); if (d >= h) return d; } };
+const repeteTx = e => { if (e.mensal === "dia") return "todo dia " + +e.data.slice(8) + " do mês"; if (!e.mensal) return e.semanal ? "toda semana" : "";
+  const w = new Date(e.data + "T12:00").getDay(), n = Math.ceil(+e.data.slice(8) / 7), o = w % 6 === 0;
+  return `${o ? "todo" : "toda"} ${n > 4 ? (o ? "último" : "última") : n + (o ? "º" : "ª")} ${["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"][w]} do mês`; };
 const proxSemanal = s => { const d = new Date(s + "T12:00"), h = new Date(hojeISO() + "T12:00"); while (d < h) d.setDate(d.getDate() + 7); return ymd(d); };
 /* documento da trilha: uma nota do projeto (a data vem sozinha da última edição) ou um PDF por link, com a data que a pessoa informou */
 const docNota = d => d && d.nota ? NT(d.nota) : null;
@@ -1665,6 +1676,7 @@ const corEv = e => { const p = P(e.proj); return fc(p ? F(p.frente) : null); };
 function ocorrencias(de, ate) {
   const out = [];
   for (const e of S.eventos) {
+    if (e.mensal) { for (let i = 0, d; (d = mesN(e, i)) <= ate; i++) if (d >= de) out.push({ e, d }); continue; }
     if (!e.semanal) { if (e.data >= de && e.data <= ate) out.push({ e, d: e.data }); continue; }
     for (let d = new Date(e.data + "T12:00"); ymd(d) <= ate; d = addD(d, 7)) if (ymd(d) >= de) out.push({ e, d: ymd(d) });
   }
@@ -1708,7 +1720,33 @@ function calHTML() {
   <div class="seg" role="group" aria-label="Ver a semana ou o mês"><button data-act="calv" data-c="semana" aria-pressed="${UI.cal === "semana"}">Semana</button><button data-act="calv" data-c="mes" aria-pressed="${UI.cal === "mes"}">Mês</button></div>
   <div class="cbar"><div class="cnav"><button class="btn arrow" data-act="calnav" data-d="-1" aria-label="${UI.cal === "semana" ? "Semana anterior" : "Mês anterior"}">‹</button><button class="btn" data-act="calnav" data-d="0">${UI.cal === "semana" ? "Hoje" : "Mês atual"}</button><button class="btn arrow" data-act="calnav" data-d="1" aria-label="${UI.cal === "semana" ? "Próxima semana" : "Próximo mês"}">›</button>
     <div class="range">${range}${sub ? `<small>${sub}</small>` : ""}</div></div>${stats}
-    <div style="display:flex;gap:8px"><button class="btn" data-act="newtask">+ Tarefa</button><button class="btn primary" data-act="newev">+ Compromisso</button></div></div>${body}</div>`;
+    <div style="display:flex;gap:8px">${souAdm() ? `<button class="btn" data-act="sugerido">Calendário sugerido</button>` : ""}<button class="btn" data-act="newtask">+ Tarefa</button><button class="btn primary" data-act="newev">+ Compromisso</button></div></div>${body}</div>`;
+}
+
+/* calendário sugerido: compromissos e documentos montados fora do site (calendario-sugerido.json, ao lado da página).
+   O ADM vê o que falta e adiciona com um clique; o que já está no site (mesmo id, ou documento com o mesmo link) não é tocado. */
+const semAc = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+const projPorNome = n => { const k = semAc(n); return k ? (S.projetos.find(p => !p.excluido && semAc(p.nome) === k) || S.projetos.find(p => !p.excluido && semAc(p.nome).includes(k))) : null; };
+const membroPorNome = n => { const k = semAc(n); return S.membros.find(m => semAc(m.curto) === k || semAc(m.nome).split(" ")[0] === k) || S.membros.find(m => semAc(m.nome).startsWith(k)); };
+async function abrirSugerido() {
+  let d; try { d = await (await fetch("calendario-sugerido.json?v=" + Date.now())).json(); } catch (e) { return toast("Não achei o calendário sugerido."); }
+  const evs = (d.eventos || []).filter(x => !S.eventos.some(y => y.id === x.id)), docs = (d.documentos || []).filter(x => { const p = projPorNome(x.projeto); return p && !(p.docs || []).some(y => y.link === x.link); });
+  UI.sug = { evs, docs };
+  const semProj = [...new Set(evs.filter(x => x.projeto && !projPorNome(x.projeto)).map(x => x.projeto))];
+  const linha = x => `<li><b>${esc(x.titulo)}</b> <small style="color:var(--muted)">${dmy(x.data)}, ${x.ini}${x.mensal || x.semanal ? ", " + repeteTx(x) : ""}${x.quem && x.quem.length ? " · " + esc(x.quem.join(", ")) : ""}</small></li>`;
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="Calendário sugerido"><h2>Calendário sugerido</h2>
+  <p style="margin:0 0 10px">${esc(d.sobre || "")}</p>
+  ${evs.length || docs.length ? `<p style="margin:0 0 6px"><b>${plural(evs.length, "compromisso novo", "compromissos novos")}</b>${docs.length ? " e " + plural(docs.length, "documento", "documentos") : ""}. O que já está no calendário fica como está.</p>
+  <div style="max-height:46vh;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px 10px"><ul style="margin:0;padding-left:18px">${evs.filter(x => x.mensal || x.semanal).map(linha).join("")}</ul>${evs.some(x => !x.mensal && !x.semanal) ? `<div style="margin:8px 0 2px;font-weight:600">Só uma vez</div><ul style="margin:0;padding-left:18px">${evs.filter(x => !x.mensal && !x.semanal).map(linha).join("")}</ul>` : ""}${docs.length ? `<div style="margin:8px 0 2px;font-weight:600">Documentos</div><ul style="margin:0;padding-left:18px">${docs.map(x => `<li>${esc(x.titulo)} <small style="color:var(--muted)">no projeto ${esc(projPorNome(x.projeto).nome)}</small></li>`).join("")}</ul>` : ""}</div>
+  ${semProj.length ? `<p class="empty">Sem projeto com o nome ${semProj.map(esc).join(", ")}: esses entram sem projeto, e dá para escolher depois.</p>` : ""}
+  <div class="row-form"><button class="btn primary" data-act="addsug">Adicionar tudo</button><button type="button" class="btn ghost" data-act="closemodal">Agora não</button></div>` : `<p class="empty">Tudo o que está na sugestão já está no site.</p><div class="row-form"><button type="button" class="btn ghost" data-act="closemodal">Fechar</button></div>`}</div></div>`;
+}
+function addSugerido() {
+  const { evs, docs } = UI.sug || {}; if (!evs) return;
+  evs.forEach(x => { const p = projPorNome(x.projeto);
+    S.eventos.push({ id: x.id, titulo: x.titulo, data: x.data, ini: x.ini, fim: x.fim || x.ini, local: x.local || "", proj: p ? p.id : "", quem: (x.quem || []).map(membroPorNome).filter(Boolean).map(m => m.id), semanal: !!x.semanal, mensal: x.mensal || "", desc: x.desc || "", criador: UI.me, em: Date.now() }); });
+  docs.forEach(x => { const p = projPorNome(x.projeto); p.docs = p.docs || []; p.docs.push({ id: "doc" + Date.now() + Math.random().toString(36).slice(2, 5), por: UI.me, em: Date.now(), titulo: x.titulo, nota: "", link: x.link, alt: x.alt || hojeISO() }); });
+  save(); UI.sug = null; $("#overlay").innerHTML = ""; toast("Calendário sugerido adicionado."); render();
 }
 
 /* janela de compromisso */
@@ -1724,13 +1762,13 @@ function desenharEvento() {
     <div class="two"><label>Dia<input class="field" type="date" name="data" id="ev-d" value="${e.data}"></label><label>Onde (cole o link da reunião)<input class="field" name="local" id="ev-l" value="${esc(e.local)}" placeholder="https://meet.google.com/..."></label></div>
     <div class="two"><label>Começa<input class="field" type="time" name="ini" id="ev-i" value="${e.ini}"></label><label>Termina<input class="field" type="time" name="fim" id="ev-f" value="${e.fim}"></label></div>
     <label>Projeto<select class="field" name="proj" id="ev-p"><option value="">Nenhum</option>${S.projetos.map(p => `<option value="${p.id}"${p.id === e.proj ? " selected" : ""}>${esc(p.nome)}</option>`).join("")}</select></label>
-    <label style="display:flex;gap:8px;align-items:center;color:var(--fg)"><input type="checkbox" name="semanal" id="ev-s"${e.semanal ? " checked" : ""}> Repete toda semana</label>
+    <label>Repete<select class="field" name="rep" id="ev-s">${[["", "Não repete"], ["semanal", "Toda semana"], ["semana", "Todo mês, no mesmo dia da semana (ex.: 1ª segunda)"], ["dia", "Todo mês, no mesmo dia do mês"]].map(([v, t]) => `<option value="${v}"${(e.mensal || (e.semanal ? "semanal" : "")) === v ? " selected" : ""}>${t}</option>`).join("")}</select></label>
     <div><div style="font-size:13.5px;color:var(--muted);margin-bottom:4px">Quem vai (${e.quem.length})</div><div class="pick">${S.membros.map(m => `<button type="button" class="chip" data-act="who" data-id="${m.id}" aria-pressed="${e.quem.includes(m.id)}">${av(m.id, 24)}${esc(m.nome)}</button>`).join("")}</div></div>
     <label>Observações<textarea class="field" name="desc" id="ev-o" style="min-height:80px">${esc(e.desc)}</textarea></label>
     <div class="row-form"><button class="btn primary">${novo ? "Criar compromisso" : "Salvar"}</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${novo || !(souAdm() || e.criador === UI.me) ? "" : `<button type="button" class="btn ghost" data-act="delev" style="margin-left:auto;color:var(--bad)">${UI.confirmDel ? "Clique de novo para apagar" : "Apagar"}</button>`}</div>
   </form>${novo ? "" : `<p style="margin:14px 0 0;font-size:14px"><a class="link" href="${esc(gcal(e))}" target="_blank" rel="noopener">Pôr na minha agenda do Google</a>${ehLink(e.local) ? ` · <a class="link" href="${esc(e.local.trim())}" target="_blank" rel="noopener">Entrar na reunião</a>` : ""}</p>`}</div></div>`;
 }
-function lerEvento() { const f = document.querySelector('[data-form="evento"]'); if (!f) return; const fd = new FormData(f), e = UI.draft; ["titulo", "data", "local", "ini", "fim", "proj", "desc"].forEach(k => e[k] = fd.get(k) || ""); e.semanal = !!fd.get("semanal"); }
+function lerEvento() { const f = document.querySelector('[data-form="evento"]'); if (!f) return; const fd = new FormData(f), e = UI.draft; ["titulo", "data", "local", "ini", "fim", "proj", "desc"].forEach(k => e[k] = fd.get(k) || ""); const r = fd.get("rep") || ""; e.semanal = r === "semanal"; e.mensal = r === "semana" || r === "dia" ? r : ""; }
 /* excluir projeto: sai da árvore e vai para "Projetos excluídos" (campo excluido), de onde um ADM restaura; só o dono apaga de vez */
 function excluirProjeto(p) {
   S.projetos = S.projetos.filter(x => x !== p); p.excluido = Date.now(); p.excluidoPor = UI.me; S.lixo.push(p);
@@ -1877,6 +1915,8 @@ function acao(t, e) {
   if (a === "calnav") { const d = +t.dataset.d; if (!d) UI.ref = null; else { const r = UI.ref ? new Date(UI.ref + "T12:00") : new Date(); if (UI.cal === "semana") r.setDate(r.getDate() + 7 * d); else r.setMonth(r.getMonth() + d, 1); UI.ref = ymd(r); } return render(); }
   if (a === "ev") { e.stopPropagation(); return abrirEvento(t.dataset.id); }
   if (a === "newev") return abrirEvento(null);
+  if (a === "sugerido") return abrirSugerido();
+  if (a === "addsug") return addSugerido();
   if (a === "newtask") return abrirTarefaForm({ quem: UI.me });
   if (a === "newat") return abrirEvento(null, t.dataset.date);
   if (a === "who") { lerEvento(); const q = UI.draft.quem, id = t.dataset.id; UI.draft.quem = q.includes(id) ? q.filter(x => x !== id) : q.concat(id); return desenharEvento(); }
