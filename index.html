@@ -564,6 +564,20 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
 .acc .sec .n { display: inline-block; margin-left: 6px; background: var(--miolo); color: #1E1A17; border-radius: 99px; font-size: 11px; padding: 0 7px; line-height: 18px; vertical-align: 1px; }
 .acc-ped { margin: 0 0 22px; padding: 14px 16px; border: 1px solid color-mix(in oklch, var(--miolo) 45%, var(--line)); border-radius: var(--r-l); background: color-mix(in oklch, var(--miolo) 6%, var(--raised)); }
 .acc-dica { font-size: 13.5px; color: var(--muted); margin: 0 0 6px; max-width: 64ch; }
+/* artefatos (só ADM) */
+.nav button[hidden] { display: none; }
+.art-busca { width: 100%; max-width: 480px; margin: 0 0 12px; }
+.arts { max-width: 820px; }
+.arts h2.sec { margin: 22px 0 4px; display: flex; align-items: center; gap: 8px; }
+.art { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.art .ic { flex: none; width: 40px; height: 40px; border-radius: var(--r-m); display: grid; place-items: center; background: var(--panel); color: var(--accent); }
+.art .ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.art .tx { flex: 1; min-width: 0; }
+.art .tx b { display: block; font-weight: 600; }
+.art .tx p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.art .tx small { display: block; color: var(--faint); font-size: 12.5px; margin-top: 3px; }
+.art .acts { display: flex; gap: 6px; flex: none; }
+@media (max-width: 560px) { .art { flex-wrap: wrap; } .art .acts { width: 100%; padding-left: 52px; } }
 @media (max-width: 1180px) { .marca .mk i { display: none; } }
 /* celular e tablet estreito: as cinco seções descem para uma barra fixa embaixo, com ícone e nome (antes Tarefas e Votações sumiam à direita) */
 @media (max-width: 860px) {
@@ -573,6 +587,8 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
   .nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--bar); border-top: 1px solid var(--bar-line); padding: 0 max(4px, env(safe-area-inset-right, 0px)) env(safe-area-inset-bottom, 0px) max(4px, env(safe-area-inset-left, 0px)); }
   .nav button { position: relative; flex: 1 1 0; min-width: 0; flex-direction: column; justify-content: center; gap: 3px; padding: 7px 2px 6px; min-height: 58px; font-size: 11.5px; line-height: 1.1; }
   .nav button span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  /* com a aba Artefatos (só ADM) são seis seções: letra um pouco menor para "Integrantes" caber */
+  .nav:has(button[data-adm]:not([hidden])) button { font-size: 10.5px; padding-left: 1px; padding-right: 1px; letter-spacing: -.01em; }
   .nav svg { display: block; }
   .nav button[aria-current="page"] { color: var(--sel); }
   .nav button[aria-current="page"]::before { top: -1px; bottom: auto; left: 30%; right: 30%; border-radius: 0 0 2px 2px; }
@@ -614,6 +630,7 @@ details.feitas summary, details.ideias-old summary { cursor: pointer; color: var
     <button data-act="go" data-v="integrantes"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.5-3.5 3.2-5.5 6.5-5.5s6 2 6.5 5.5"/><path d="M15.5 4.8a3.5 3.5 0 0 1 0 6.4M18 14.8c2 .7 3.2 2.5 3.5 5.2"/></svg><span>Integrantes</span></button>
     <button data-act="go" data-v="tarefas"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5l2 2 3.5-3.5M4 15.5l2 2 3.5-3.5M13 7h7M13 16h7"/></svg><span>Tarefas</span></button>
     <button data-act="go" data-v="votacoes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h16v7H4zM8 13V4h8v9M10.5 8.5l1.5 1.5 3-3"/></svg><span>Votações</span></button>
+    <button data-act="go" data-v="artefatos" data-adm hidden><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 4h12a2 2 0 0 1 2 2v11M3 11h14"/></svg><span>Artefatos</span></button>
   </nav>
   <div class="right">
     <div class="tema" role="group" aria-label="Tema da tela"><button data-act="tema" data-t="light" aria-pressed="false" aria-label="Tema claro" title="Tema claro"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg></button><button data-act="tema" data-t="dark" aria-pressed="true" aria-label="Tema escuro" title="Tema escuro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button></div>
@@ -708,7 +725,7 @@ async function entrarNuvem() {
   });
 }
 function assinar() {
-  S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [], mensagens: [], notas: [], pessoal: { tarefas: [] }, lixo: [] }; NV.prontos = 0;
+  S = { versao: SEED.versao, membros: [], frentes: [], projetos: [], eventos: [], votacoes: [], mensagens: [], notas: [], pessoal: { tarefas: [] }, lixo: [], artefatos: [] }; NV.prontos = 0;
   NV.db.collection("notas").onSnapshot(snap => { S.notas = snap.docs.map(d => volta(d.data())).concat(S.notas.filter(n => n.dono)); NV.notasOk = true; tentarMigrar(); agendarRender(); }, () => {});
   /* a conversa e o online ficam fora do salvamento geral: cada mensagem e cada sinal é um documento próprio */
   NV.db.collection("mensagens").orderBy("em", "desc").limit(300).onSnapshot(snap => { S.mensagens = snap.docs.map(d => d.data()); if (UI.v === "projeto" && UI.tab === "conversa") renderChat(); else if (UI.v === "inicio") agendarRender(); }, () => {});
@@ -752,7 +769,7 @@ function pronto() {
   if (!NV.acesso.membro || !M(NV.acesso.membro)) return telaQuem();
   UI.me = NV.acesso.membro;
   /* cada perfil guarda a conta Google que é dele: assim ninguém entra como outra pessoa */
-  assinarPessoal(UI.me); assinarAcessos();
+  assinarPessoal(UI.me); assinarAcessos(); assinarArtefatos();
   if (!M(UI.me).uid) { M(UI.me).uid = NV.user.uid; save(); } document.querySelector("header.top").hidden = false; go("inicio");
   if (!NV.pulso) { NV.pulso = setInterval(pulsar, 120e3); pulsar(); }
   tentarMigrar();
@@ -792,7 +809,7 @@ const KEY = "psychology-site-v2";
 let S;
 try { S = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { S = null; }
 if (!S || S.versao !== SEED.versao) S = JSON.parse(JSON.stringify(SEED));
-S.mensagens = S.mensagens || []; S.notas = S.notas || []; S.pessoal = S.pessoal || { tarefas: [] }; S.lixo = S.lixo || [];
+S.mensagens = S.mensagens || []; S.notas = S.notas || []; S.pessoal = S.pessoal || { tarefas: [] }; S.lixo = S.lixo || []; S.artefatos = S.artefatos || [];
 const UI = { v: "inicio", proj: null, tab: "sobre", person: null, filtro: "todos", cal: "semana", ref: null, me: "matheus", edit: false, pastas: {}, pastaSel: "", tf: null };
 try { const u = JSON.parse(localStorage.getItem(KEY + "-ui") || "{}"); if (u.me) UI.me = u.me; if (u.cal) UI.cal = u.cal; } catch (e) {}
 if (!S.membros.some(m => m.id === UI.me)) UI.me = S.membros[0] ? S.membros[0].id : UI.me;
@@ -929,7 +946,7 @@ function go(v, extra) {
   const marca = v === "projeto" ? (UI.proj === EU_ID ? "area" : "inicio") : v === "pessoa" ? "integrantes" : v === "votacao" ? "votacoes" : v;
   document.querySelectorAll("header [data-v]").forEach(b => b.setAttribute("aria-current", b.dataset.v === marca ? "page" : "false"));
   const bv = document.querySelector('header [data-v="votacoes"]'); if (bv && UI.me) { const n = S.votacoes.filter(x => !fechada(x) && !(x.votos[UI.me] || []).length).length; bv.dataset.n = n || ""; bv.title = n ? plural(n, "votação esperando seu voto", "votações esperando seu voto") : ""; }
-  marcarPedidos();
+  marcarPedidos(); document.querySelectorAll("header [data-adm]").forEach(b => b.hidden = !souAdm());
   $("#meBtn").innerHTML = av(UI.me, 34);
   render(); scrollTo(0, 0);
 }
@@ -943,6 +960,7 @@ function render() {
   if (UI.v === "calendario") el.innerHTML = calHTML();
   if (UI.v === "tarefas") el.innerHTML = tarefasHTML();
   if (UI.v === "votacoes") el.innerHTML = votacoesHTML();
+  if (UI.v === "artefatos") el.innerHTML = artefatosHTML();
   if (UI.v === "votacao") el.innerHTML = votacaoHTML(S.votacoes.find(x => x.id === UI.vot));
   renderAgora(); const ch = $("#chatList"); if (ch) ch.scrollTop = ch.scrollHeight;
 }
@@ -1580,6 +1598,67 @@ function acessosHTML(topo) {
     ${bloq.length ? `<details class="feitas" open><summary>Acesso retirado (${bloq.length})</summary>${bloq.map(a => `<div class="lixo-li">${quem(a)}${bt(a, "devolver", "Devolver acesso")}</div>`).join("")}</details>` : ""}</div>`;
 }
 
+/* ===== ARTEFATOS (27/10/2026, pedido de Matheus): as páginas do Claude feitas para o clube, num lugar só, só para ADM.
+   Ficam na coleção "artefatos", que o banco só entrega a ADM (firestore.rules), e não no código, porque o GitHub é público.
+   O projeto de cada uma é o escolhido; sem escolha, vale o projeto em cuja trilha o mesmo link já está. ===== */
+function assinarArtefatos() {
+  if (NV.artOn || !NV.on || !souAdm()) return; NV.artOn = true;
+  NV.db.collection("artefatos").onSnapshot(snap => { S.artefatos = snap.docs.map(d => d.data()); NV.artOk = true; if (UI.v === "artefatos" && !editando()) render(); },
+    () => { NV.artErro = true; if (UI.v === "artefatos") render(); });
+}
+const linkBase = u => String(u || "").trim().replace(/[?#].*$/, "").replace(/\/+$/, "").toLowerCase();
+const trilhaDe = a => S.projetos.find(p => (p.docs || []).some(d => d.link && linkBase(d.link) === linkBase(a.link)));
+const projArt = a => P(a.proj) || trilhaDe(a);
+const semAcento = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const ICO_ART = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="14" height="13" rx="2"/><path d="M7 4h12a2 2 0 0 1 2 2v11M3 11h14"/></svg>';
+function artListaHTML() {
+  const q = semAcento(UI.artq), f = UI.artf || "todos";
+  const lista = S.artefatos.filter(a => { const p = projArt(a);
+    if (f !== "todos" && (f === "clube" ? p : !p || p.id !== f)) return false;
+    return !q || semAcento([a.titulo, a.desc, p && p.nome].join(" ")).includes(q); });
+  if (!lista.length) return `<p class="empty">${S.artefatos.length ? "Nada com essa busca." : "Nenhuma página ainda. Use + Nova página para pôr a primeira."}</p>`;
+  const grupos = new Map();
+  lista.sort((a, b) => a.titulo.localeCompare(b.titulo, "pt")).forEach(a => { const p = projArt(a), k = p ? p.id : ""; if (!grupos.has(k)) grupos.set(k, []); grupos.get(k).push(a); });
+  const ordem = [...grupos.keys()].sort((a, b) => (a === "") - (b === "") || S.projetos.findIndex(p => p.id === a) - S.projetos.findIndex(p => p.id === b));
+  return ordem.map(k => { const p = P(k), fr = p && F(p.frente);
+    return `<h2 class="sec">${fr ? `<span class="chipf" style="--fc:${fc(fr)}"></span>` : ""}${p ? esc(p.nome) : "Do clube todo"}</h2>${grupos.get(k).map(a => {
+      const t = trilhaDe(a);
+      return `<div class="art"><span class="ic">${ICO_ART}</span><span class="tx"><b>${esc(a.titulo)}</b>${a.desc ? `<p>${esc(a.desc)}</p>` : ""}
+        <small>${t ? `Também na trilha de <button class="link" data-act="proj" data-id="${t.id}" data-tab="sobre">${esc(t.nome)}</button>. ` : ""}Posta por ${esc(nm(a.por))}${a.em ? " em " + dataDe(a.em) : ""}.</small></span>
+        <span class="acts"><a class="btn small primary" href="${esc(a.link)}" target="_blank" rel="noopener">Abrir</a><button class="btn small ghost" data-act="editart" data-id="${a.id}">Editar</button></span></div>`; }).join("")}`; }).join("");
+}
+function artefatosHTML() {
+  if (!souAdm()) return `<div class="wrap"><h1>Artefatos</h1><p class="empty">Só os ADM veem esta tela.</p></div>`;
+  const n = k => S.artefatos.filter(a => { const p = projArt(a); return k === "clube" ? !p : p && p.id === k; }).length;
+  const f = UI.artf || "todos";
+  const chip = (k, l, c, cor) => `<button class="chip" data-act="artf" data-k="${k}" aria-pressed="${f === k}">${cor ? `<span class="chipf" style="--fc:${cor}"></span>` : ""}${l} · ${c}</button>`;
+  return `<div class="wrap"><div style="display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><h1>Artefatos</h1>
+  <p class="lede">As páginas do Claude feitas para o Lastro, num lugar só: posts, identidade, planos e maquetes. Só os ADM veem esta tela. A página abre no claude.ai; se ela pedir permissão, quem fez a página precisa compartilhá-la com você.</p></div>
+  <button class="btn primary" data-act="editart">+ Nova página</button></div>
+  ${NV.on && NV.artErro ? '<p class="empty">O banco não entregou a lista. Falta publicar as regras novas no Firebase.</p>' : NV.on && !NV.artOk ? '<p class="empty">Carregando as páginas.</p>' : ""}
+  <input class="field art-busca" id="artQ" type="search" placeholder="Buscar por nome, assunto ou projeto" value="${esc(UI.artq || "")}" aria-label="Buscar páginas">
+  <div class="filters">${chip("todos", "Todas", S.artefatos.length)}${S.projetos.filter(p => n(p.id)).map(p => chip(p.id, esc(p.nome), n(p.id), F(p.frente) && fc(F(p.frente)))).join("")}${n("clube") ? chip("clube", "Do clube todo", n("clube")) : ""}</div>
+  <div class="arts" id="artList">${artListaHTML()}</div></div>`;
+}
+function abrirArt(id) {
+  const a = S.artefatos.find(x => x.id === id);
+  $("#overlay").innerHTML = `<div class="modal" data-act="closemodal"><div class="dialog" role="dialog" aria-label="${a ? "Editar página" : "Nova página"}"><h2>${a ? "Editar página" : "Nova página"}</h2>
+  <form class="form" data-form="art" data-id="${a ? a.id : ""}">
+    <label>Nome<input class="field" name="titulo" id="ar-tit" required value="${esc(a ? a.titulo : "")}" placeholder="Ex.: Posts do Lastro"></label>
+    <label>Link<input class="field" name="link" id="ar-link" type="url" required value="${esc(a ? a.link : "")}" placeholder="https://claude.ai/artifact/..."></label>
+    <label>O que é, em uma frase<input class="field" name="desc" id="ar-desc" value="${esc(a ? a.desc || "" : "")}" placeholder="Ex.: Acervo dos posts publicados e modelos de story."></label>
+    <label>Projeto<select class="field" name="proj" id="ar-proj"><option value="">${a && trilhaDe(a) ? "O da trilha (" + esc(trilhaDe(a).nome) + ")" : "Do clube todo"}</option>${S.projetos.map(p => `<option value="${p.id}"${a && a.proj === p.id ? " selected" : ""}>${esc(p.nome)}</option>`).join("")}</select></label>
+    <div class="row-form"><button class="btn primary">Salvar</button><button type="button" class="btn ghost" data-act="closemodal">Cancelar</button>${a ? `<button type="button" class="btn ghost" data-act="delart" data-id="${a.id}" style="margin-left:auto;color:var(--bad)">Tirar da lista</button>` : ""}</div>
+  </form></div></div>`;
+  $("#ar-tit").focus();
+}
+function gravarArt(a, apagar) {
+  if (!NV.on) return save();
+  const ref = NV.db.collection("artefatos").doc(a.id);
+  (apagar ? ref.delete() : ref.set(JSON.parse(JSON.stringify(a)))).catch(e => toast("Não consegui salvar: " + e.message));
+}
+document.addEventListener("input", e => { if (e.target.id === "artQ") { UI.artq = e.target.value; const el = $("#artList"); if (el) el.innerHTML = artListaHTML(); } });
+
 /* ===== VOTAÇÕES ===== */
 const hojeISO = () => ymd(new Date());
 const fechada = v => v.encerrada || (v.prazo && v.prazo < hojeISO());
@@ -1903,6 +1982,10 @@ function acao(t, e) {
   e = e || { target: t, stopPropagation() {} };
   const a = t.dataset.act, p = UI.v === "projeto" ? P(UI.proj) : null;
   if (a === "closemodal") { if (e.target === t || t.tagName === "BUTTON") $("#overlay").innerHTML = ""; return; }
+  if (a === "artf") { UI.artf = t.dataset.k; return render(); }
+  if (a === "editart") return abrirArt(t.dataset.id);
+  if (a === "delart") { const x = S.artefatos.find(y => y.id === t.dataset.id); if (!x || !confirm(`Tirar “${x.titulo}” da lista? A página continua no claude.ai.`)) return;
+    S.artefatos = S.artefatos.filter(y => y !== x); gravarArt(x, true); $("#overlay").innerHTML = ""; toast("Tirada da lista."); return render(); }
   if (a === "go") return go(t.dataset.v, t.dataset.filtro ? { filtro: t.dataset.filtro } : t.dataset.v === "integrantes" ? { filtro: "todos" } : {});
   if (a === "proj") { $("#overlay").innerHTML = ""; return go("projeto", { proj: t.dataset.id, tab: t.dataset.tab || "sobre" }); }
   if (a === "person") return t.dataset.id === UI.me ? go("perfil") : go("pessoa", { person: t.dataset.id });
@@ -2021,6 +2104,16 @@ document.addEventListener("submit", e => {
     if (novo) { pp.tarefas.push({ ...dados, st: "afazer", em: Date.now(), por: UI.me }); UI.ultProj = pid; }
     else { const x = pp.tarefas[+f.dataset.i], era = x.st; Object.assign(x, dados, { st: fd.get("st") || x.st, alt: Date.now() }); if (x.st === "feito" && era !== "feito") concluir(pp, x); if (x.st !== "feito") { delete x.feitoEm; delete x.feitoPor; } }
     save(); $("#overlay").innerHTML = ""; toast(novo ? "Tarefa criada." : "Tarefa salva."); return render();
+  }
+  if (k === "art") {
+    const titulo = String(fd.get("titulo") || "").trim(), link = String(fd.get("link") || "").trim();
+    if (!titulo) return toast("Dê um nome à página.");
+    if (!/^https:\/\//.test(link)) return toast("Cole o link da página (começa com https://).");
+    let x = S.artefatos.find(y => y.id === f.dataset.id);
+    if (S.artefatos.some(y => y !== x && linkBase(y.link) === linkBase(link))) return toast("Esse link já está na lista.");
+    const novo = !x; if (novo) { x = { id: "art" + Date.now() + Math.random().toString(36).slice(2, 5), por: UI.me, em: Date.now() }; S.artefatos.push(x); }
+    Object.assign(x, { titulo, link, desc: String(fd.get("desc") || "").trim(), proj: fd.get("proj") || "", alt: Date.now(), altPor: UI.me });
+    gravarArt(x); $("#overlay").innerHTML = ""; toast(novo ? "Página na lista." : "Página salva."); return render();
   }
   if (k === "doc") {
     const tipo = fd.get("tipo"), titulo = String(fd.get("titulo") || "").trim(), link = String(fd.get("link") || "").trim();
